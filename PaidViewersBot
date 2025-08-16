@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paidviewersbot</title>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        /* --- General Styles & Theming --- */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #000000;
+            --tg-theme-button-color: #007bff;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-hint-color: #999999;
+            --secondary-bg-color: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 70px; /* Space for bottom navigation */
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            overscroll-behavior-y: none; /* Prevents pull-to-refresh */
+        }
+
+        /* --- Main App Container --- */
+        .app-container {
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        /* --- Page Styles --- */
+        .page {
+            display: none; /* Hide all pages by default */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page.active {
+            display: block; /* Show only the active page */
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        p, li {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--tg-theme-hint-color);
+        }
+        
+        ul {
+            padding-left: 20px;
+            list-style-type: '✅ ';
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            background-color: var(--secondary-bg-color);
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--tg-theme-hint-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .nav-btn.active {
+            color: var(--tg-theme-button-color);
+            font-weight: 500;
+        }
+        
+        .nav-btn .emoji {
+            font-size: 22px;
+        }
+
+        /* --- Shared Components --- */
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--tg-theme-button-text-color);
+            background-color: var(--tg-theme-button-color);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        
+        /* --- Page-Specific Styles --- */
+        .balance-container {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--secondary-bg-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .balance-container h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .info-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: var(--secondary-bg-color);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Home Page -->
+        <div id="home-page" class="page active">
+            <div class="balance-container">
+                <h2 id="balance-display">$0.0000</h2>
+            </div>
+            <div class="info-container">
+                <p>Daily Ads Limit: <span id="ads-watched-display">0</span>/40</p>
+                <p>Daily Earning Limit: $0.20</p>
+            </div>
+            <button id="watch-ad-btn">Watch Ad</button>
+        </div>
+
+        <!-- Tasks Page -->
+        <div id="tasks-page" class="page">
+            <h2>Tasks</h2>
+            <p>No tasks available.</p>
+        </div>
+
+        <!-- Invite Friends Page -->
+        <div id="invite-page" class="page">
+            <h2>Invite Friends</h2>
+            <p>Get one-time bonuses for your referrals:</p>
+            <ul>
+                <li>10 referrals = $0.05</li>
+                <li>50 referrals = $0.25</li>
+                <li>100 referrals = $0.50</li>
+            </ul>
+            <p>Your unique referral link:</p>
+            <input type="text" id="referral-link" readonly>
+            <button id="copy-link-btn">Copy Link</button>
+        </div>
+
+        <!-- Withdraw Page -->
+        <div id="withdraw-page" class="page">
+            <h2>Withdraw</h2>
+            <p>Minimum withdrawal amount is $1.00.</p>
+            <input type="text" id="wallet-address" placeholder="Enter your USDT (BEP20) wallet address">
+            <button id="withdraw-btn">Withdraw</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-page="home-page">
+            <span class="emoji">🏠</span> Home
+        </button>
+        <button class="nav-btn" data-page="tasks-page">
+            <span class="emoji">📋</span> Tasks
+        </button>
+        <button class="nav-btn" data-page="invite-page">
+            <span class="emoji">👥</span> Invite
+        </button>
+        <button class="nav-btn" data-page="withdraw-page">
+            <span class="emoji">💵</span> Withdraw
+        </button>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- INITIALIZE TELEGRAM APP ---
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+
+            // --- STATE MANAGEMENT ---
+            let state = {
+                balance: 0.00,
+                adsWatched: 0,
+                dailyAdLimit: 40,
+                dailyEarningPerAd: 0.20 / 40, // $0.005 per ad
+                minWithdrawal: 1.00
+            };
+            
+            // --- DOM ELEMENT REFERENCES ---
+            const pages = document.querySelectorAll('.page');
+            const navButtons = document.querySelectorAll('.nav-btn');
+            
+            const balanceDisplay = document.getElementById('balance-display');
+            const adsWatchedDisplay = document.getElementById('ads-watched-display');
+            const watchAdBtn = document.getElementById('watch-ad-btn');
+            
+            const referralLinkInput = document.getElementById('referral-link');
+            const copyLinkBtn = document.getElementById('copy-link-btn');
+
+            const walletAddressInput = document.getElementById('wallet-address');
+            const withdrawBtn = document.getElementById('withdraw-btn');
+
+            // --- NAVIGATION LOGIC ---
+            function showPage(pageId) {
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+
+                navButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.page === pageId);
+                });
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    showPage(button.dataset.page);
+                });
+            });
+
+            // --- UI UPDATE FUNCTIONS ---
+            function updateHomeUI() {
+                balanceDisplay.textContent = `$${state.balance.toFixed(4)}`;
+                adsWatchedDisplay.textContent = state.adsWatched;
+                if (state.adsWatched >= state.dailyAdLimit) {
+                    watchAdBtn.disabled = true;
+                    watchAdBtn.textContent = 'Limit Reached';
+                }
+            }
+
+            // --- PAGE-SPECIFIC LOGIC ---
+            
+            // Home Page
+            watchAdBtn.addEventListener('click', () => {
+                if (state.adsWatched < state.dailyAdLimit) {
+                    state.adsWatched++;
+                    state.balance += state.dailyEarningPerAd;
+                    updateHomeUI();
+                    // In a real app, this is where you would show an ad.
+                    tg.showAlert(`Ad watched! You earned $${state.dailyEarningPerAd.toFixed(4)}.`);
+                }
+            });
+
+            // Invite Page
+            function setupInvitePage() {
+                const userId = tg.initDataUnsafe?.user?.id || 'TEST_USER_ID';
+                referralLinkInput.value = `https://t.me/Paidviewersbot?start=${userId}`;
+            }
+            
+            copyLinkBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(referralLinkInput.value).then(() => {
+                    tg.showAlert('Referral link copied to clipboard!');
+                }).catch(() => {
+                    tg.showAlert('Failed to copy link.');
+                });
+            });
+
+            // Withdraw Page
+            withdrawBtn.addEventListener('click', () => {
+                const walletAddress = walletAddressInput.value.trim();
+                
+                // BEP20 address validation (starts with '0x', 42 chars long)
+                if (!/^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
+                    tg.showAlert('Invalid address — you may lose your USDT.');
+                    return;
+                }
+                
+                if (state.balance < state.minWithdrawal) {
+                    tg.showAlert(`Your balance is too low. Minimum withdrawal is $${state.minWithdrawal.toFixed(2)}.`);
+                    return;
+                }
+
+                // Placeholder for backend call
+                tg.showConfirm(`Confirm withdrawal of $${state.balance.toFixed(4)} to ${walletAddress}?`, (confirmed) => {
+                    if (confirmed) {
+                        // In a real app, you would send this request to your backend.
+                        console.log(`Withdrawing ${state.balance} to ${walletAddress}`);
+                        tg.showAlert('Your withdrawal request has been submitted!');
+                        // state.balance = 0; // Uncomment to reset balance after request
+                        // updateHomeUI();
+                    }
+                });
+            });
+
+            // --- INITIALIZATION ---
+            function initializeApp() {
+                updateHomeUI();
+                setupInvitePage();
+                // Load user data from a backend here if needed
+            }
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
