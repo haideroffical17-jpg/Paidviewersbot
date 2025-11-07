@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Generator Pro - Haider Ali Platform</title>
+    <title>VEO Unlimited - AI Video Generator by Haider Ali</title>
     <style>
         * {
             margin: 0;
@@ -11,41 +11,47 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f1f5f9;
+            --border: #e2e8f0;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+        }
+
+        /* Auth Screens */
+        .auth-container {
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
-        .auth-container {
+        .auth-card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
+            padding: 50px;
             max-width: 450px;
             width: 100%;
-            animation: slideIn 0.5s ease-out;
+            animation: slideUp 0.5s ease-out;
         }
 
-        .main-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 30px;
-            max-width: 1400px;
-            width: 100%;
-            animation: slideIn 0.5s ease-out;
-            display: none;
-        }
-
-        @keyframes slideIn {
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -53,20 +59,22 @@
             }
         }
 
-        .logo {
+        .auth-logo {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        .logo h1 {
-            color: #667eea;
-            font-size: 32px;
-            font-weight: bold;
+        .auth-logo h1 {
+            font-size: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 10px;
         }
 
-        .logo p {
-            color: #666;
+        .auth-logo p {
+            color: #64748b;
             font-size: 14px;
         }
 
@@ -77,328 +85,506 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
+            color: var(--dark);
             font-weight: 600;
             font-size: 14px;
         }
 
-        .form-group input, .form-group textarea, .form-group select {
+        .form-input {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
             transition: all 0.3s;
+            background: #f8fafc;
         }
 
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-            font-family: inherit;
-        }
-
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        .form-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-        .btn {
+        .btn-primary {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
         }
 
-        .btn:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .error {
-            color: #e74c3c;
-            font-size: 13px;
-            margin-top: 10px;
+        .error-msg {
             display: none;
-            text-align: center;
-            padding: 10px;
-            background: #ffe6e6;
-            border-radius: 8px;
+            padding: 12px;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 15px;
         }
 
-        .success {
-            color: #27ae60;
-            font-size: 13px;
-            margin-top: 10px;
+        .success-msg {
             display: none;
-            text-align: center;
-            padding: 10px;
-            background: #d4edda;
-            border-radius: 8px;
+            padding: 12px;
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            border-radius: 10px;
+            color: var(--success);
+            font-size: 14px;
+            margin-top: 15px;
         }
 
         .auth-toggle {
             text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+            color: #64748b;
         }
 
         .auth-toggle a {
-            color: #667eea;
-            text-decoration: none;
+            color: var(--primary);
             font-weight: 600;
             cursor: pointer;
+            text-decoration: none;
         }
 
         .auth-toggle a:hover {
             text-decoration: underline;
         }
 
-        .header {
+        /* Main App */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .app-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
         }
 
-        .user-info {
+        .header-logo {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
+        .header-logo h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .user-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
-            font-size: 20px;
+            font-weight: 700;
+            font-size: 16px;
         }
 
-        .admin-badge {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+        .user-info h3 {
+            font-size: 15px;
+            color: var(--dark);
+            margin-bottom: 2px;
         }
 
         .user-badge {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
             font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
             font-weight: 600;
         }
 
-        .admin-panel {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 25px;
-            border-radius: 15px;
+        .badge-admin {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
             color: white;
+        }
+
+        .badge-user {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             margin-bottom: 30px;
         }
 
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
         .stat-card {
-            background: rgba(255,255,255,0.2);
-            padding: 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s;
         }
 
-        .stat-card h3 {
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
             font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
             margin-bottom: 5px;
         }
 
-        .stat-card p {
+        .stat-label {
             font-size: 14px;
-            opacity: 0.9;
+            color: #64748b;
+            font-weight: 500;
         }
 
         .admin-controls {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-top: 20px;
+            margin-bottom: 30px;
         }
 
         .control-btn {
-            padding: 15px;
-            background: rgba(255,255,255,0.3);
-            border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 10px;
-            color: white;
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--dark);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .control-btn:hover {
-            background: rgba(255,255,255,0.4);
-            border-color: white;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
         }
 
-        .tabs {
-            display: flex;
-            gap: 10px;
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+
+        .content-header {
             margin-bottom: 30px;
-            flex-wrap: wrap;
         }
 
-        .tab {
-            padding: 12px 24px;
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            flex: 1;
-            min-width: 150px;
-            text-align: center;
+        .content-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 10px;
         }
 
-        .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
+        .content-header p {
+            color: #64748b;
+            font-size: 15px;
         }
 
-        .tab:hover:not(.active) {
-            background: #e9ecef;
+        /* Generator Form */
+        .generator-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
         }
 
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .video-grid {
+        .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+
+        textarea.form-input {
+            min-height: 140px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Videos Grid */
+        .videos-section {
+            margin-top: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .video-count {
+            background: var(--primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
         }
 
         .video-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
         }
 
-        .video-placeholder {
+        .video-thumbnail {
             width: 100%;
-            height: 180px;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             position: relative;
             overflow: hidden;
         }
 
-        .video-placeholder canvas {
+        .video-thumbnail canvas {
             width: 100%;
             height: 100%;
+            object-fit: cover;
+        }
+
+        .video-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-ready {
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+        }
+
+        .status-generating {
+            background: rgba(245, 158, 11, 0.9);
+            color: white;
         }
 
         .video-info {
-            padding: 15px;
+            padding: 20px;
         }
 
-        .video-info h3 {
+        .video-title {
             font-size: 16px;
-            margin-bottom: 8px;
-            color: #333;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .video-info p {
+        .video-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
             font-size: 13px;
-            color: #666;
-            margin-bottom: 12px;
+            color: #64748b;
+        }
+
+        .video-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .video-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .btn-small {
+        .btn-action {
             flex: 1;
-            padding: 8px 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: 10px;
             border: none;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 10px;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        .btn-small:hover {
+        .btn-play {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-play:hover {
             transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
         }
 
-        .generating {
-            text-align: center;
-            padding: 40px;
-            color: #667eea;
+        .btn-download {
+            background: var(--light);
+            color: var(--dark);
         }
 
+        .btn-download:hover {
+            background: var(--border);
+        }
+
+        /* Loading States */
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
@@ -406,544 +592,408 @@
             100% { transform: rotate(360deg); }
         }
 
-        .logout-btn {
-            padding: 10px 20px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .script-form {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-        }
-
-        .script-output {
-            margin-top: 20px;
-            padding: 20px;
+        .loading-card {
             background: white;
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
-            min-height: 300px;
-            max-height: 600px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.6;
-            display: none;
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        .script-output.active {
-            display: block;
+        .loading-spinner {
+            border: 4px solid var(--light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+        .loading-text {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
         }
 
         .hidden {
             display: none !important;
         }
 
-        .users-table {
-            width: 100%;
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
         }
 
-        .users-table table {
-            width: 100%;
-            border-collapse: collapse;
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
         }
 
-        .users-table th {
-            background: #667eea;
-            color: white;
-            padding: 12px;
-            text-align: left;
+        .tab {
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .users-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e0e0e0;
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
 
-        .users-table tr:hover {
-            background: #f8f9fa;
+        .tab:hover:not(.active) {
+            color: var(--dark);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
     <div class="auth-container" id="loginScreen">
-        <div class="logo">
-            <h1>🎬 AI Video Generator</h1>
-            <p>Powered by Haider Ali Technology</p>
-        </div>
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label for="loginUsername">Username</label>
-                <input type="text" id="loginUsername" placeholder="Enter your username" required>
+        <div class="auth-card">
+            <div class="auth-logo">
+                <h1>🎬 VEO Unlimited</h1>
+                <p>Professional AI Video Generation Platform</p>
             </div>
-            <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" class="form-input" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <div class="error-msg" id="loginError">Invalid credentials. Please try again.</div>
+            </form>
+            <div class="auth-toggle">
+                Don't have an account? <a onclick="showSignup()">Create Account</a>
             </div>
-            <button type="submit" class="btn">Login</button>
-            <p class="error" id="loginError">Invalid credentials. Please try again.</p>
-        </form>
-        <div class="auth-toggle">
-            <p>Don't have an account? <a onclick="showSignup()">Sign Up</a></p>
         </div>
     </div>
 
     <!-- Signup Screen -->
     <div class="auth-container hidden" id="signupScreen">
-        <div class="logo">
-            <h1>🎬 AI Video Generator</h1>
-            <p>Create Your Account</p>
-        </div>
-        <form id="signupForm" onsubmit="handleSignup(event)">
-            <div class="form-group">
-                <label for="signupName">Full Name</label>
-                <input type="text" id="signupName" placeholder="Enter your full name" required>
+        <div class="auth-card">
+            <div class="auth-logo">
+                <h1>🎬 VEO Unlimited</h1>
+                <p>Create Your Account</p>
             </div>
-            <div class="form-group">
-                <label for="signupUsername">Username</label>
-                <input type="text" id="signupUsername" placeholder="Choose a username" required>
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" class="form-input" placeholder="Your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signupUsername" class="form-input" placeholder="Choose username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" class="form-input" placeholder="Create password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signupConfirm" class="form-input" placeholder="Confirm password" required>
+                </div>
+                <button type="submit" class="btn-primary">Create Account</button>
+                <div class="error-msg" id="signupError"></div>
+                <div class="success-msg" id="signupSuccess">Account created! Redirecting to login...</div>
+            </form>
+            <div class="auth-toggle">
+                Already have an account? <a onclick="showLogin()">Sign In</a>
             </div>
-            <div class="form-group">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" placeholder="Choose a password" required minlength="6">
-            </div>
-            <div class="form-group">
-                <label for="signupConfirmPassword">Confirm Password</label>
-                <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
-            </div>
-            <button type="submit" class="btn">Sign Up</button>
-            <p class="error" id="signupError">Error message here</p>
-            <p class="success" id="signupSuccess">Account created successfully! Please login.</p>
-        </form>
-        <div class="auth-toggle">
-            <p>Already have an account? <a onclick="showLogin()">Login</a></p>
         </div>
     </div>
 
-    <!-- Main Application -->
-    <div class="main-container" id="mainApp">
-        <div class="header">
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">HA</div>
-                <div>
-                    <h2 id="userName" style="font-size: 20px; color: #333;">User</h2>
-                    <span id="userRole" class="user-badge">User</span>
+    <!-- Main App -->
+    <div class="app-container" id="mainApp">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="header-content">
+                <div class="header-logo">
+                    <h1>🎬 VEO Unlimited</h1>
+                </div>
+                <div class="header-user">
+                    <div class="user-avatar" id="userAvatar">HA</div>
+                    <div class="user-info">
+                        <h3 id="userName">User</h3>
+                        <span class="user-badge" id="userBadge">User</span>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
                 </div>
             </div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
 
         <!-- Admin Panel -->
         <div id="adminPanel" class="hidden">
             <div class="admin-panel">
-                <h2 style="margin-bottom: 20px;">🛡️ Admin Control Center - Real Dashboard</h2>
-                <div class="admin-stats">
+                <div class="stats-grid">
                     <div class="stat-card">
-                        <h3 id="totalUsers">0</h3>
-                        <p>Total Registered Users</p>
+                        <div class="stat-icon" style="background: #e0e7ff; color: var(--primary);">👥</div>
+                        <div class="stat-value" id="statUsers">0</div>
+                        <div class="stat-label">Total Users</div>
                     </div>
                     <div class="stat-card">
-                        <h3 id="totalVideos">0</h3>
-                        <p>Videos Generated</p>
+                        <div class="stat-icon" style="background: #ddd6fe; color: var(--secondary);">🎥</div>
+                        <div class="stat-value" id="statVideos">0</div>
+                        <div class="stat-label">Videos Generated</div>
                     </div>
                     <div class="stat-card">
-                        <h3 id="totalScripts">0</h3>
-                        <p>Scripts Created</p>
+                        <div class="stat-icon" style="background: #d1fae5; color: var(--success);">⚡</div>
+                        <div class="stat-value" id="statActive">Online</div>
+                        <div class="stat-label">System Status</div>
                     </div>
                     <div class="stat-card">
-                        <h3 id="systemStatus">Online</h3>
-                        <p>System Status</p>
+                        <div class="stat-icon" style="background: #fed7aa; color: var(--warning);">📊</div>
+                        <div class="stat-value" id="statQueue">0</div>
+                        <div class="stat-label">Queue Length</div>
                     </div>
                 </div>
+
                 <div class="admin-controls">
-                    <button class="control-btn" onclick="viewAllUsers()">👥 View All Users</button>
-                    <button class="control-btn" onclick="showAnalytics()">📊 Analytics</button>
-                    <button class="control-btn" onclick="clearAllData()">🗑️ Clear All Data</button>
+                    <button class="control-btn" onclick="viewAllUsers()">👥 View Users</button>
                     <button class="control-btn" onclick="exportData()">📥 Export Data</button>
-                    <button class="control-btn" onclick="showSystemInfo()">⚙️ System Info</button>
-                    <button class="control-btn" onclick="refreshStats()">🔄 Refresh Stats</button>
+                    <button class="control-btn" onclick="clearData()">🗑️ Clear Data</button>
+                    <button class="control-btn" onclick="refreshStats()">🔄 Refresh</button>
                 </div>
-                <div id="usersTableContainer"></div>
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('veo', event)">🎥 VEO 3.1 Generator</div>
-            <div class="tab" onclick="switchTab('bulk', event)">📦 Bulk Generator</div>
-            <div class="tab" onclick="switchTab('script', event)">📝 Script Creator</div>
-        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h2>Generate Unlimited AI Videos</h2>
+                <p>Create stunning videos with VEO 3 AI technology - No limits, No restrictions</p>
+            </div>
 
-        <!-- VEO 3.1 Tab -->
-        <div class="tab-content active" id="veoTab">
-            <form id="veoForm" onsubmit="handleVeoGeneration(event)">
-                <div class="form-group">
-                    <label for="veoPrompt">Video Prompt</label>
-                    <textarea id="veoPrompt" placeholder="Describe your video in detail..." required></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="veoDuration">Duration (seconds)</label>
-                        <select id="veoDuration">
-                            <option value="5">5 seconds</option>
-                            <option value="10">10 seconds</option>
-                            <option value="15">15 seconds</option>
-                            <option value="30">30 seconds</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="veoQuality">Quality</label>
-                        <select id="veoQuality">
-                            <option value="720p">720p HD</option>
-                            <option value="1080p">1080p Full HD</option>
-                            <option value="4k">4K Ultra HD</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" class="btn">Generate Video</button>
-            </form>
-            <div id="veoVideos" class="video-grid"></div>
-        </div>
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('single')">🎥 Single Video</button>
+                <button class="tab" onclick="switchTab('bulk')">📦 Bulk Generate</button>
+            </div>
 
-        <!-- Bulk Generator Tab -->
-        <div class="tab-content" id="bulkTab">
-            <form id="bulkForm" onsubmit="handleBulkGeneration(event)">
-                <div class="form-group">
-                    <label for="bulkPrompts">Video Prompts (one per line, max 100)</label>
-                    <textarea id="bulkPrompts" placeholder="Enter video prompts, one per line..." style="min-height: 200px;" required></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="bulkDuration">Duration (seconds)</label>
-                        <select id="bulkDuration">
-                            <option value="5">5 seconds</option>
-                            <option value="10">10 seconds</option>
-                            <option value="15">15 seconds</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="bulkQuality">Quality</label>
-                        <select id="bulkQuality">
-                            <option value="720p">720p HD</option>
-                            <option value="1080p">1080p Full HD</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" class="btn">Generate All Videos</button>
-            </form>
-            <div id="bulkVideos" class="video-grid"></div>
-        </div>
-
-        <!-- Script Creator Tab -->
-        <div class="tab-content" id="scriptTab">
-            <div class="script-form">
-                <form id="scriptForm" onsubmit="handleScriptGeneration(event)">
-                    <div class="form-row">
+            <!-- Single Video Tab -->
+            <div class="tab-content active" id="singleTab">
+                <div class="generator-card">
+                    <form onsubmit="generateVideo(event)">
                         <div class="form-group">
-                            <label for="scriptTitle">Script Title/Topic</label>
-                            <input type="text" id="scriptTitle" placeholder="e.g., Adventure Story, Love Story" required>
+                            <label>Video Prompt</label>
+                            <textarea id="videoPrompt" class="form-input" placeholder="Describe your video in detail... e.g., 'A serene sunset over mountains with birds flying'" required></textarea>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Duration</label>
+                                <select id="videoDuration" class="form-input">
+                                    <option value="5">5 seconds</option>
+                                    <option value="10">10 seconds</option>
+                                    <option value="15">15 seconds</option>
+                                    <option value="30">30 seconds</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quality</label>
+                                <select id="videoQuality" class="form-input">
+                                    <option value="720p">720p HD</option>
+                                    <option value="1080p" selected>1080p Full HD</option>
+                                    <option value="4k">4K Ultra HD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-generate" id="generateBtn">
+                            <span>⚡ Generate Video</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bulk Tab -->
+            <div class="tab-content" id="bulkTab">
+                <div class="generator-card">
+                    <form onsubmit="generateBulk(event)">
                         <div class="form-group">
-                            <label for="scriptWordCount">Word Count</label>
-                            <input type="number" id="scriptWordCount" placeholder="e.g., 500, 1000" min="100" max="5000" value="1000" required>
+                            <label>Bulk Prompts (one per line)</label>
+                            <textarea id="bulkPrompts" class="form-input" style="min-height: 200px;" placeholder="Enter multiple prompts, one per line...&#10;&#10;A beautiful sunset over ocean&#10;Mountain landscape with snow&#10;City at night with lights" required></textarea>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="scriptGenre">Genre/Style</label>
-                        <select id="scriptGenre">
-                            <option value="dramatic">Dramatic</option>
-                            <option value="comedy">Comedy</option>
-                            <option value="thriller">Thriller</option>
-                            <option value="romance">Romance</option>
-                            <option value="action">Action</option>
-                            <option value="documentary">Documentary</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="scriptDetails">Additional Details (Optional)</label>
-                        <textarea id="scriptDetails" placeholder="Add any specific requirements, characters, settings, etc."></textarea>
-                    </div>
-                    <button type="submit" class="btn">🤖 Generate Complete Script with GPT-5</button>
-                </form>
-                <div class="script-output" id="scriptOutput"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Duration</label>
+                                <select id="bulkDuration" class="form-input">
+                                    <option value="5">5 seconds</option>
+                                    <option value="10">10 seconds</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quality</label>
+                                <select id="bulkQuality" class="form-input">
+                                    <option value="720p">720p HD</option>
+                                    <option value="1080p">1080p Full HD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-generate">
+                            <span>📦 Generate All Videos</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Videos Section -->
+            <div class="videos-section">
+                <div class="section-header">
+                    <h3 class="section-title">Your Videos</h3>
+                    <span class="video-count" id="videoCount">0 videos</span>
+                </div>
+                <div class="videos-grid" id="videosGrid"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize users database
-        function initializeUsers() {
-            let users = localStorage.getItem('videoGenUsers');
-            if (!users) {
-                const defaultUsers = {
+        // Initialize
+        function initUsers() {
+            if (!localStorage.getItem('veoUsers')) {
+                localStorage.setItem('veoUsers', JSON.stringify({
                     'HaiderAli': {
                         password: 'HaiderAli369',
                         role: 'admin',
                         name: 'Haider Ali',
-                        joinDate: new Date().toLocaleDateString()
+                        joinDate: new Date().toISOString()
                     }
-                };
-                localStorage.setItem('videoGenUsers', JSON.stringify(defaultUsers));
-                return defaultUsers;
+                }));
             }
-            return JSON.parse(users);
         }
 
-        // Initialize stats
-        function initializeStats() {
-            if (!localStorage.getItem('platformStats')) {
-                localStorage.setItem('platformStats', JSON.stringify({
+        function initStats() {
+            if (!localStorage.getItem('veoStats')) {
+                localStorage.setItem('veoStats', JSON.stringify({
                     totalVideos: 0,
-                    totalScripts: 0
+                    activeQueue: 0
                 }));
             }
         }
 
         let currentUser = null;
-        let veoVideos = [];
-        let bulkVideos = [];
+        let videoQueue = [];
 
-        // Initialize on page load
-        initializeUsers();
-        initializeStats();
+        initUsers();
+        initStats();
 
-        // Show/Hide screens
+        // Auth Functions
         function showLogin() {
             document.getElementById('signupScreen').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('loginError').style.display = 'none';
         }
 
         function showSignup() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('signupScreen').classList.remove('hidden');
-            document.getElementById('signupError').style.display = 'none';
-            document.getElementById('signupSuccess').style.display = 'none';
         }
 
-        // Handle Login
-        function handleLogin(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
+        function handleLogin(e) {
+            e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-            
-            const users = JSON.parse(localStorage.getItem('videoGenUsers'));
-            
+            const users = JSON.parse(localStorage.getItem('veoUsers'));
+
             if (users[username] && users[username].password === password) {
                 currentUser = {
-                    username: username,
+                    username,
                     name: users[username].name,
                     role: users[username].role
                 };
-                
-                // Hide login screen
+
                 document.getElementById('loginScreen').classList.add('hidden');
-                
-                // Show main app
                 document.getElementById('mainApp').style.display = 'block';
-                
-                // Set user info
                 document.getElementById('userName').textContent = currentUser.name;
-                
-                // Set avatar
-                const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                document.getElementById('userAvatar').textContent = initials;
-                
-                // Set role
-                const roleElement = document.getElementById('userRole');
+                document.getElementById('userAvatar').textContent = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                const badge = document.getElementById('userBadge');
                 if (currentUser.role === 'admin') {
-                    roleElement.textContent = 'Administrator';
-                    roleElement.className = 'admin-badge';
+                    badge.textContent = 'Administrator';
+                    badge.className = 'user-badge badge-admin';
                     document.getElementById('adminPanel').classList.remove('hidden');
                     updateAdminStats();
                 } else {
-                    roleElement.textContent = 'User';
-                    roleElement.className = 'user-badge';
-                    document.getElementById('adminPanel').classList.add('hidden');
+                    badge.textContent = 'User';
+                    badge.className = 'user-badge badge-user';
                 }
-                
-                document.getElementById('loginError').style.display = 'none';
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
-            
-            return false;
         }
 
-        // Handle Signup
-        function handleSignup(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
+        function handleSignup(e) {
+            e.preventDefault();
             const name = document.getElementById('signupName').value.trim();
             const username = document.getElementById('signupUsername').value.trim();
             const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-            
-            const errorElement = document.getElementById('signupError');
-            const successElement = document.getElementById('signupSuccess');
-            
-            // Validation
-            if (password !== confirmPassword) {
-                errorElement.textContent = 'Passwords do not match!';
-                errorElement.style.display = 'block';
-                successElement.style.display = 'none';
-                return false;
+            const confirm = document.getElementById('signupConfirm').value;
+
+            const errorEl = document.getElementById('signupError');
+            const successEl = document.getElementById('signupSuccess');
+
+            if (password !== confirm) {
+                errorEl.textContent = 'Passwords do not match!';
+                errorEl.style.display = 'block';
+                return;
             }
-            
-            if (password.length < 6) {
-                errorElement.textContent = 'Password must be at least 6 characters!';
-                errorElement.style.display = 'block';
-                successElement.style.display = 'none';
-                return false;
-            }
-            
-            const users = JSON.parse(localStorage.getItem('videoGenUsers'));
-            
+
+            const users = JSON.parse(localStorage.getItem('veoUsers'));
             if (users[username]) {
-                errorElement.textContent = 'Username already exists!';
-                errorElement.style.display = 'block';
-                successElement.style.display = 'none';
-                return false;
+                errorEl.textContent = 'Username already exists!';
+                errorEl.style.display = 'block';
+                return;
             }
-            
-            // Create new user
+
             users[username] = {
-                password: password,
+                password,
                 role: 'user',
-                name: name,
-                joinDate: new Date().toLocaleDateString()
+                name,
+                joinDate: new Date().toISOString()
             };
+
+            localStorage.setItem('veoUsers', JSON.stringify(users));
             
-            // Save to localStorage
-            localStorage.setItem('videoGenUsers', JSON.stringify(users));
+            errorEl.style.display = 'none';
+            successEl.style.display = 'block';
             
-            // Show success
-            errorElement.style.display = 'none';
-            successElement.style.display = 'block';
-            
-            // Clear form
-            document.getElementById('signupForm').reset();
-            
-            // Redirect to login
             setTimeout(() => {
                 showLogin();
+                document.getElementById('signupName').value = '';
+                document.getElementById('signupUsername').value = '';
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('signupConfirm').value = '';
+                successEl.style.display = 'none';
             }, 2000);
-            
-            return false;
-        }
-
-        function updateAdminStats() {
-            const users = JSON.parse(localStorage.getItem('videoGenUsers'));
-            const stats = JSON.parse(localStorage.getItem('platformStats'));
-            
-            document.getElementById('totalUsers').textContent = Object.keys(users).length;
-            document.getElementById('totalVideos').textContent = stats.totalVideos;
-            document.getElementById('totalScripts').textContent = stats.totalScripts;
-        }
-
-        function refreshStats() {
-            updateAdminStats();
-            alert('Stats refreshed successfully!');
-        }
-
-        function viewAllUsers() {
-            const users = JSON.parse(localStorage.getItem('videoGenUsers'));
-            const container = document.getElementById('usersTableContainer');
-            
-            let html = '<div class="users-table"><h3 style="margin-bottom: 15px; color: #333;">Registered Users</h3><table>';
-            html += '<tr><th>Username</th><th>Name</th><th>Role</th><th>Join Date</th></tr>';
-            
-            Object.keys(users).forEach(username => {
-                const user = users[username];
-                html += `<tr>
-                    <td><strong>${username}</strong></td>
-                    <td>${user.name}</td>
-                    <td><span style="background: ${user.role === 'admin' ? '#f093fb' : '#4facfe'}; color: white; padding: 3px 10px; border-radius: 15px; font-size: 11px;">${user.role.toUpperCase()}</span></td>
-                    <td>${user.joinDate || 'N/A'}</td>
-                </tr>`;
-            });
-            
-            html += '</table></div>';
-            container.innerHTML = html;
-        }
-
-        function showAnalytics() {
-            const stats = JSON.parse(localStorage.getItem('platformStats'));
-            alert(`📊 Platform Analytics:\n\nTotal Videos Generated: ${stats.totalVideos}\nTotal Scripts Created: ${stats.totalScripts}\n\nKeep up the great work!`);
-        }
-
-        function clearAllData() {
-            if (confirm('Are you sure you want to clear all user data? This will keep admin account but remove all other users and stats.')) {
-                const defaultUsers = {
-                    'HaiderAli': {
-                        password: 'HaiderAli369',
-                        role: 'admin',
-                        name: 'Haider Ali',
-                        joinDate: new Date().toLocaleDateString()
-                    }
-                };
-                localStorage.setItem('videoGenUsers', JSON.stringify(defaultUsers));
-                localStorage.setItem('platformStats', JSON.stringify({
-                    totalVideos: 0,
-                    totalScripts: 0
-                }));
-                updateAdminStats();
-                document.getElementById('usersTableContainer').innerHTML = '';
-                alert('All data cleared successfully!');
-            }
-        }
-
-        function exportData() {
-            const users = JSON.parse(localStorage.getItem('videoGenUsers'));
-            const stats = JSON.parse(localStorage.getItem('platformStats'));
-            const data = {
-                users: users,
-                stats: stats,
-                exportDate: new Date().toLocaleString()
-            };
-            
-            const dataStr = JSON.stringify(data, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'platform_data_export.json';
-            link.click();
-            
-            alert('Data exported successfully!');
-        }
-
-        function showSystemInfo() {
-            alert(`🖥️ System Information:\n\nBrowser: ${navigator.userAgent.split(' ').slice(-1)[0]}\nPlatform: ${navigator.platform}\nOnline Status: ${navigator.onLine ? 'Online' : 'Offline'}\nLanguage: ${navigator.language}\n\nAll systems operational!`);
         }
 
         function logout() {
@@ -952,53 +1002,107 @@
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('loginUsername').value = '';
             document.getElementById('loginPassword').value = '';
-            document.getElementById('loginError').style.display = 'none';
         }
 
-        // Tab switching
-        function switchTab(tabName, event) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        // Admin Functions
+        function updateAdminStats() {
+            const users = JSON.parse(localStorage.getItem('veoUsers'));
+            const stats = JSON.parse(localStorage.getItem('veoStats'));
+            
+            document.getElementById('statUsers').textContent = Object.keys(users).length;
+            document.getElementById('statVideos').textContent = stats.totalVideos;
+            document.getElementById('statQueue').textContent = videoQueue.length;
+        }
+
+        function refreshStats() {
+            updateAdminStats();
+            alert('✅ Stats refreshed successfully!');
+        }
+
+        function viewAllUsers() {
+            const users = JSON.parse(localStorage.getItem('veoUsers'));
+            let list = 'Registered Users:\n\n';
+            Object.entries(users).forEach(([username, data]) => {
+                list += `• ${data.name} (@${username}) - ${data.role}\n`;
+            });
+            alert(list);
+        }
+
+        function exportData() {
+            const data = {
+                users: JSON.parse(localStorage.getItem('veoUsers')),
+                stats: JSON.parse(localStorage.getItem('veoStats')),
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'veo_unlimited_data.json';
+            a.click();
+            alert('✅ Data exported successfully!');
+        }
+
+        function clearData() {
+            if (confirm('⚠️ Clear all user data? Admin account will be preserved.')) {
+                localStorage.setItem('veoUsers', JSON.stringify({
+                    'HaiderAli': {
+                        password: 'HaiderAli369',
+                        role: 'admin',
+                        name: 'Haider Ali',
+                        joinDate: new Date().toISOString()
+                    }
+                }));
+                localStorage.setItem('veoStats', JSON.stringify({
+                    totalVideos: 0,
+                    activeQueue: 0
+                }));
+                updateAdminStats();
+                alert('✅ Data cleared!');
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
             event.target.classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
         }
 
-        // Real Video Generation with Canvas
-        async function generateRealVideo(prompt, duration, quality) {
+        // Video Generation
+        async function generateVideoFrames(prompt, duration, quality) {
             return new Promise((resolve) => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 
-                // Set dimensions based on quality
-                const dimensions = {
-                    '720p': { width: 1280, height: 720 },
-                    '1080p': { width: 1920, height: 1080 },
-                    '4k': { width: 3840, height: 2160 }
+                const dims = {
+                    '720p': {w: 1280, h: 720},
+                    '1080p': {w: 1920, h: 1080},
+                    '4k': {w: 3840, h: 2160}
                 };
                 
-                const dim = dimensions[quality] || dimensions['1080p'];
-                canvas.width = dim.width;
-                canvas.height = dim.height;
+                const dim = dims[quality] || dims['1080p'];
+                canvas.width = dim.w;
+                canvas.height = dim.h;
                 
                 const frames = [];
                 const fps = 30;
-                const totalFrames = parseInt(duration) * fps;
+                const totalFrames = duration * fps;
                 
-                // Generate animated frames
                 for (let i = 0; i < totalFrames; i++) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    // Animated gradient background
                     const angle = (i / totalFrames) * 360;
-                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                    gradient.addColorStop(0, `hsl(${angle}, 70%, 50%)`);
-                    gradient.addColorStop(0.5, `hsl(${(angle + 120) % 360}, 70%, 60%)`);
-                    gradient.addColorStop(1, `hsl(${(angle + 240) % 360}, 70%, 50%)`);
-                    ctx.fillStyle = gradient;
+                    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                    grad.addColorStop(0, `hsl(${angle}, 70%, 50%)`);
+                    grad.addColorStop(0.5, `hsl(${(angle + 120) % 360}, 70%, 60%)`);
+                    grad.addColorStop(1, `hsl(${(angle + 240) % 360}, 70%, 50%)`);
+                    ctx.fillStyle = grad;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     
-                    // Animated circles
                     for (let j = 0; j < 5; j++) {
                         const x = (canvas.width / 2) + Math.sin((i + j * 50) / 30) * (200 + j * 50);
                         const y = (canvas.height / 2) + Math.cos((i + j * 50) / 30) * (200 + j * 50);
@@ -1010,133 +1114,131 @@
                         ctx.fill();
                     }
                     
-                    // Text overlays
                     ctx.fillStyle = 'white';
                     ctx.shadowColor = 'rgba(0,0,0,0.5)';
                     ctx.shadowBlur = 10;
-                    
                     ctx.font = 'bold 60px Arial';
                     ctx.textAlign = 'center';
-                    ctx.fillText('AI Generated Video', canvas.width / 2, canvas.height / 2 - 50);
+                    ctx.fillText('VEO 3 AI Generated', canvas.width / 2, canvas.height / 2 - 50);
                     
                     ctx.font = '30px Arial';
-                    const truncated = prompt.length > 50 ? prompt.substring(0, 50) + '...' : prompt;
+                    const truncated = prompt.length > 60 ? prompt.substring(0, 60) + '...' : prompt;
                     ctx.fillText(truncated, canvas.width / 2, canvas.height / 2 + 20);
                     
                     ctx.font = '24px Arial';
-                    ctx.fillText(`Frame ${i + 1}/${totalFrames}`, canvas.width / 2, canvas.height / 2 + 70);
+                    ctx.fillText(`${quality} • ${duration}s • Frame ${i + 1}/${totalFrames}`, canvas.width / 2, canvas.height / 2 + 70);
                     
-                    frames.push(canvas.toDataURL('image/jpeg', 0.8));
+                    frames.push(canvas.toDataURL('image/jpeg', 0.85));
                 }
                 
-                resolve({
-                    id: Date.now(),
-                    prompt: prompt,
-                    duration: duration,
-                    quality: quality,
-                    frames: frames,
-                    fps: fps,
-                    timestamp: new Date().toLocaleString()
-                });
+                resolve(frames);
             });
         }
 
-        // VEO Generation Handler
-        async function handleVeoGeneration(event) {
-            event.preventDefault();
-            event.stopPropagation();
+        async function generateVideo(e) {
+            e.preventDefault();
             
-            const prompt = document.getElementById('veoPrompt').value;
-            const duration = document.getElementById('veoDuration').value;
-            const quality = document.getElementById('veoQuality').value;
+            const prompt = document.getElementById('videoPrompt').value;
+            const duration = parseInt(document.getElementById('videoDuration').value);
+            const quality = document.getElementById('videoQuality').value;
             
-            const container = document.getElementById('veoVideos');
-            const tempDiv = document.createElement('div');
-            tempDiv.className = 'generating';
-            tempDiv.innerHTML = '<div class="spinner"></div><p>Generating video with VEO 3.1 AI...</p>';
-            container.insertBefore(tempDiv, container.firstChild);
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div><span>Generating...</span>';
             
-            // Generate video
-            const video = await generateRealVideo(prompt, duration, quality);
+            const frames = await generateVideoFrames(prompt, duration, quality);
             
-            tempDiv.remove();
-            displayVideo(video, 'veoVideos');
+            const video = {
+                id: Date.now(),
+                prompt,
+                duration,
+                quality,
+                frames,
+                fps: 30,
+                timestamp: new Date().toLocaleString(),
+                status: 'ready'
+            };
             
-            // Update stats
-            const stats = JSON.parse(localStorage.getItem('platformStats'));
+            addVideoToGrid(video);
+            
+            const stats = JSON.parse(localStorage.getItem('veoStats'));
             stats.totalVideos++;
-            localStorage.setItem('platformStats', JSON.stringify(stats));
+            localStorage.setItem('veoStats', JSON.stringify(stats));
+            
             if (currentUser.role === 'admin') updateAdminStats();
             
-            document.getElementById('veoForm').reset();
-            return false;
+            btn.disabled = false;
+            btn.innerHTML = '<span>⚡ Generate Video</span>';
+            document.getElementById('videoPrompt').value = '';
         }
 
-        // Bulk Generation Handler
-        async function handleBulkGeneration(event) {
-            event.preventDefault();
-            event.stopPropagation();
+        async function generateBulk(e) {
+            e.preventDefault();
             
             const prompts = document.getElementById('bulkPrompts').value.split('\n').filter(p => p.trim());
-            const duration = document.getElementById('bulkDuration').value;
+            const duration = parseInt(document.getElementById('bulkDuration').value);
             const quality = document.getElementById('bulkQuality').value;
             
             if (prompts.length > 100) {
-                alert('Maximum 100 prompts allowed!');
-                return false;
+                alert('⚠️ Maximum 100 videos at once!');
+                return;
             }
             
-            const container = document.getElementById('bulkVideos');
-            container.innerHTML = '<div class="generating"><div class="spinner"></div><p>Generating ' + prompts.length + ' videos...</p></div>';
-            
             for (let i = 0; i < prompts.length; i++) {
-                const video = await generateRealVideo(prompts[i], duration, quality);
-                video.id = Date.now() + i;
+                const frames = await generateVideoFrames(prompts[i], duration, quality);
                 
-                if (i === 0) {
-                    container.innerHTML = '';
-                }
+                const video = {
+                    id: Date.now() + i,
+                    prompt: prompts[i],
+                    duration,
+                    quality,
+                    frames,
+                    fps: 30,
+                    timestamp: new Date().toLocaleString(),
+                    status: 'ready'
+                };
                 
-                displayVideo(video, 'bulkVideos');
+                addVideoToGrid(video);
                 
-                // Update stats
-                const stats = JSON.parse(localStorage.getItem('platformStats'));
+                const stats = JSON.parse(localStorage.getItem('veoStats'));
                 stats.totalVideos++;
-                localStorage.setItem('platformStats', JSON.stringify(stats));
+                localStorage.setItem('veoStats', JSON.stringify(stats));
             }
             
             if (currentUser.role === 'admin') updateAdminStats();
-            document.getElementById('bulkForm').reset();
-            return false;
+            document.getElementById('bulkPrompts').value = '';
+            alert(`✅ ${prompts.length} videos generated successfully!`);
         }
 
-        // Display Video
-        function displayVideo(video, containerId) {
-            const container = document.getElementById(containerId);
+        function addVideoToGrid(video) {
+            const grid = document.getElementById('videosGrid');
             const card = document.createElement('div');
             card.className = 'video-card';
             card.innerHTML = `
-                <div class="video-placeholder">
+                <div class="video-thumbnail">
                     <canvas id="canvas-${video.id}" width="640" height="360"></canvas>
+                    <div class="video-status status-ready">✓ Ready</div>
                 </div>
                 <div class="video-info">
-                    <h3>${video.prompt.substring(0, 40)}${video.prompt.length > 40 ? '...' : ''}</h3>
-                    <p>Duration: ${video.duration}s | Quality: ${video.quality}</p>
-                    <p style="font-size: 11px;">${video.timestamp}</p>
+                    <div class="video-title">${video.prompt}</div>
+                    <div class="video-meta">
+                        <span>⏱️ ${video.duration}s</span>
+                        <span>📺 ${video.quality}</span>
+                        <span>🕐 ${video.timestamp.split(',')[1]}</span>
+                    </div>
                     <div class="video-actions">
-                        <button class="btn-small" onclick="playVideo('${video.id}', ${JSON.stringify(video.frames)}, ${video.fps})">▶️ Play</button>
-                        <button class="btn-small" onclick="downloadVideo('${video.id}')">📥 Download</button>
+                        <button class="btn-action btn-play" onclick="playVideo(${video.id}, ${JSON.stringify(video.frames)}, ${video.fps})">
+                            ▶️ Play
+                        </button>
+                        <button class="btn-action btn-download" onclick="downloadVideo(${video.id})">
+                            📥 Download
+                        </button>
                     </div>
                 </div>
             `;
             
-            if (containerId === 'veoVideos') {
-                container.insertBefore(card, container.firstChild);
-            } else {
-                container.appendChild(card);
-            }
+            grid.insertBefore(card, grid.firstChild);
             
-            // Draw first frame
             setTimeout(() => {
                 const canvas = document.getElementById(`canvas-${video.id}`);
                 if (canvas) {
@@ -1146,20 +1248,21 @@
                     img.src = video.frames[0];
                 }
             }, 100);
+            
+            updateVideoCount();
         }
 
-        // Play Video
-        function playVideo(videoId, frames, fps) {
-            const canvas = document.getElementById(`canvas-${videoId}`);
+        function playVideo(id, frames, fps) {
+            const canvas = document.getElementById(`canvas-${id}`);
             if (!canvas) return;
             
             const ctx = canvas.getContext('2d');
-            let currentFrame = 0;
+            let frame = 0;
             
             const interval = setInterval(() => {
-                if (currentFrame >= frames.length) {
+                if (frame >= frames.length) {
                     clearInterval(interval);
-                    currentFrame = 0;
+                    frame = 0;
                     const img = new Image();
                     img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     img.src = frames[0];
@@ -1168,119 +1271,18 @@
                 
                 const img = new Image();
                 img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                img.src = frames[currentFrame];
-                currentFrame++;
+                img.src = frames[frame];
+                frame++;
             }, 1000 / fps);
         }
 
-        function downloadVideo(videoId) {
-            alert('Video downloaded! (In production, this would download actual MP4 file)');
+        function downloadVideo(id) {
+            alert('📥 Video download started! (In production, this would download MP4 file)');
         }
 
-        // Script Generation
-        function handleScriptGeneration(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const title = document.getElementById('scriptTitle').value;
-            const wordCount = parseInt(document.getElementById('scriptWordCount').value);
-            const genre = document.getElementById('scriptGenre').value;
-            const details = document.getElementById('scriptDetails').value;
-            
-            const output = document.getElementById('scriptOutput');
-            output.classList.add('active');
-            output.innerHTML = '<div class="generating"><div class="spinner"></div><p>GPT-5 is generating your complete script...</p></div>';
-            
-            setTimeout(() => {
-                const script = generateFullScript(title, wordCount, genre, details);
-                output.textContent = script;
-                
-                // Update stats
-                const stats = JSON.parse(localStorage.getItem('platformStats'));
-                stats.totalScripts++;
-                localStorage.setItem('platformStats', JSON.stringify(stats));
-                if (currentUser.role === 'admin') updateAdminStats();
-            }, 3000);
-            
-            return false;
-        }
-
-        function generateFullScript(title, wordCount, genre, details) {
-            const scenes = Math.ceil(wordCount / 200);
-            let script = `╔════════════════════════════════════════════════════╗
-║     PROFESSIONAL ${genre.toUpperCase()} SCREENPLAY          ║
-║     Title: ${title.padEnd(35)}║
-║     Generated by GPT-5 AI Engine                   ║
-║     Target Words: ${wordCount}                              ║
-║     Date: ${new Date().toLocaleDateString().padEnd(41)}║
-╚════════════════════════════════════════════════════╝
-
-FADE IN:
-
-`;
-
-            // Add scenes
-            for (let i = 1; i <= scenes; i++) {
-                script += `
-═══════════════════════════════════════════════════
-SCENE ${i} - ${getSceneTitle(i, genre)}
-═══════════════════════════════════════════════════
-
-INT/EXT. LOCATION - DAY/NIGHT
-
-${generateSceneContent(i, genre, title)}
-
-`;
-            }
-
-            script += `
-FADE OUT.
-
-═══════════════════════════════════════════════════
-                   THE END
-═══════════════════════════════════════════════════
-
-PRODUCTION NOTES:
-- Genre: ${genre.charAt(0).toUpperCase() + genre.slice(1)}
-- Estimated Runtime: ${Math.floor(wordCount / 150)} minutes
-- Characters: Multiple (expandable)
-- Setting: Versatile
-${details ? `- Special Requirements: ${details}` : ''}
-
-Generated by AI Video Generator Pro
-Platform by Haider Ali Technology
-`;
-
-            return script;
-        }
-
-        function getSceneTitle(num, genre) {
-            const titles = {
-                dramatic: ['The Beginning', 'Rising Tension', 'The Revelation', 'Climactic Moment', 'Resolution'],
-                comedy: ['Setup', 'Misunderstanding', 'Chaos Ensues', 'The Big Laugh', 'Happy Ending'],
-                thriller: ['Normal Life', 'First Clue', 'The Chase', 'Near Escape', 'Final Confrontation'],
-                romance: ['First Meeting', 'Connection', 'Conflict', 'Separation', 'Reunion'],
-                action: ['Preparation', 'First Strike', 'The Battle', 'Last Stand', 'Victory'],
-                documentary: ['Introduction', 'Background', 'Investigation', 'Revelation', 'Conclusion']
-            };
-            
-            return titles[genre][num - 1] || 'Scene Development';
-        }
-
-        function generateSceneContent(sceneNum, genre, title) {
-            return `The camera opens on a compelling vista. Our protagonist enters frame.
-
-PROTAGONIST
-"This is where it all begins. The journey of ${title}."
-
-[Detailed action and dialogue unfolds here. The scene builds tension, develops characters, and advances the plot. Visual storytelling combines with sharp dialogue to create an engaging narrative experience.]
-
-SUPPORTING CHARACTER
-"We need to move forward. There's no turning back now."
-
-The scene continues with rich description, character development, and plot progression. Every moment is crafted to maintain audience engagement while building toward the story's climax.
-
-[Camera movements, lighting, and sound design notes would be added here for production purposes.]`;
+        function updateVideoCount() {
+            const count = document.getElementById('videosGrid').children.length;
+            document.getElementById('videoCount').textContent = `${count} video${count !== 1 ? 's' : ''}`;
         }
     </script>
 </body>
