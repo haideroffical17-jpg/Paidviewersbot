@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEO Unlimited - Professional AI Video Platform Powered by Grow With Haider (GWH)</title>
+    <title>VEO 3.1 Unlimited - Professional AI Video Platform</title>
     <style>
         * {
             margin: 0;
@@ -17,18 +17,19 @@
             --secondary: #8b5cf6;
             --success: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
             --dark: #1e293b;
             --light: #f1f5f9;
             --border: #e2e8f0;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
 
-        /* Auth Container */
+        /* Auth Screens */
         .auth-wrapper {
             min-height: 100vh;
             display: flex;
@@ -38,12 +39,13 @@
         }
 
         .auth-card {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 60px 50px;
             max-width: 500px;
             width: 100%;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
             animation: slideUp 0.6s ease-out;
         }
 
@@ -70,9 +72,19 @@
 
         .auth-logo h1 {
             font-size: 38px;
-            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .auth-logo .version {
+            color: var(--success);
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .auth-logo p {
@@ -101,7 +113,7 @@
             font-size: 16px;
             transition: all 0.3s;
             background: white;
-            color: #64748b;
+            color: #1e293b;
         }
 
         .form-input::placeholder {
@@ -117,7 +129,7 @@
         .btn-submit {
             width: 100%;
             padding: 18px;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
             border-radius: 14px;
@@ -129,7 +141,6 @@
         }
 
         .btn-submit:hover {
-            background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
         }
@@ -181,17 +192,18 @@
         .app-container {
             display: none;
             min-height: 100vh;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .app-header {
-            background: white;
-            border-bottom: 2px solid var(--border);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
             padding: 22px 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
         .header-content {
@@ -215,8 +227,21 @@
 
         .header-logo h1 {
             font-size: 26px;
-            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .header-logo .version-badge {
+            background: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 700;
+            margin-left: 8px;
         }
 
         .header-user {
@@ -263,7 +288,7 @@
 
         .btn-logout {
             padding: 11px 22px;
-            background: var(--danger);
+            background: rgba(239, 68, 68, 0.9);
             color: white;
             border: none;
             border-radius: 11px;
@@ -292,16 +317,17 @@
         }
 
         .stat-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 28px;
             border-radius: 18px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             transition: all 0.3s;
         }
 
         .stat-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
         .stat-icon {
@@ -337,8 +363,8 @@
 
         .control-btn {
             padding: 16px 22px;
-            background: white;
-            border: 2px solid var(--border);
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 13px;
             color: var(--dark);
             font-weight: 700;
@@ -354,6 +380,7 @@
             border-color: var(--primary);
             color: var(--primary);
             transform: translateY(-2px);
+            background: white;
         }
 
         /* Main Content */
@@ -365,26 +392,30 @@
 
         .content-header {
             margin-bottom: 32px;
+            text-align: center;
         }
 
         .content-header h2 {
-            font-size: 30px;
-            color: var(--dark);
-            margin-bottom: 10px;
-            font-weight: 700;
+            font-size: 42px;
+            color: white;
+            margin-bottom: 12px;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .content-header p {
-            color: #64748b;
-            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            font-weight: 500;
         }
 
         /* Generator Card */
         .generator-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 22px;
             padding: 38px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             margin-bottom: 35px;
         }
 
@@ -419,13 +450,13 @@
             gap: 12px;
         }
 
-        .btn-generate:hover {
+        .btn-generate:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 14px 38px rgba(99, 102, 241, 0.4);
         }
 
         .btn-generate:disabled {
-            opacity: 0.6;
+            opacity: 0.7;
             cursor: not-allowed;
             transform: none;
         }
@@ -457,15 +488,16 @@
         }
 
         .section-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: var(--dark);
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .video-count {
-            background: var(--primary);
-            color: white;
-            padding: 7px 18px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--primary);
+            padding: 8px 20px;
             border-radius: 22px;
             font-weight: 700;
             font-size: 15px;
@@ -478,10 +510,11 @@
         }
 
         .video-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             transition: all 0.3s;
             animation: fadeIn 0.5s ease-out;
         }
@@ -499,7 +532,7 @@
 
         .video-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 14px 32px rgba(0,0,0,0.15);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.2);
         }
 
         .video-thumbnail {
@@ -516,6 +549,28 @@
             object-fit: cover;
         }
 
+        .video-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+
+        .video-watermark h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .video-watermark p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
         .video-status {
             position: absolute;
             top: 14px;
@@ -525,7 +580,7 @@
             font-size: 13px;
             font-weight: 700;
             backdrop-filter: blur(10px);
-            background: rgba(16, 185, 129, 0.9);
+            background: rgba(16, 185, 129, 0.95);
             color: white;
         }
 
@@ -602,15 +657,15 @@
             display: flex;
             gap: 12px;
             margin-bottom: 32px;
-            border-bottom: 2px solid var(--border);
         }
 
         .tab {
             padding: 16px 32px;
-            background: transparent;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: #64748b;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            color: white;
             font-weight: 700;
             font-size: 16px;
             cursor: pointer;
@@ -618,12 +673,13 @@
         }
 
         .tab.active {
+            background: rgba(255, 255, 255, 0.95);
             color: var(--primary);
-            border-bottom-color: var(--primary);
+            border-color: white;
         }
 
         .tab:hover:not(.active) {
-            color: var(--dark);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .tab-content {
@@ -634,34 +690,31 @@
             display: block;
         }
 
-        /* Script Output */
-        .script-output {
-            background: white;
-            border-radius: 18px;
-            padding: 28px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-            margin-top: 26px;
-            max-height: 650px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.7;
-            color: var(--dark);
-            display: none;
+        /* Prompt Examples */
+        .prompt-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        .script-output.active {
-            display: block;
-        }
-
-        .script-footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid var(--border);
+        .example-chip {
+            padding: 12px 18px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
             text-align: center;
-            font-style: italic;
-            color: #64748b;
+        }
+
+        .example-chip:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         @media (max-width: 768px) {
@@ -675,6 +728,9 @@
                 flex-direction: column;
                 gap: 20px;
             }
+            .tabs {
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
@@ -685,7 +741,8 @@
             <div class="auth-logo">
                 <div class="auth-logo-icon">🎬</div>
                 <h1>VEO Unlimited</h1>
-                <p>Professional AI Video Generation Platform</p>
+                <div class="version">VEO 3.1 Powered</div>
+                <p>Professional AI Video Generation</p>
             </div>
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
@@ -712,6 +769,7 @@
             <div class="auth-logo">
                 <div class="auth-logo-icon">🎬</div>
                 <h1>VEO Unlimited</h1>
+                <div class="version">VEO 3.1 Powered</div>
                 <p>Create Your Account</p>
             </div>
             <form onsubmit="handleSignup(event)">
@@ -748,7 +806,10 @@
             <div class="header-content">
                 <div class="header-logo">
                     <span class="header-logo-icon">🎬</span>
-                    <h1>VEO Unlimited</h1>
+                    <div>
+                        <h1>VEO Unlimited</h1>
+                        <span class="version-badge">VEO 3.1</span>
+                    </div>
                 </div>
                 <div class="header-user">
                     <div class="user-avatar" id="userAvatar">HA</div>
@@ -776,19 +837,19 @@
                         <div class="stat-label">Videos Generated</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon" style="background: #d1fae5; color: var(--success);">📝</div>
-                        <div class="stat-value" id="statScripts">0</div>
-                        <div class="stat-label">Scripts Created</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: #fed7aa; color: var(--warning);">⚡</div>
+                        <div class="stat-icon" style="background: #d1fae5; color: var(--success);">⚡</div>
                         <div class="stat-value">Online</div>
                         <div class="stat-label">System Status</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #fed7aa; color: var(--warning);">🔥</div>
+                        <div class="stat-value" id="statQueue">0</div>
+                        <div class="stat-label">Active Queue</div>
                     </div>
                 </div>
 
                 <div class="admin-controls">
-                    <button class="control-btn" onclick="viewAllUsers()">👥 View Users</button>
+                    <button class="control-btn" onclick="viewAllUsers()">👥 View All Users</button>
                     <button class="control-btn" onclick="exportData()">📥 Export Data</button>
                     <button class="control-btn" onclick="clearData()">🗑️ Clear Data</button>
                     <button class="control-btn" onclick="refreshStats()">🔄 Refresh Stats</button>
@@ -799,33 +860,38 @@
         <div class="main-content">
             <div class="content-header">
                 <h2>Generate Unlimited AI Videos</h2>
-                <p>Create stunning videos with VEO 3.1 AI - Fixed 8 seconds, Professional Quality</p>
+                <p>Create stunning videos with VEO 3.1 - Professional quality, instant results</p>
             </div>
 
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('single')">🎥 VEO 3.1 Generator</button>
                 <button class="tab" onclick="switchTab('bulk')">📦 Bulk Generate</button>
-                <button class="tab" onclick="switchTab('script')">📝 Script Creator</button>
             </div>
 
             <!-- Single Video Tab -->
             <div class="tab-content active" id="singleTab">
                 <div class="generator-card">
+                    <div class="prompt-examples">
+                        <div class="example-chip" onclick="useExample('A serene sunset over ocean waves with birds flying')">🌅 Sunset Ocean</div>
+                        <div class="example-chip" onclick="useExample('City skyline at night with moving traffic lights')">🌃 City Night</div>
+                        <div class="example-chip" onclick="useExample('Forest path with sunlight through trees')">🌲 Forest Path</div>
+                        <div class="example-chip" onclick="useExample('Abstract colorful particles dancing')">✨ Particles</div>
+                    </div>
                     <form onsubmit="generateVideo(event)">
                         <div class="form-group">
-                            <label class="form-label">Video Prompt (VEO 3.1 - 8 seconds)</label>
-                            <textarea id="videoPrompt" class="form-input" placeholder="Describe your video in detail...&#10;&#10;Example: A serene sunset over calm ocean waves with seagulls flying in the golden light" required></textarea>
+                            <label class="form-label">Video Prompt - Describe your vision</label>
+                            <textarea id="videoPrompt" class="form-input" placeholder="Example: A raccoon climbing a pipe in dark slimy surroundings, close-up shot with dramatic lighting..." required></textarea>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">Duration</label>
-                                <input type="text" class="form-input" value="8 seconds (Fixed)" disabled>
+                                <input type="text" class="form-input" value="8 seconds (VEO 3.1)" disabled>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Quality</label>
                                 <select id="videoQuality" class="form-input">
-                                    <option value="720p">720p HD</option>
                                     <option value="1080p" selected>1080p Full HD</option>
+                                    <option value="720p">720p HD</option>
                                     <option value="4k">4K Ultra HD</option>
                                 </select>
                             </div>
@@ -842,19 +908,24 @@
                 <div class="generator-card">
                     <form onsubmit="generateBulk(event)">
                         <div class="form-group">
-                            <label class="form-label">Bulk Prompts (one per line) - VEO 3.1</label>
-                            <textarea id="bulkPrompts" class="form-input" style="min-height: 220px;" placeholder="Enter multiple prompts, one per line...&#10;&#10;A beautiful sunset over ocean&#10;Mountain landscape with snow peaks&#10;City skyline at night with lights" required></textarea>
+                            <label class="form-label">Bulk Prompts (one per line)</label>
+                            <textarea id="bulkPrompts" class="form-input" style="min-height: 220px;" placeholder="Enter multiple prompts, one per line...
+
+A beautiful sunset over ocean waves
+Mountain landscape with snow peaks
+City at night with lights
+Forest with morning fog" required></textarea>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">Duration</label>
-                                <input type="text" class="form-input" value="8 seconds (Fixed)" disabled>
+                                <input type="text" class="form-input" value="8 seconds (VEO 3.1)" disabled>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Quality</label>
                                 <select id="bulkQuality" class="form-input">
-                                    <option value="720p">720p HD</option>
                                     <option value="1080p">1080p Full HD</option>
+                                    <option value="720p">720p HD</option>
                                 </select>
                             </div>
                         </div>
@@ -862,43 +933,6 @@
                             <span>📦 Generate All Videos</span>
                         </button>
                     </form>
-                </div>
-            </div>
-
-            <!-- Script Tab -->
-            <div class="tab-content" id="scriptTab">
-                <div class="generator-card">
-                    <form onsubmit="generateScript(event)">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Script Title</label>
-                                <input type="text" id="scriptTitle" class="form-input" placeholder="e.g., Adventure Story" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Word Count</label>
-                                <input type="number" id="scriptWordCount" class="form-input" placeholder="e.g., 1000" min="100" max="5000" value="1000" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Genre</label>
-                            <select id="scriptGenre" class="form-input">
-                                <option value="dramatic">Dramatic</option>
-                                <option value="comedy">Comedy</option>
-                                <option value="thriller">Thriller</option>
-                                <option value="romance">Romance</option>
-                                <option value="action">Action</option>
-                                <option value="documentary">Documentary</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Additional Details (Optional)</label>
-                            <textarea id="scriptDetails" class="form-input" placeholder="Add specific requirements, characters, settings..."></textarea>
-                        </div>
-                        <button type="submit" class="btn-generate">
-                            <span>🤖 Generate Complete Script</span>
-                        </button>
-                    </form>
-                    <div class="script-output" id="scriptOutput"></div>
                 </div>
             </div>
 
@@ -914,6 +948,7 @@
     </div>
 
     <script>
+        // Initialize
         function initUsers() {
             if (!localStorage.getItem('veoUsers')) {
                 localStorage.setItem('veoUsers', JSON.stringify({
@@ -930,8 +965,7 @@
         function initStats() {
             if (!localStorage.getItem('veoStats')) {
                 localStorage.setItem('veoStats', JSON.stringify({
-                    totalVideos: 0,
-                    totalScripts: 0
+                    totalVideos: 0
                 }));
             }
         }
@@ -1042,12 +1076,12 @@
             
             document.getElementById('statUsers').textContent = Object.keys(users).length;
             document.getElementById('statVideos').textContent = stats.totalVideos;
-            document.getElementById('statScripts').textContent = stats.totalScripts;
+            document.getElementById('statQueue').textContent = '0';
         }
 
         function refreshStats() {
             updateAdminStats();
-            alert('✅ Stats refreshed successfully!');
+            alert('✅ Stats refreshed!');
         }
 
         function viewAllUsers() {
@@ -1072,7 +1106,7 @@
             a.href = url;
             a.download = 'veo_unlimited_data.json';
             a.click();
-            alert('✅ Data exported successfully!');
+            alert('✅ Data exported!');
         }
 
         function clearData() {
@@ -1086,10 +1120,11 @@
                     }
                 }));
                 localStorage.setItem('veoStats', JSON.stringify({
-                    totalVideos: 0,
-                    totalScripts: 0
+                    totalVideos: 0
                 }));
                 updateAdminStats();
+                document.getElementById('videosGrid').innerHTML = '';
+                updateVideoCount();
                 alert('✅ Data cleared!');
             }
         }
@@ -1102,8 +1137,45 @@
             document.getElementById(tab + 'Tab').classList.add('active');
         }
 
-        // VEO 3.1 - Fixed 8 seconds
-        async function generateVideoFrames(prompt, quality) {
+        function useExample(text) {
+            document.getElementById('videoPrompt').value = text;
+        }
+
+        // Prompt analysis - Smart matching
+        function analyzePrompt(prompt) {
+            const lower = prompt.toLowerCase();
+            
+            // Nature scenes
+            if (lower.includes('sunset') || lower.includes('ocean') || lower.includes('beach') || lower.includes('waves')) {
+                return { theme: 'nature', colors: ['#ff6b35', '#f7931e', '#fdc830'], motion: 'gentle' };
+            }
+            
+            // City/Urban
+            if (lower.includes('city') || lower.includes('building') || lower.includes('traffic') || lower.includes('street')) {
+                return { theme: 'urban', colors: ['#667eea', '#764ba2', '#6366f1'], motion: 'dynamic' };
+            }
+            
+            // Forest/Nature
+            if (lower.includes('forest') || lower.includes('tree') || lower.includes('jungle') || lower.includes('leaves')) {
+                return { theme: 'forest', colors: ['#11998e', '#38ef7d', '#56ab2f'], motion: 'calm' };
+            }
+            
+            // Dark/Night
+            if (lower.includes('dark') || lower.includes('night') || lower.includes('shadow') || lower.includes('pipe') || lower.includes('slimy')) {
+                return { theme: 'dark', colors: ['#2c3e50', '#34495e', '#1a1a2e'], motion: 'tense' };
+            }
+            
+            // Abstract/Particles
+            if (lower.includes('particle') || lower.includes('abstract') || lower.includes('colorful') || lower.includes('dance')) {
+                return { theme: 'abstract', colors: ['#f093fb', '#f5576c', '#4facfe'], motion: 'energetic' };
+            }
+            
+            // Default
+            return { theme: 'default', colors: ['#667eea', '#764ba2', '#8b5cf6'], motion: 'moderate' };
+        }
+
+        // Advanced VEO 3.1 style video generation
+        async function generateVEO31Video(prompt, quality) {
             return new Promise((resolve) => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -1118,48 +1190,73 @@
                 canvas.width = dim.w;
                 canvas.height = dim.h;
                 
+                const analysis = analyzePrompt(prompt);
                 const frames = [];
                 const fps = 30;
-                const duration = 8; // Fixed 8 seconds
+                const duration = 8;
                 const totalFrames = duration * fps;
                 
                 for (let i = 0; i < totalFrames; i++) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    const angle = (i / totalFrames) * 360;
-                    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                    grad.addColorStop(0, `hsl(${angle}, 70%, 50%)`);
-                    grad.addColorStop(0.5, `hsl(${(angle + 120) % 360}, 70%, 60%)`);
-                    grad.addColorStop(1, `hsl(${(angle + 240) % 360}, 70%, 50%)`);
+                    const progress = i / totalFrames;
+                    
+                    // Dynamic gradient based on prompt analysis
+                    const grad = ctx.createRadialGradient(
+                        canvas.width / 2, canvas.height / 2, 0,
+                        canvas.width / 2, canvas.height / 2, canvas.width / 2
+                    );
+                    
+                    grad.addColorStop(0, analysis.colors[0]);
+                    grad.addColorStop(0.5, analysis.colors[1]);
+                    grad.addColorStop(1, analysis.colors[2]);
                     ctx.fillStyle = grad;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     
-                    for (let j = 0; j < 5; j++) {
-                        const x = (canvas.width / 2) + Math.sin((i + j * 50) / 30) * (200 + j * 50);
-                        const y = (canvas.height / 2) + Math.cos((i + j * 50) / 30) * (200 + j * 50);
-                        const size = 50 + j * 20;
+                    // Motion effects based on theme
+                    const motionIntensity = {
+                        'gentle': 100,
+                        'dynamic': 250,
+                        'calm': 80,
+                        'tense': 150,
+                        'energetic': 300,
+                        'moderate': 180
+                    }[analysis.motion];
+                    
+                    // Animated elements
+                    for (let j = 0; j < 8; j++) {
+                        const angle = (i / totalFrames * Math.PI * 2) + (j * Math.PI / 4);
+                        const radius = motionIntensity + (j * 40);
+                        const x = (canvas.width / 2) + Math.cos(angle) * radius;
+                        const y = (canvas.height / 2) + Math.sin(angle) * radius;
+                        const size = 30 + (j * 15);
                         
-                        ctx.fillStyle = `hsla(${(angle + j * 60) % 360}, 80%, 60%, 0.5)`;
+                        const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+                        gradient.addColorStop(0, `${analysis.colors[j % 3]}dd`);
+                        gradient.addColorStop(1, `${analysis.colors[(j + 1) % 3]}00`);
+                        
+                        ctx.fillStyle = gradient;
                         ctx.beginPath();
                         ctx.arc(x, y, size, 0, Math.PI * 2);
                         ctx.fill();
                     }
                     
-                    ctx.fillStyle = 'white';
+                    // Add watermark
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
                     ctx.shadowColor = 'rgba(0,0,0,0.5)';
-                    ctx.shadowBlur = 10;
-                    ctx.font = 'bold 60px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('VEO 3.1 Generated', canvas.width / 2, canvas.height / 2 - 50);
+                    ctx.shadowBlur = 15;
                     
-                    ctx.font = '30px Arial';
-                    const truncated = prompt.length > 60 ? prompt.substring(0, 60) + '...' : prompt;
-                    ctx.fillText(truncated, canvas.width / 2, canvas.height / 2 + 20);
+                    ctx.font = 'bold 48px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('VEO 3.1 Generated', canvas.width / 2, canvas.height / 2 - 40);
                     
                     ctx.font = '24px Arial';
-                    ctx.fillText(`${quality} • 8s • Frame ${i + 1}/${totalFrames}`, canvas.width / 2, canvas.height / 2 + 70);
+                    ctx.fillText('Powered by Grow With Haider (GWH)', canvas.width / 2, canvas.height / 2);
                     
-                    frames.push(canvas.toDataURL('image/jpeg', 0.85));
+                    ctx.font = '18px Arial';
+                    ctx.fillText(`1080p • 8s • Frame ${i + 1}/${totalFrames}`, canvas.width / 2, canvas.height / 2 + 40);
+                    
+                    frames.push(canvas.toDataURL('image/jpeg', 0.90));
                 }
                 
                 resolve(frames);
@@ -1174,14 +1271,16 @@
             
             const btn = document.getElementById('generateBtn');
             btn.disabled = true;
-            btn.innerHTML = '<div class="spinner"></div><span>Generating VEO 3.1 Video...</span>';
+            btn.innerHTML = '<div class="spinner"></div><span>Generating VEO 3.1...</span>';
             
-            const frames = await generateVideoFrames(prompt, quality);
+            // Simulate processing time
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            const frames = await generateVEO31Video(prompt, quality);
             
             const video = {
                 id: Date.now(),
                 prompt,
-                duration: 8,
                 quality,
                 frames,
                 fps: 30,
@@ -1199,6 +1298,8 @@
             btn.disabled = false;
             btn.innerHTML = '<span>⚡ Generate VEO 3.1 Video</span>';
             document.getElementById('videoPrompt').value = '';
+            
+            alert('✅ Video generated successfully!');
         }
 
         async function generateBulk(e) {
@@ -1207,18 +1308,17 @@
             const prompts = document.getElementById('bulkPrompts').value.split('\n').filter(p => p.trim());
             const quality = document.getElementById('bulkQuality').value;
             
-            if (prompts.length > 100) {
-                alert('⚠️ Maximum 100 videos!');
+            if (prompts.length > 50) {
+                alert('⚠️ Maximum 50 videos at once!');
                 return;
             }
             
             for (let i = 0; i < prompts.length; i++) {
-                const frames = await generateVideoFrames(prompts[i], quality);
+                const frames = await generateVEO31Video(prompts[i], quality);
                 
                 const video = {
                     id: Date.now() + i,
                     prompt: prompts[i],
-                    duration: 8,
                     quality,
                     frames,
                     fps: 30,
@@ -1234,17 +1334,20 @@
             
             if (currentUser.role === 'admin') updateAdminStats();
             document.getElementById('bulkPrompts').value = '';
-            alert(`✅ ${prompts.length} VEO 3.1 videos generated!`);
+            alert(`✅ ${prompts.length} videos generated!`);
         }
 
         function addVideoToGrid(video) {
             const grid = document.getElementById('videosGrid');
             const card = document.createElement('div');
             card.className = 'video-card';
-            card.id = `video-card-${video.id}`;
             card.innerHTML = `
                 <div class="video-thumbnail">
                     <canvas id="canvas-${video.id}" width="640" height="360"></canvas>
+                    <div class="video-watermark">
+                        <h3>VEO 3.1 Generated</h3>
+                        <p>Powered by Grow With Haider (GWH)</p>
+                    </div>
                     <div class="video-status">✓ Ready</div>
                 </div>
                 <div class="video-info">
@@ -1267,7 +1370,6 @@
             
             grid.insertBefore(card, grid.firstChild);
             
-            // Store video data
             if (!window.videoData) window.videoData = {};
             window.videoData[video.id] = video;
             
@@ -1314,140 +1416,38 @@
             const video = window.videoData[id];
             if (!video) return;
             
-            // Create a simple text file with video info for demo
-            const videoInfo = `VEO 3.1 Video Information
+            const info = `VEO 3.1 Video
 ================================
 
 Prompt: ${video.prompt}
-Duration: 8 seconds (Fixed VEO 3.1)
 Quality: ${video.quality}
+Duration: 8 seconds
 Generated: ${video.timestamp}
-Total Frames: ${video.frames.length}
+Frames: ${video.frames.length}
+
+VEO 3.1 Generated
+Powered by Grow With Haider (GWH)
+1080p • 8s • Frame 1/${video.frames.length}
 
 Generated by AI Video Generator Pro
 Platform by Haider Ali Technology
 
-Note: This is a demo. In production, this would be an actual MP4 video file.
+Note: Demo version. Production will download actual MP4 file.
 `;
             
-            const blob = new Blob([videoInfo], { type: 'text/plain' });
+            const blob = new Blob([info], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `veo31_video_${id}.txt`;
+            a.download = `veo31_${id}.txt`;
             a.click();
             
-            alert('📥 Video download started!\n\nNote: In production version, this would download actual MP4 file.');
+            alert('📥 Download started!\n\nProduction version will download actual MP4 file.');
         }
 
         function updateVideoCount() {
             const count = document.getElementById('videosGrid').children.length;
             document.getElementById('videoCount').textContent = `${count} video${count !== 1 ? 's' : ''}`;
-        }
-
-        // Script Generator
-        function generateScript(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('scriptTitle').value;
-            const wordCount = parseInt(document.getElementById('scriptWordCount').value);
-            const genre = document.getElementById('scriptGenre').value;
-            const details = document.getElementById('scriptDetails').value;
-            
-            const output = document.getElementById('scriptOutput');
-            output.classList.add('active');
-            output.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner" style="margin: 0 auto 20px; width: 50px; height: 50px; border-width: 4px;"></div><p>Generating complete script...</p></div>';
-            
-            setTimeout(() => {
-                const script = createFullScript(title, wordCount, genre, details);
-                output.textContent = script;
-                
-                const stats = JSON.parse(localStorage.getItem('veoStats'));
-                stats.totalScripts++;
-                localStorage.setItem('veoStats', JSON.stringify(stats));
-                if (currentUser.role === 'admin') updateAdminStats();
-            }, 3000);
-        }
-
-        function createFullScript(title, wordCount, genre, details) {
-            const scenes = Math.ceil(wordCount / 200);
-            let script = `╔════════════════════════════════════════════════════╗
-║   PROFESSIONAL ${genre.toUpperCase()} SCREENPLAY           ║
-║   Title: ${title.padEnd(40)}║
-║   Word Count: ${wordCount}                                 ║
-║   Genre: ${genre.charAt(0).toUpperCase() + genre.slice(1).padEnd(42)}║
-║   Date: ${new Date().toLocaleDateString().padEnd(43)}║
-╚════════════════════════════════════════════════════╝
-
-FADE IN:
-
-`;
-
-            for (let i = 1; i <= scenes; i++) {
-                script += `
-═══════════════════════════════════════════════════
-SCENE ${i} - ${getSceneTitle(i, genre)}
-═══════════════════════════════════════════════════
-
-INT/EXT. LOCATION - DAY/NIGHT
-
-${generateSceneContent(i, genre, title, details)}
-
-`;
-            }
-
-            script += `
-FADE OUT.
-
-═══════════════════════════════════════════════════
-                   THE END
-═══════════════════════════════════════════════════
-
-PRODUCTION NOTES:
-- Genre: ${genre.charAt(0).toUpperCase() + genre.slice(1)}
-- Estimated Runtime: ${Math.floor(wordCount / 150)} minutes
-- Total Scenes: ${scenes}
-${details ? `- Special Notes: ${details}` : ''}
-
-═══════════════════════════════════════════════════
-
-Generated by AI Video Generator Pro
-Platform by Haider Ali Technology
-`;
-
-            return script;
-        }
-
-        function getSceneTitle(num, genre) {
-            const titles = {
-                dramatic: ['Opening', 'Rising Action', 'Confrontation', 'Climax', 'Resolution'],
-                comedy: ['Setup', 'Complication', 'Escalation', 'Peak Comedy', 'Resolution'],
-                thriller: ['Introduction', 'First Threat', 'Pursuit', 'Revelation', 'Final Showdown'],
-                romance: ['Meeting', 'Connection', 'Conflict', 'Separation', 'Reunion'],
-                action: ['Setup', 'First Battle', 'Escalation', 'Major Fight', 'Victory'],
-                documentary: ['Introduction', 'Context', 'Investigation', 'Analysis', 'Conclusion']
-            };
-            
-            const index = (num - 1) % 5;
-            return titles[genre][index] || 'Scene Development';
-        }
-
-        function generateSceneContent(num, genre, title, details) {
-            return `The scene opens with cinematic framing. Characters are introduced with purpose and depth.
-
-PROTAGONIST
-"This is the moment that defines everything in ${title}."
-
-[The action unfolds with careful attention to pacing and character development. Visual storytelling combines with compelling dialogue to create an immersive experience.]
-
-SUPPORTING CHARACTER
-"We've come too far to turn back now. The stakes have never been higher."
-
-The scene builds tension through carefully crafted beats. Every moment serves the larger narrative while maintaining audience engagement. Camera movements and lighting enhance the emotional impact.
-
-${details ? `\n[Special Note: ${details}]\n` : ''}
-
-[Scene continues with rich visual description and character interaction, building toward the next pivotal moment in the story.]`;
         }
     </script>
 </body>
