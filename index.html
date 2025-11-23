@@ -3,425 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Image Studio - Powered by Grow With Haider</title>
-    <meta name="referrer" content="no-referrer">
+    <title>ixBrowser Dashboard Clone</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        /* Custom Scrollbar for Dark Theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #16171b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2c35; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b3e4a; 
+        }
         
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            overflow: hidden;
+        .pattern-dots {
+            background-image: radial-gradient(#000 1px, transparent 1px);
+            background-size: 8px 8px;
         }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-
-        .dashboard-card {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            height: 100%;
+        
+        /* Modal Animation */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
         }
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            border-color: #6366f1;
-            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 200ms ease-out, transform 200ms ease-out;
         }
-
-        .tool-view {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0f172a;
-            z-index: 50;
-            transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
         }
-        .tool-view.active {
-            transform: translateX(0);
-        }
-
-        .spinner {
-            width: 36px;
-            height: 36px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top-color: #6366f1;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @keyframes popIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-pop {
-            animation: popIn 0.3s ease-out forwards;
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms ease-in, transform 200ms ease-in;
         }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="bg-[#1b1c21] text-gray-300 font-sans text-sm overflow-hidden h-screen flex selection:bg-blue-500 selection:text-white">
 
-    <!-- ================= DASHBOARD (ONLY 1 TOOL) ================= -->
-    <div id="dashboard" class="flex-1 overflow-y-auto p-6 md:p-10 animate-fade-in flex items-center justify-center">
-        <div class="max-w-4xl w-full">
-            <div class="mb-12 text-center">
-                <div class="inline-block mb-3 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
-                    <span class="text-xs font-bold text-indigo-400 tracking-widest uppercase">✨ Powered by Grow With Haider</span>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#16171b] flex flex-col border-r border-gray-800 flex-shrink-0">
+        <!-- Logo -->
+        <div class="h-16 flex items-center px-6 gap-3 border-b border-gray-800/50">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-500 to-blue-600 flex items-center justify-center text-white font-bold text-xs">
+                IX
+            </div>
+            <span class="text-xl font-bold text-gray-100 tracking-tight">ixBrowser</span>
+        </div>
+
+        <!-- Menu Items -->
+        <nav class="flex-1 py-4 space-y-1 overflow-y-auto">
+            <div class="px-4 py-2 flex items-center gap-3 text-blue-500 bg-[#252830] border-r-2 border-blue-500 cursor-pointer">
+                <i data-lucide="monitor" class="w-[18px]"></i>
+                <span class="font-medium">Browser Profile</span>
+            </div>
+            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
+                <i data-lucide="globe" class="w-[18px]"></i>
+                <span>Proxy Resources</span>
+            </div>
+            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
+                <i data-lucide="puzzle" class="w-[18px]"></i>
+                <span>Extension Management</span>
+            </div>
+            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
+                <i data-lucide="users" class="w-[18px]"></i>
+                <span>Team Management</span>
+            </div>
+            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
+                <i data-lucide="shopping-cart" class="w-[18px]"></i>
+                <span>Order & Recharge</span>
+            </div>
+            <div class="px-4 py-3 flex items-center gap-3 text-red-400 hover:text-red-300 hover:bg-white/5 cursor-pointer transition-colors">
+                <i data-lucide="gift" class="w-[18px]"></i>
+                <span>Affiliate Rewards</span>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-800">
+            <div class="bg-white p-2 rounded w-24 h-24 mx-auto mb-2">
+                <div class="w-full h-full bg-black pattern-dots opacity-80"></div>
+            </div>
+            <p class="text-center text-xs text-gray-500">WhatsApp Support</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        
+        <!-- Top Header -->
+        <header class="h-16 bg-[#1b1c21] border-b border-gray-800 flex items-center justify-between px-6 flex-shrink-0">
+            <div class="flex items-center gap-2 text-gray-400 text-xs hidden sm:flex">
+                <span>Dashboard</span>
+                <span>/</span>
+                <span>Browser Profile</span>
+                <span>/</span>
+                <span class="text-white">Profile List</span>
+            </div>
+            
+            <div class="flex items-center gap-4 ml-auto">
+                <div class="hidden md:flex items-center gap-2">
+                   <button class="px-3 py-1.5 border border-red-500/50 text-red-500 rounded text-xs hover:bg-red-500/10 transition">
+                     Purchase Plan
+                   </button>
+                   <button class="px-3 py-1.5 border border-red-500/50 text-red-500 rounded text-xs hover:bg-red-500/10 transition">
+                     Purchase Proxy
+                   </button>
                 </div>
-                <h1 class="text-5xl font-black text-white mb-4 tracking-tight">AI Creator Studio</h1>
-                <p class="text-slate-400 text-lg">Professional Bulk Image Generator</p>
+                <div class="flex items-center gap-3 text-gray-400 border-l border-gray-700 pl-4">
+                  <span class="hover:text-white cursor-pointer transition text-xs">Help</span>
+                  <span class="hover:text-white cursor-pointer transition text-xs">English</span>
+                  <div class="flex items-center gap-2 text-white">
+                    <div class="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-xs font-medium">H</div>
+                    <span class="text-xs hidden lg:inline">haider...</span>
+                  </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Body -->
+        <main class="flex-1 p-6 overflow-hidden flex flex-col">
+            <div class="flex items-center gap-2 mb-4 font-bold text-lg text-white">
+                <span class="w-2 h-2 rounded-full bg-white"></span>
+                Profile List
             </div>
 
-            <div class="grid grid-cols-1 max-w-md mx-auto">
+            <!-- Controls Container -->
+            <div class="bg-[#222329] p-4 rounded-t-lg border border-gray-800 border-b-0 space-y-4 flex-shrink-0">
                 
-                <!-- Tool 1: Bulk Image Gen -->
-                <div onclick="openTool('bulk-tool')" class="dashboard-card p-10 rounded-3xl flex flex-col items-center text-center group border-indigo-500/30 hover:border-indigo-500 shadow-2xl">
-                    <div class="w-24 h-24 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-5xl shadow-lg shadow-indigo-600/30 mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-layer-group"></i>
+                <!-- Top Controls -->
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <button onclick="openModal()" class="bg-[#2d75ff] hover:bg-blue-600 text-white px-4 py-1.5 rounded flex items-center gap-2 text-sm transition shadow-lg shadow-blue-900/20">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Create Profile
+                        </button>
+                        <button class="border border-blue-500/50 text-blue-400 px-4 py-1.5 rounded flex items-center gap-2 text-sm hover:bg-blue-500/10 transition">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Synchronizer
+                        </button>
                     </div>
-                    <h3 class="text-3xl font-bold text-white mb-3">Bulk Image Generator</h3>
-                    <p class="text-slate-400 leading-relaxed text-lg">Fast Generation. Unlimited Batch. 4K Upscaling.</p>
-                    <span class="mt-8 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm flex items-center gap-2 group-hover:bg-indigo-500 transition-colors">
-                        Start Creating <i class="fa-solid fa-arrow-right"></i>
-                    </span>
+
+                    <!-- Search & Filter -->
+                    <div class="flex items-center gap-2 flex-1 justify-end hidden lg:flex">
+                        <div class="bg-[#1b1c21] border border-gray-700 rounded px-3 py-1.5 text-xs text-gray-400 flex items-center justify-between min-w-[120px] cursor-pointer hover:border-gray-600">
+                            Tag Selection <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                        </div>
+                        <div class="bg-[#1b1c21] border border-gray-700 rounded px-3 py-1.5 text-xs text-gray-400 flex items-center justify-between min-w-[120px] cursor-pointer hover:border-gray-600">
+                            Group Selection <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                        </div>
+                        <div class="flex">
+                            <div class="bg-[#1b1c21] border border-gray-700 border-r-0 rounded-l px-3 py-1.5 text-xs text-gray-400 flex items-center justify-between min-w-[100px] cursor-pointer">
+                                Profile Name <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                            </div>
+                            <div class="relative">
+                                <input id="searchInput" type="text" placeholder="Enter details..." class="bg-[#1b1c21] border border-gray-700 rounded-r px-3 py-1.5 text-xs text-white w-48 focus:outline-none focus:border-blue-500 transition-colors">
+                                <i data-lucide="search" class="w-3.5 h-3.5 absolute right-2 top-2 text-gray-500"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Bottom Controls -->
+                <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-gray-800">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-[#1b1c21] border border-blue-500/30 text-blue-400 rounded px-3 py-1.5 text-xs flex items-center gap-2 cursor-pointer hover:bg-blue-500/5 transition">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Open In Batches <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                         <button onclick="renderProfiles()" class="bg-[#2d75ff] text-white px-4 py-1 rounded text-xs hover:bg-blue-600 transition">Refresh</button>
+                         <div class="flex bg-[#1b1c21] rounded p-0.5 border border-gray-800" id="tabContainer">
+                           <button class="px-3 py-1 text-xs rounded bg-[#2d75ff] text-white transition-all tab-btn" onclick="switchTab(this)">All Profiles</button>
+                           <button class="px-3 py-1 text-xs rounded text-gray-400 hover:text-white transition-all tab-btn" onclick="switchTab(this)">Favorite Profiles</button>
+                           <button class="px-3 py-1 text-xs rounded text-gray-400 hover:text-white transition-all tab-btn" onclick="switchTab(this)">Opened Profiles</button>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="flex-1 bg-[#222329] border border-gray-800 border-t-0 overflow-auto relative rounded-b-lg">
+                <table class="w-full text-left border-collapse">
+                    <thead class="sticky top-0 bg-[#2a2b32] text-gray-400 font-medium text-xs z-10 shadow-sm">
+                        <tr>
+                            <th class="p-3 w-10 text-center"><input type="checkbox" class="rounded bg-gray-700 border-gray-600 cursor-pointer accent-blue-500"></th>
+                            <th class="p-3 cursor-pointer hover:text-white transition-colors">No. <span class="text-[10px] ml-1">▼</span></th>
+                            <th class="p-3">Group</th>
+                            <th class="p-3">Tag</th>
+                            <th class="p-3">Profile Name</th>
+                            <th class="p-3">Proxy</th>
+                            <th class="p-3">Time</th>
+                            <th class="p-3 text-center">Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="profileTableBody" class="divide-y divide-gray-800/50">
+                        <!-- JS will populate this -->
+                    </tbody>
+                </table>
+                
+                <!-- Empty State (Hidden by default) -->
+                <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-gray-500">
+                    <i data-lucide="search" class="w-12 h-12 mb-4 opacity-20"></i>
+                    <p>No profiles found</p>
+                </div>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="bg-[#222329] p-3 border border-gray-800 border-t-0 rounded-b-lg flex items-center justify-between text-xs text-gray-400 flex-shrink-0 mt-4 rounded-lg">
+                <div id="totalCount">Total 0</div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1 border border-gray-700 rounded px-2 py-1 cursor-pointer hover:border-gray-600">
+                        10/page <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="p-1 hover:text-white disabled:opacity-50 transition"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+                        <span class="text-blue-500 font-medium">1</span>
+                        <button class="p-1 hover:text-white disabled:opacity-50 transition"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Backdrop -->
+    <div id="modalBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300">
+        <!-- Modal Content -->
+        <div id="modalContent" class="bg-[#222329] border border-gray-700 rounded-lg w-full max-w-md shadow-2xl transform transition-all duration-300 scale-95 opacity-0">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h2 class="text-base font-bold text-white">Create New Profile</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1.5">Profile Name</label>
+                    <input type="text" id="pName" class="w-full bg-[#1b1c21] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm transition-colors" placeholder="e.g., Facebook Farm 1">
+                </div>
+
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1.5">Proxy Configuration (Optional)</label>
+                    <input type="text" id="pProxy" class="w-full bg-[#1b1c21] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm transition-colors" placeholder="socks5 IP:Port:User:Pass">
+                </div>
+                
+                 <div>
+                    <label class="block text-xs text-gray-400 mb-1.5">Target URL (On Open)</label>
+                    <input type="text" id="pUrl" class="w-full bg-[#1b1c21] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm transition-colors" placeholder="https://..." value="https://www.google.com">
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-700 flex justify-end gap-3 bg-[#1b1c21] rounded-b-lg">
+                <button onclick="closeModal()" class="px-4 py-1.5 text-gray-400 hover:text-white text-sm transition-colors">
+                    Cancel
+                </button>
+                <button onclick="createProfile()" class="bg-[#2d75ff] hover:bg-blue-600 text-white px-6 py-1.5 rounded text-sm transition-all shadow-lg shadow-blue-900/20">
+                    Confirm
+                </button>
             </div>
         </div>
     </div>
 
-
-    <!-- ================= TOOL 1: BULK IMAGE GENERATOR ================= -->
-    <div id="bulk-tool" class="tool-view">
-        <div class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0 z-20">
-            <div class="flex items-center gap-4">
-                <button onclick="closeTool('bulk-tool')" class="w-10 h-10 rounded-full hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
-                    <i class="fa-solid fa-arrow-left text-lg"></i>
-                </button>
-                <div class="flex flex-col">
-                    <h2 class="font-bold text-white text-lg leading-none">Bulk Image Generator</h2>
-                    <span class="text-[10px] text-indigo-400 font-medium mt-1">Powered by Grow With Haider</span>
-                </div>
-            </div>
-             <div class="flex gap-3">
-                 <!-- ENHANCE BUTTON (Initially Hidden) -->
-                <button onclick="enhanceAllImages()" id="btn-enhance-all" class="hidden bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20 animate-pop border border-white/10">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Enhance All to 4K
-                </button>
-            </div>
-        </div>
-
-        <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
-             
-             <!-- Left Sidebar: Inputs -->
-             <div class="w-full md:w-96 bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-10 p-6 shadow-2xl overflow-y-auto md:overflow-y-visible">
-                 
-                 <div class="mb-6">
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Aspect Ratio</label>
-                    <select id="bulk-ratio" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-indigo-500 cursor-pointer hover:border-indigo-500/50 transition-colors">
-                        <option value="1920x1080">Landscape (16:9) - HD</option>
-                        <option value="1024x1024">Square (1:1) - HD</option>
-                        <option value="1080x1920">Portrait (9:16) - HD</option>
-                        <option value="3840x2160">Cinematic 4K (21:9)</option>
-                    </select>
-                 </div>
-
-                 <div class="flex-1 flex flex-col mb-6 min-h-[200px]">
-                    <div class="flex justify-between items-end mb-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase block">Image Prompts (Unlimited)</label>
-                        <span class="text-xs text-indigo-400 font-mono bg-indigo-500/10 px-2 py-1 rounded" id="prompt-count">0 Prompts</span>
-                    </div>
-                    <textarea id="bulk-prompt" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-4 text-sm text-white outline-none focus:border-indigo-500 resize-none font-mono leading-relaxed placeholder-slate-600" placeholder="Paste your prompts here (one per line)...&#10;Example:&#10;A futuristic city in rain&#10;A cute robot eating pizza"></textarea>
-                 </div>
-
-                 <!-- Status -->
-                 <div id="status-bar" class="hidden mb-4 bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-3 text-center animate-pulse">
-                     <span class="text-sm font-bold text-indigo-400 block" id="status-text">Preparing...</span>
-                 </div>
-
-                 <!-- Buttons -->
-                 <div class="space-y-3">
-                     <button onclick="generateBulk()" id="btn-bulk" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 active:scale-95 hover:-translate-y-0.5">
-                        <i class="fa-solid fa-bolt"></i> Fast Generate
-                    </button>
-
-                    <button onclick="downloadAllImages()" id="btn-download-all" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 active:scale-95 hover:-translate-y-0.5 animate-pop">
-                        <i class="fa-solid fa-file-zipper"></i> Download All (.zip)
-                    </button>
-                 </div>
-             </div>
-
-             <!-- Right Area: Grid -->
-             <div class="flex-1 p-6 overflow-y-auto scroll-smooth bg-slate-950" id="grid-container">
-                 <div id="bulk-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 pb-32">
-                    <!-- Empty State -->
-                    <div class="col-span-full flex flex-col items-center justify-center h-96 text-slate-600 border-2 border-dashed border-slate-800 rounded-3xl bg-slate-900/50">
-                        <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4 shadow-inner">
-                            <i class="fa-solid fa-images text-4xl opacity-50"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-500">Ready to Create Magic</h3>
-                        <p class="text-sm text-slate-600 mt-2 max-w-xs text-center">Enter prompts on the left. We'll generate fast drafts first, then you can Enhance to 4K.</p>
-                    </div>
-                 </div>
-             </div>
-        </div>
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-3 rounded shadow-lg border-l-4 border-green-500 transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toastMsg">Operation Successful</span>
     </div>
 
     <script>
-        // --- GLOBAL NAV ---
-        function openTool(id) { document.getElementById(id).classList.add('active'); }
-        function closeTool(id) { document.getElementById(id).classList.remove('active'); }
+        // --- State Management ---
+        const defaultProfiles = [
+            { id: 1, no: 3, group: 'Haider Channel', name: 'spanish', note: 'Notes:', tag: 'Add Tag', proxy: 'No proxy', url: 'https://www.google.com', created: '11-17 08:54:26', lastOpened: '11-22 11:05:39' },
+            { id: 2, no: 2, group: 'Haider Channel', name: 'VEXUNA', note: 'Notes:', tag: 'Add Tag', proxy: 'No proxy', url: 'https://www.google.com', created: '11-13 07:57:19', lastOpened: '11-22 19:20:52' },
+            { id: 3, no: 1, group: 'Haider Channel', name: 'history', note: 'Notes:', tag: 'History', proxy: 'socks5 45.145.57.213:10136', url: 'https://www.google.com', created: '11-11 09:11:13', lastOpened: '11-22 03:19:45' },
+        ];
 
-        // --- BULK GENERATOR LOGIC ---
-        let generatedImages = []; // Stores {url, name, prompt, seed}
+        let profiles = JSON.parse(localStorage.getItem('html_browser_profiles')) || defaultProfiles;
 
-        const bulkInput = document.getElementById('bulk-prompt');
-        if(bulkInput) {
-             bulkInput.addEventListener('input', () => {
-                const lines = bulkInput.value.split('\n').filter(l => l.trim()).length;
-                document.getElementById('prompt-count').textContent = `${lines} Prompts`;
-            });
+        // --- DOM Elements ---
+        const tableBody = document.getElementById('profileTableBody');
+        const emptyState = document.getElementById('emptyState');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalContent = document.getElementById('modalContent');
+        const totalCount = document.getElementById('totalCount');
+        const searchInput = document.getElementById('searchInput');
+
+        // --- Core Functions ---
+
+        function saveProfiles() {
+            localStorage.setItem('html_browser_profiles', JSON.stringify(profiles));
+            renderProfiles();
         }
 
-        // DIRECT DOWNLOAD HELPER (ROBUST)
-        async function forceDownload(url, filename) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network error');
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(blobUrl);
-            } catch (e) {
-                window.open(url, '_blank');
-            }
-        }
+        function renderProfiles() {
+            const query = searchInput.value.toLowerCase();
+            const filtered = profiles.filter(p => p.name.toLowerCase().includes(query));
 
-        // --- ENHANCE ALL TO 4K (UPSCALING) ---
-        async function enhanceAllImages() {
-             if(generatedImages.length === 0) return alert("Generate images first!");
-             
-             const btn = document.getElementById('btn-enhance-all');
-             const originalText = btn.innerHTML;
-             btn.disabled = true;
-             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Enhancing to 4K...';
-             
-             const ratio = document.getElementById('bulk-ratio').value;
-             const [w, h] = ratio.split('x');
-
-             // Upscale Logic: Re-generate using "Flux" model + "Enhanced Prompt" + "Same Seed"
-             for(let i=0; i<generatedImages.length; i++) {
-                 const imgObj = generatedImages[i];
-                 const cardImg = document.getElementById(`img-el-${i}`);
-                 const badge = document.getElementById(`badge-el-${i}`);
-                 
-                 if(cardImg) {
-                     // Create Enhanced Prompt
-                     const enhancedPrompt = `${imgObj.prompt}, cinematic lighting, hyper-realistic, 8k, masterpiece, sharp focus, detailed texture, artstation HQ`;
-                     
-                     // Use Flux Model for HD
-                     const newUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=${w}&height=${h}&model=flux&seed=${imgObj.seed}&nologo=true`;
-                     
-                     cardImg.style.opacity = '0.3';
-                     
-                     // Reload Image
-                     await new Promise(resolve => {
-                         const newImg = new Image();
-                         newImg.onload = () => {
-                             cardImg.src = newUrl;
-                             cardImg.style.opacity = '1';
-                             
-                             // Update Badge
-                             if(badge) {
-                                 badge.innerText = "4K UHD";
-                                 badge.className = "absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg animate-pop";
-                             }
-                             
-                             // Update Data
-                             generatedImages[i].url = newUrl;
-                             resolve();
-                         };
-                         newImg.onerror = resolve; // Skip error
-                         newImg.src = newUrl;
-                     });
-                 }
-             }
-             
-             btn.innerHTML = '<i class="fa-solid fa-check-double"></i> Enhancement Complete!';
-             btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
-             btn.classList.add('bg-green-600');
-             
-             setTimeout(() => {
-                 btn.innerHTML = originalText;
-                 btn.classList.remove('bg-green-600');
-                 btn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
-                 btn.disabled = false;
-             }, 3000);
-        }
-
-        async function generateBulk() {
-            const promptsRaw = bulkInput.value.split('\n').filter(p => p.trim());
-            const prompts = promptsRaw.map(p => p.replace(/^\d+[\.\)]\s*/, ''));
+            tableBody.innerHTML = '';
             
-            const grid = document.getElementById('bulk-grid');
-            const btn = document.getElementById('btn-bulk');
-            const btnDlAll = document.getElementById('btn-download-all');
-            const btnEnhance = document.getElementById('btn-enhance-all');
-            const statusText = document.getElementById('status-text');
-            const statusBar = document.getElementById('status-bar');
-            const ratio = document.getElementById('bulk-ratio').value;
-            const [w, h] = ratio.split('x');
-
-            if(!prompts.length) return alert("Please enter at least one prompt.");
-
-            // UI Start
-            btn.disabled = true; 
-            btn.innerHTML = '<div class="spinner border-white w-5 h-5 mr-2"></div> Generating...';
-            statusBar.classList.remove('hidden');
-            btnEnhance.classList.add('hidden');
-            grid.innerHTML = ''; 
-            generatedImages = []; 
-
-            // 1. Create Pending Cards
-            const cardIds = [];
-            prompts.forEach((p, idx) => {
-                const card = document.createElement('div');
-                card.id = `card-${idx}`;
-                card.className = 'bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-lg h-80 relative flex flex-col items-center justify-center opacity-50 animate-pop';
-                card.innerHTML = `
-                    <i class="fa-regular fa-clock text-4xl mb-3 text-slate-600"></i>
-                    <span class="text-sm font-bold text-slate-500">Waiting...</span>
-                    <div class="absolute bottom-0 w-full p-2 text-center bg-black/50 text-[10px] text-slate-400 truncate">${p}</div>
-                `;
-                grid.appendChild(card);
-                cardIds.push(`card-${idx}`);
-            });
-
-            if(window.innerWidth < 768) {
-                document.getElementById('grid-container').scrollIntoView({ behavior: 'smooth' });
-            }
-
-            // 2. Process Loop (Fast Mode using Turbo)
-            for(let i=0; i<prompts.length; i++) {
-                const p = prompts[i];
-                const card = document.getElementById(cardIds[i]);
-                
-                statusText.textContent = `Creating Image ${i+1} of ${prompts.length}...`;
-                
-                card.style.opacity = '1';
-                card.className = 'bg-slate-800 rounded-2xl p-1 shadow-lg border border-indigo-500/50 h-auto animate-pulse transition-all';
-                card.innerHTML = `
-                    <div class="h-64 w-full bg-slate-900 rounded-xl flex flex-col items-center justify-center">
-                        <div class="spinner border-indigo-500 mb-3"></div>
-                        <span class="text-sm font-bold text-indigo-400">Generating Fast...</span>
-                    </div>
-                `;
-                card.scrollIntoView({behavior:'smooth', block:'center'});
-
-                // Fast Generation (Turbo Model)
-                const seed = Math.floor(Math.random() * 999999);
-                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=${w}&height=${h}&model=turbo&seed=${seed}&nologo=true&t=${Date.now()}`;
-
-                await new Promise((resolve) => {
-                    const img = new Image();
-                    img.crossOrigin = "Anonymous"; 
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                filtered.forEach(p => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-[#2a2c35] group transition-colors border-b border-gray-800/30';
                     
-                    img.onload = () => {
-                        const filename = `image_${i+1}_${seed}.jpg`;
-                        generatedImages.push({ url: url, name: filename, prompt: p, seed: seed });
-                        
-                        card.className = "bg-slate-800 rounded-2xl p-3 shadow-xl border border-slate-700 flex flex-col gap-3 animate-pop group h-auto transition-all hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10";
-                        card.innerHTML = `
-                            <div class="relative w-full overflow-hidden rounded-xl bg-slate-950 border border-white/5 group-hover:border-white/10 transition-colors">
-                                <img id="img-el-${i}" src="${url}" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105 cursor-pointer" onclick="window.open('${url}', '_blank')">
-                                <div id="badge-el-${i}" class="absolute top-3 right-3 bg-gray-800/80 text-gray-300 text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md border border-white/10 shadow-lg">Fast</div>
-                            </div>
-                            <div class="flex flex-col gap-2 mt-auto w-full">
-                                <p class="text-xs text-slate-400 truncate font-mono px-1" title="${p}">${p}</p>
-                                <button onclick="forceDownload('${url}', '${filename}')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-bold text-center transition-all shadow-lg hover:shadow-indigo-500/25 flex items-center justify-center gap-2 active:scale-95 group/btn">
-                                    <i class="fa-solid fa-download group-hover/btn:animate-bounce"></i> Download
+                    // Proxy Logic
+                    let proxyDisplay = `<div class="text-gray-500 text-xs">No proxy</div>`;
+                    if (p.proxy && p.proxy !== 'No proxy') {
+                         const parts = p.proxy.split(' ');
+                         const type = parts[0] || 'http';
+                         const ip = parts[1] || p.proxy;
+                         proxyDisplay = `
+                            <div class="text-blue-400 text-xs">${type}</div>
+                            <div class="text-gray-400 text-[10px] mt-0.5 font-mono">${ip}</div>
+                         `;
+                    }
+
+                    // Tag Styling
+                    const tagClass = p.tag === 'History' 
+                        ? "text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded text-[10px] uppercase inline-block" 
+                        : "text-blue-400 text-xs cursor-pointer hover:underline";
+
+                    row.innerHTML = `
+                        <td class="p-3 text-center"><input type="checkbox" class="rounded bg-gray-700 border-gray-600 cursor-pointer accent-blue-500"></td>
+                        <td class="p-3">
+                            <span class="border border-orange-400 text-orange-400 px-2 py-0.5 rounded text-xs font-mono">${p.no}</span>
+                        </td>
+                        <td class="p-3">
+                            <div class="text-white text-xs">${p.group}</div>
+                        </td>
+                        <td class="p-3">
+                            <span class="${tagClass}">${p.tag}</span>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-medium text-white text-sm">${p.name}</div>
+                            <div class="text-gray-500 text-[10px] mt-0.5">${p.note}</div>
+                        </td>
+                        <td class="p-3">
+                            ${proxyDisplay}
+                        </td>
+                        <td class="p-3 text-[10px] text-gray-400 font-mono">
+                            <div>${p.created}</div>
+                            <div class="text-gray-500 mt-1">${p.lastOpened}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="launchProfile(${p.id})" class="border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded text-xs transition-colors">
+                                    Open
                                 </button>
+                                <button class="text-gray-500 hover:text-white p-1 transition"><i data-lucide="settings" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="deleteProfile(${p.id})" class="text-gray-500 hover:text-red-500 p-1 transition"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                             </div>
-                        `;
-                        resolve();
-                    };
-                    img.onerror = () => {
-                        setTimeout(() => {
-                             img.src = url + "&retry=1";
-                        }, 1000);
-                        setTimeout(() => {
-                             if(!img.complete) {
-                                card.innerHTML = `<div class="h-64 flex flex-col items-center justify-center text-red-400"><i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i><span>Failed</span></div>`;
-                                resolve(); 
-                             }
-                        }, 8000);
-                    };
-                    img.src = url;
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
                 });
             }
 
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fast Generate';
-            statusText.textContent = "Drafts Ready! Click 'Enhance All' for 4K.";
-            
-            if(generatedImages.length > 0) {
-                document.getElementById('btn-download-all').classList.remove('hidden');
-                document.getElementById('btn-enhance-all').classList.remove('hidden'); // Show Enhance Button
+            totalCount.innerText = `Total ${profiles.length}`;
+            lucide.createIcons(); // Re-init icons for new rows
+        }
+
+        // --- Action Functions ---
+
+        function launchProfile(id) {
+            const profile = profiles.find(p => p.id === id);
+            if (profile) {
+                const now = new Date();
+                const dateString = `${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+                
+                profile.lastOpened = dateString;
+                saveProfiles();
+                
+                window.open(profile.url, '_blank');
+                showToast(`Launched: ${profile.name}`);
             }
+        }
+
+        function createProfile() {
+            const name = document.getElementById('pName').value;
+            const proxy = document.getElementById('pProxy').value;
+            const url = document.getElementById('pUrl').value;
+
+            if (!name) {
+                alert("Profile name is required");
+                return;
+            }
+
+            const now = new Date();
+            const dateString = `${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+            const newProfile = {
+                id: Date.now(),
+                no: profiles.length + 1,
+                group: 'Default Group',
+                name: name,
+                note: 'Notes:',
+                tag: 'Add Tag',
+                proxy: proxy || 'No proxy',
+                url: url || 'https://www.google.com',
+                created: dateString,
+                lastOpened: '-'
+            };
+
+            profiles.unshift(newProfile); // Add to top
+            saveProfiles();
+            closeModal();
+            showToast("Profile Created Successfully");
+            
+            // Reset form
+            document.getElementById('pName').value = '';
+            document.getElementById('pProxy').value = '';
+        }
+
+        function deleteProfile(id) {
+            if(confirm("Are you sure you want to delete this profile?")) {
+                profiles = profiles.filter(p => p.id !== id);
+                saveProfiles();
+                showToast("Profile Deleted");
+            }
+        }
+
+        // --- Modal Logic ---
+
+        function openModal() {
+            modalBackdrop.classList.remove('hidden');
+            // Small delay to allow display:block to apply before opacity transition
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.getElementById('pName').focus();
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modalBackdrop.classList.add('hidden');
+            }, 300); // Wait for transition
+        }
+
+        // Close modal on clicking outside
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) closeModal();
+        });
+
+        // --- UI Utilities ---
+
+        function switchTab(btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-[#2d75ff]', 'text-white');
+                b.classList.add('text-gray-400');
+            });
+            btn.classList.remove('text-gray-400');
+            btn.classList.add('bg-[#2d75ff]', 'text-white');
+            // Filter logic could go here
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
             
             setTimeout(() => {
-                // Keep status bar visible for instruction
-                // statusBar.classList.add('hidden');
+                toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         }
 
-        async function downloadAllImages() {
-            if(generatedImages.length === 0) return alert("No images to download");
-            const btn = document.getElementById('btn-download-all');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<div class="spinner w-4 h-4 border-white mr-2"></div> Zipping...';
-            btn.disabled = true;
+        // --- Init ---
+        searchInput.addEventListener('input', renderProfiles);
+        renderProfiles();
+        lucide.createIcons();
 
-            try {
-                const zip = new JSZip();
-                const folder = zip.folder("AI_Images");
-                
-                const promises = generatedImages.map(async (imgObj) => {
-                    try {
-                        const response = await fetch(imgObj.url);
-                        const blob = await response.blob();
-                        folder.file(imgObj.name, blob);
-                    } catch(e) { console.error("Skip", imgObj.url); }
-                });
-
-                await Promise.all(promises);
-                const content = await zip.generateAsync({ type: "blob" });
-                saveAs(content, "Bulk_Images.zip");
-            } catch (e) {
-                alert("Error creating zip file. Please try individual downloads.");
-            }
-            btn.innerHTML = originalText; 
-            btn.disabled = false;
-        }
     </script>
 </body>
 </html>
