@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Image Studio - Powered by Grow With Haider</title>
+    <meta name="referrer" content="no-referrer">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -93,7 +94,7 @@
                         <i class="fa-solid fa-layer-group"></i>
                     </div>
                     <h3 class="text-3xl font-bold text-white mb-3">Bulk Image Generator</h3>
-                    <p class="text-slate-400 leading-relaxed text-lg">Generate unlimited images at once. Auto-Enhance prompts for 8K quality. Direct one-click download.</p>
+                    <p class="text-slate-400 leading-relaxed text-lg">Fast Generation. Unlimited Batch. 4K Upscaling.</p>
                     <span class="mt-8 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm flex items-center gap-2 group-hover:bg-indigo-500 transition-colors">
                         Start Creating <i class="fa-solid fa-arrow-right"></i>
                     </span>
@@ -117,9 +118,9 @@
                 </div>
             </div>
              <div class="flex gap-3">
-                 <!-- NEW ENHANCE BUTTON -->
-                <button onclick="enhanceAllImages()" id="btn-enhance-all" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20 animate-pop">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Enhance All (4K)
+                 <!-- ENHANCE BUTTON (Initially Hidden) -->
+                <button onclick="enhanceAllImages()" id="btn-enhance-all" class="hidden bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20 animate-pop border border-white/10">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Enhance All to 4K
                 </button>
             </div>
         </div>
@@ -131,25 +132,12 @@
                  
                  <div class="mb-6">
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Aspect Ratio</label>
-                    <select id="bulk-ratio" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-indigo-500">
+                    <select id="bulk-ratio" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-indigo-500 cursor-pointer hover:border-indigo-500/50 transition-colors">
                         <option value="1920x1080">Landscape (16:9) - HD</option>
                         <option value="1024x1024">Square (1:1) - HD</option>
                         <option value="1080x1920">Portrait (9:16) - HD</option>
                         <option value="3840x2160">Cinematic 4K (21:9)</option>
                     </select>
-                 </div>
-
-                 <div class="mb-6">
-                     <label class="flex items-center gap-3 cursor-pointer bg-indigo-500/10 border border-indigo-500/30 p-4 rounded-xl hover:bg-indigo-500/20 transition-colors group">
-                         <div class="relative flex items-center">
-                             <input type="checkbox" id="auto-enhance" checked class="peer sr-only">
-                             <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                         </div>
-                         <div class="flex flex-col">
-                             <span class="text-sm text-white font-bold group-hover:text-indigo-300 transition-colors">🚀 Auto-Prompt Magic</span>
-                             <span class="text-[10px] text-slate-400">Turns simple text into art</span>
-                         </div>
-                     </label>
                  </div>
 
                  <div class="flex-1 flex flex-col mb-6 min-h-[200px]">
@@ -168,7 +156,7 @@
                  <!-- Buttons -->
                  <div class="space-y-3">
                      <button onclick="generateBulk()" id="btn-bulk" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 active:scale-95 hover:-translate-y-0.5">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Images
+                        <i class="fa-solid fa-bolt"></i> Fast Generate
                     </button>
 
                     <button onclick="downloadAllImages()" id="btn-download-all" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 active:scale-95 hover:-translate-y-0.5 animate-pop">
@@ -186,7 +174,7 @@
                             <i class="fa-solid fa-images text-4xl opacity-50"></i>
                         </div>
                         <h3 class="text-xl font-bold text-slate-500">Ready to Create Magic</h3>
-                        <p class="text-sm text-slate-600 mt-2 max-w-xs text-center">Enter prompts on the left sidebar to start generating unlimited high-quality images.</p>
+                        <p class="text-sm text-slate-600 mt-2 max-w-xs text-center">Enter prompts on the left. We'll generate fast drafts first, then you can Enhance to 4K.</p>
                     </div>
                  </div>
              </div>
@@ -199,7 +187,7 @@
         function closeTool(id) { document.getElementById(id).classList.remove('active'); }
 
         // --- BULK GENERATOR LOGIC ---
-        let generatedImages = []; // Stores {url, name, prompt}
+        let generatedImages = []; // Stores {url, name, prompt, seed}
 
         const bulkInput = document.getElementById('bulk-prompt');
         if(bulkInput) {
@@ -228,31 +216,47 @@
             }
         }
 
-        // --- ENHANCE ALL TO 4K ---
+        // --- ENHANCE ALL TO 4K (UPSCALING) ---
         async function enhanceAllImages() {
              if(generatedImages.length === 0) return alert("Generate images first!");
              
              const btn = document.getElementById('btn-enhance-all');
              const originalText = btn.innerHTML;
              btn.disabled = true;
-             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Upscaling...';
+             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Enhancing to 4K...';
              
-             // Upscale Logic: Reload images with 'enhance=true' parameter and higher quality seed
+             const ratio = document.getElementById('bulk-ratio').value;
+             const [w, h] = ratio.split('x');
+
+             // Upscale Logic: Re-generate using "Flux" model + "Enhanced Prompt" + "Same Seed"
              for(let i=0; i<generatedImages.length; i++) {
                  const imgObj = generatedImages[i];
                  const cardImg = document.getElementById(`img-el-${i}`);
+                 const badge = document.getElementById(`badge-el-${i}`);
+                 
                  if(cardImg) {
-                     // Add upscale parameters to URL
-                     const newUrl = imgObj.url + "&enhance=true&quality=100&upscale=2";
-                     cardImg.style.opacity = '0.5';
+                     // Create Enhanced Prompt
+                     const enhancedPrompt = `${imgObj.prompt}, cinematic lighting, hyper-realistic, 8k, masterpiece, sharp focus, detailed texture, artstation HQ`;
                      
-                     // Reload
+                     // Use Flux Model for HD
+                     const newUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=${w}&height=${h}&model=flux&seed=${imgObj.seed}&nologo=true`;
+                     
+                     cardImg.style.opacity = '0.3';
+                     
+                     // Reload Image
                      await new Promise(resolve => {
                          const newImg = new Image();
                          newImg.onload = () => {
                              cardImg.src = newUrl;
                              cardImg.style.opacity = '1';
-                             // Update data for download
+                             
+                             // Update Badge
+                             if(badge) {
+                                 badge.innerText = "4K UHD";
+                                 badge.className = "absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg animate-pop";
+                             }
+                             
+                             // Update Data
                              generatedImages[i].url = newUrl;
                              resolve();
                          };
@@ -262,11 +266,16 @@
                  }
              }
              
-             btn.innerHTML = '<i class="fa-solid fa-check"></i> All Enhanced!';
+             btn.innerHTML = '<i class="fa-solid fa-check-double"></i> Enhancement Complete!';
+             btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+             btn.classList.add('bg-green-600');
+             
              setTimeout(() => {
                  btn.innerHTML = originalText;
+                 btn.classList.remove('bg-green-600');
+                 btn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
                  btn.disabled = false;
-             }, 2000);
+             }, 3000);
         }
 
         async function generateBulk() {
@@ -281,13 +290,12 @@
             const statusBar = document.getElementById('status-bar');
             const ratio = document.getElementById('bulk-ratio').value;
             const [w, h] = ratio.split('x');
-            const autoEnhance = document.getElementById('auto-enhance').checked;
 
             if(!prompts.length) return alert("Please enter at least one prompt.");
 
             // UI Start
             btn.disabled = true; 
-            btn.innerHTML = '<div class="spinner border-white w-5 h-5 mr-2"></div> Processing...';
+            btn.innerHTML = '<div class="spinner border-white w-5 h-5 mr-2"></div> Generating...';
             statusBar.classList.remove('hidden');
             btnEnhance.classList.add('hidden');
             grid.innerHTML = ''; 
@@ -312,7 +320,7 @@
                 document.getElementById('grid-container').scrollIntoView({ behavior: 'smooth' });
             }
 
-            // 2. Process Loop
+            // 2. Process Loop (Fast Mode using Turbo)
             for(let i=0; i<prompts.length; i++) {
                 const p = prompts[i];
                 const card = document.getElementById(cardIds[i]);
@@ -324,18 +332,14 @@
                 card.innerHTML = `
                     <div class="h-64 w-full bg-slate-900 rounded-xl flex flex-col items-center justify-center">
                         <div class="spinner border-indigo-500 mb-3"></div>
-                        <span class="text-sm font-bold text-indigo-400">Generating...</span>
+                        <span class="text-sm font-bold text-indigo-400">Generating Fast...</span>
                     </div>
                 `;
                 card.scrollIntoView({behavior:'smooth', block:'center'});
 
-                let finalPrompt = p;
-                if(autoEnhance) {
-                    finalPrompt = `${p}, cinematic lighting, hyper-realistic, 8k, masterpiece, sharp focus, detailed texture, artstation HQ`;
-                }
-
+                // Fast Generation (Turbo Model)
                 const seed = Math.floor(Math.random() * 999999);
-                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=${w}&height=${h}&model=flux&seed=${seed}&nologo=true&t=${Date.now()}`;
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=${w}&height=${h}&model=turbo&seed=${seed}&nologo=true&t=${Date.now()}`;
 
                 await new Promise((resolve) => {
                     const img = new Image();
@@ -343,13 +347,13 @@
                     
                     img.onload = () => {
                         const filename = `image_${i+1}_${seed}.jpg`;
-                        generatedImages.push({ url: url, name: filename, prompt: p });
+                        generatedImages.push({ url: url, name: filename, prompt: p, seed: seed });
                         
                         card.className = "bg-slate-800 rounded-2xl p-3 shadow-xl border border-slate-700 flex flex-col gap-3 animate-pop group h-auto transition-all hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10";
                         card.innerHTML = `
                             <div class="relative w-full overflow-hidden rounded-xl bg-slate-950 border border-white/5 group-hover:border-white/10 transition-colors">
                                 <img id="img-el-${i}" src="${url}" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105 cursor-pointer" onclick="window.open('${url}', '_blank')">
-                                <div class="absolute top-3 right-3 bg-black/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md border border-white/10 shadow-lg">HD</div>
+                                <div id="badge-el-${i}" class="absolute top-3 right-3 bg-gray-800/80 text-gray-300 text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md border border-white/10 shadow-lg">Fast</div>
                             </div>
                             <div class="flex flex-col gap-2 mt-auto w-full">
                                 <p class="text-xs text-slate-400 truncate font-mono px-1" title="${p}">${p}</p>
@@ -376,8 +380,8 @@
             }
 
             btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate Images';
-            statusText.textContent = "Generation Complete!";
+            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Fast Generate';
+            statusText.textContent = "Drafts Ready! Click 'Enhance All' for 4K.";
             
             if(generatedImages.length > 0) {
                 document.getElementById('btn-download-all').classList.remove('hidden');
@@ -385,7 +389,8 @@
             }
             
             setTimeout(() => {
-                 statusBar.classList.add('hidden');
+                // Keep status bar visible for instruction
+                // statusBar.classList.add('hidden');
             }, 3000);
         }
 
