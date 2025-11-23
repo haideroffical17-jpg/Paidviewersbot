@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Image Studio - Powered by Grow With Haider</title>
-    <meta name="referrer" content="no-referrer">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -117,6 +116,12 @@
                     <span class="text-[10px] text-indigo-400 font-medium mt-1">Powered by Grow With Haider</span>
                 </div>
             </div>
+             <div class="flex gap-3">
+                 <!-- NEW ENHANCE BUTTON -->
+                <button onclick="enhanceAllImages()" id="btn-enhance-all" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20 animate-pop">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Enhance All (4K)
+                </button>
+            </div>
         </div>
 
         <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
@@ -141,8 +146,8 @@
                              <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                          </div>
                          <div class="flex flex-col">
-                             <span class="text-sm text-white font-bold group-hover:text-indigo-300 transition-colors">🚀 Auto-Enhance Quality</span>
-                             <span class="text-[10px] text-slate-400">Turns simple text into 8K art</span>
+                             <span class="text-sm text-white font-bold group-hover:text-indigo-300 transition-colors">🚀 Auto-Prompt Magic</span>
+                             <span class="text-[10px] text-slate-400">Turns simple text into art</span>
                          </div>
                      </label>
                  </div>
@@ -194,7 +199,7 @@
         function closeTool(id) { document.getElementById(id).classList.remove('active'); }
 
         // --- BULK GENERATOR LOGIC ---
-        let generatedImages = [];
+        let generatedImages = []; // Stores {url, name, prompt}
 
         const bulkInput = document.getElementById('bulk-prompt');
         if(bulkInput) {
@@ -219,9 +224,49 @@
                 document.body.removeChild(link);
                 URL.revokeObjectURL(blobUrl);
             } catch (e) {
-                // FALLBACK: If fetch fails (CORS), open in new tab
                 window.open(url, '_blank');
             }
+        }
+
+        // --- ENHANCE ALL TO 4K ---
+        async function enhanceAllImages() {
+             if(generatedImages.length === 0) return alert("Generate images first!");
+             
+             const btn = document.getElementById('btn-enhance-all');
+             const originalText = btn.innerHTML;
+             btn.disabled = true;
+             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Upscaling...';
+             
+             // Upscale Logic: Reload images with 'enhance=true' parameter and higher quality seed
+             for(let i=0; i<generatedImages.length; i++) {
+                 const imgObj = generatedImages[i];
+                 const cardImg = document.getElementById(`img-el-${i}`);
+                 if(cardImg) {
+                     // Add upscale parameters to URL
+                     const newUrl = imgObj.url + "&enhance=true&quality=100&upscale=2";
+                     cardImg.style.opacity = '0.5';
+                     
+                     // Reload
+                     await new Promise(resolve => {
+                         const newImg = new Image();
+                         newImg.onload = () => {
+                             cardImg.src = newUrl;
+                             cardImg.style.opacity = '1';
+                             // Update data for download
+                             generatedImages[i].url = newUrl;
+                             resolve();
+                         };
+                         newImg.onerror = resolve; // Skip error
+                         newImg.src = newUrl;
+                     });
+                 }
+             }
+             
+             btn.innerHTML = '<i class="fa-solid fa-check"></i> All Enhanced!';
+             setTimeout(() => {
+                 btn.innerHTML = originalText;
+                 btn.disabled = false;
+             }, 2000);
         }
 
         async function generateBulk() {
@@ -231,6 +276,7 @@
             const grid = document.getElementById('bulk-grid');
             const btn = document.getElementById('btn-bulk');
             const btnDlAll = document.getElementById('btn-download-all');
+            const btnEnhance = document.getElementById('btn-enhance-all');
             const statusText = document.getElementById('status-text');
             const statusBar = document.getElementById('status-bar');
             const ratio = document.getElementById('bulk-ratio').value;
@@ -243,6 +289,7 @@
             btn.disabled = true; 
             btn.innerHTML = '<div class="spinner border-white w-5 h-5 mr-2"></div> Processing...';
             statusBar.classList.remove('hidden');
+            btnEnhance.classList.add('hidden');
             grid.innerHTML = ''; 
             generatedImages = []; 
 
@@ -251,7 +298,6 @@
             prompts.forEach((p, idx) => {
                 const card = document.createElement('div');
                 card.id = `card-${idx}`;
-                // Full height placeholder
                 card.className = 'bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-lg h-80 relative flex flex-col items-center justify-center opacity-50 animate-pop';
                 card.innerHTML = `
                     <i class="fa-regular fa-clock text-4xl mb-3 text-slate-600"></i>
@@ -273,7 +319,6 @@
                 
                 statusText.textContent = `Creating Image ${i+1} of ${prompts.length}...`;
                 
-                // Active State
                 card.style.opacity = '1';
                 card.className = 'bg-slate-800 rounded-2xl p-1 shadow-lg border border-indigo-500/50 h-auto animate-pulse transition-all';
                 card.innerHTML = `
@@ -290,24 +335,20 @@
                 }
 
                 const seed = Math.floor(Math.random() * 999999);
-                // Using Flux model (Pollinations) - Unlimited & Free
-                // CACHE BUSTER ADDED to ensure fresh image
                 const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=${w}&height=${h}&model=flux&seed=${seed}&nologo=true&t=${Date.now()}`;
 
                 await new Promise((resolve) => {
                     const img = new Image();
-                    // IMPORTANT: No crossOrigin here to avoid CORS strictness if direct load works better in some envs, 
-                    // BUT needed for canvas/download. We try with Anonymous.
                     img.crossOrigin = "Anonymous"; 
                     
                     img.onload = () => {
                         const filename = `image_${i+1}_${seed}.jpg`;
-                        generatedImages.push({ url: url, name: filename });
+                        generatedImages.push({ url: url, name: filename, prompt: p });
                         
                         card.className = "bg-slate-800 rounded-2xl p-3 shadow-xl border border-slate-700 flex flex-col gap-3 animate-pop group h-auto transition-all hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10";
                         card.innerHTML = `
                             <div class="relative w-full overflow-hidden rounded-xl bg-slate-950 border border-white/5 group-hover:border-white/10 transition-colors">
-                                <img src="${url}" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105 cursor-pointer" onclick="window.open('${url}', '_blank')">
+                                <img id="img-el-${i}" src="${url}" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105 cursor-pointer" onclick="window.open('${url}', '_blank')">
                                 <div class="absolute top-3 right-3 bg-black/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md border border-white/10 shadow-lg">HD</div>
                             </div>
                             <div class="flex flex-col gap-2 mt-auto w-full">
@@ -320,12 +361,9 @@
                         resolve();
                     };
                     img.onerror = () => {
-                        // Retry once internally if failed
                         setTimeout(() => {
                              img.src = url + "&retry=1";
                         }, 1000);
-                        
-                        // Fallback UI if keeps failing
                         setTimeout(() => {
                              if(!img.complete) {
                                 card.innerHTML = `<div class="h-64 flex flex-col items-center justify-center text-red-400"><i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i><span>Failed</span></div>`;
@@ -343,6 +381,7 @@
             
             if(generatedImages.length > 0) {
                 document.getElementById('btn-download-all').classList.remove('hidden');
+                document.getElementById('btn-enhance-all').classList.remove('hidden'); // Show Enhance Button
             }
             
             setTimeout(() => {
@@ -361,7 +400,6 @@
                 const zip = new JSZip();
                 const folder = zip.folder("AI_Images");
                 
-                // Concurrent fetching for zip speed
                 const promises = generatedImages.map(async (imgObj) => {
                     try {
                         const response = await fetch(imgObj.url);
