@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Creator Studio - Ultimate Admin</title>
+    <title>AI Creator Studio - Safe Turbo</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -206,7 +206,7 @@
             <!-- Admin Content -->
             <div class="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
                 
-                <!-- LIVE STATS GRID (UPDATED with 6 Columns) -->
+                <!-- LIVE STATS GRID -->
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
                     <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
                         <div class="flex justify-between items-start mb-2">
@@ -224,15 +224,22 @@
                         <h3 id="stat-total-gens" class="text-3xl font-bold text-white">0</h3>
                         <p class="text-[10px] text-slate-500 mt-1">Audio Files Created</p>
                     </div>
-                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
+                    
+                    <!-- PENDING CARD WITH RESET BUTTON -->
+                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl relative group">
                         <div class="flex justify-between items-start mb-2">
-                            <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">Processing</p>
-                            <i data-lucide="loader-2" class="w-4 h-4 text-yellow-400 animate-spin"></i>
+                            <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold flex items-center gap-2">
+                                Processing <span class="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-ping"></span>
+                            </p>
+                            <!-- RESET BUTTON -->
+                            <button onclick="resetPendingStats()" class="bg-slate-700 hover:bg-yellow-500 hover:text-black text-slate-300 p-1 rounded-md transition-all pointer-events-auto" title="Reset Counter">
+                                <i data-lucide="rotate-ccw" class="w-3 h-3 pointer-events-none"></i>
+                            </button>
                         </div>
                         <h3 id="stat-pending" class="text-3xl font-bold text-yellow-400">0</h3>
                         <p class="text-[10px] text-slate-500 mt-1">Live requests</p>
                     </div>
-                    <!-- NEW: User Keys Card -->
+
                     <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
                         <div class="flex justify-between items-start mb-2">
                             <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">User Keys</p>
@@ -249,10 +256,15 @@
                         <h3 id="stat-keys-count" class="text-3xl font-bold text-white">0</h3>
                         <p class="text-[10px] text-slate-500 mt-1">Added by Admin</p>
                     </div>
-                    <div class="bg-[#162032] border border-red-500/30 p-5 rounded-2xl">
+                    
+                    <!-- FAILED CARD WITH RESET BUTTON (NEW) -->
+                    <div class="bg-[#162032] border border-red-500/30 p-5 rounded-2xl relative group">
                         <div class="flex justify-between items-start mb-2">
                             <p class="text-red-400 text-[10px] uppercase tracking-wider font-bold">Failed</p>
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-red-500"></i>
+                            <!-- RESET BUTTON -->
+                            <button onclick="resetFailedStats()" class="bg-slate-700 hover:bg-red-500 hover:text-white text-slate-300 p-1 rounded-md transition-all pointer-events-auto" title="Reset Failed Count">
+                                <i data-lucide="rotate-ccw" class="w-3 h-3 pointer-events-none"></i>
+                            </button>
                         </div>
                         <h3 id="stat-failed-gens" class="text-3xl font-bold text-red-500">0</h3>
                         <p class="text-[10px] text-slate-500 mt-1">Errors Encountered</p>
@@ -320,7 +332,7 @@
         </div>
     </div>
 
-    <!-- TEXT PREVIEW MODAL (NEW) -->
+    <!-- TEXT PREVIEW MODAL -->
     <div id="text-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[80] flex items-center justify-center hidden opacity-0 transition-opacity">
         <div class="w-full max-w-2xl bg-[#1E293B] border border-slate-700 rounded-3xl shadow-2xl p-8 relative mx-4">
             <button onclick="closeTextModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -491,7 +503,6 @@
 
         function hideToast() { getEl('toast-container').classList.add('hidden'); }
 
-        // --- CORE LOGIC ---
         function checkAuthAndStart() {
             if (state.currentUser) switchView('tool');
             else toggleUserAuth(true);
@@ -575,7 +586,6 @@
         function showEl(el) { el.classList.remove('hidden'); setTimeout(() => el.classList.remove('opacity-0'), 50); }
         function toggleSettings(show) { const modal = getEl('settings-modal'); if(show) modal.classList.remove('hidden'); else modal.classList.add('hidden'); }
 
-        // --- TEXT PREVIEW MODAL LOGIC ---
         function openTextModal(fullText) {
             els.modalFullText.innerText = fullText || "No text available.";
             els.textModal.classList.remove('hidden');
@@ -625,7 +635,7 @@
             try {
                 showToast("Loading preview...", "info"); 
                 const text = "Hello! This is a preview of my voice.";
-                const buffer = await fetchWithSmartRetry(text, voiceId, activeKeyPool);
+                const buffer = await fetchWithBackupStrategy(text, voiceId, activeKeyPool, []);
                 const blob = createWavFromBuffer(buffer);
                 const url = URL.createObjectURL(blob);
                 const audio = new Audio(url);
@@ -638,6 +648,7 @@
             }
         }
 
+        // --- SMART BACKUP ENGINE (8 Active / 2 Backup) ---
         async function generateAudio() {
             if(!state.currentUser) {
                 showToast("Session expired. Please login again.", "error");
@@ -645,25 +656,27 @@
                 toggleUserAuth(true);
                 return;
             }
-            const hasLocal = state.localKeys.length > 0;
-            const hasSystem = systemKeys.length > 0;
-            if (!state.text.trim()) return showToast("Please enter some text.", "error");
             
-            let allKeys = hasLocal ? state.localKeys : (hasSystem ? systemKeys : []);
+            let allKeys = state.localKeys.length > 0 ? state.localKeys : systemKeys;
             if (allKeys.length === 0) {
                 toggleSettings(true);
-                return showToast("No API Keys found.", "error");
+                return showToast("No API Keys found. Add in settings.", "error");
             }
+            
+            if (!state.text.trim()) return showToast("Please enter some text.", "error");
 
+            // LOGIC: Keep 2 keys as Backup if possible
             let activePool = [];
             let backupPool = [];
             
-            if (allKeys.length > 3) {
-                const activeCount = Math.ceil(allKeys.length * 0.7); 
+            if (allKeys.length > 2) {
+                const backupCount = 2;
+                const activeCount = allKeys.length - backupCount;
                 activePool = allKeys.slice(0, activeCount);
                 backupPool = allKeys.slice(activeCount);
             } else {
-                activePool = [...allKeys]; 
+                // If 2 or fewer keys, use all as active (no backup possible)
+                activePool = [...allKeys];
             }
 
             setIsGenerating(true);
@@ -671,15 +684,19 @@
 
             try {
                 const chunks = chunkText(state.text);
-                const CONCURRENCY = Math.min(activePool.length, 7); 
+                // Concurrency = Number of Active Keys
+                const CONCURRENCY = Math.max(1, activePool.length); 
                 
                 let completedCount = 0;
                 let results = new Array(chunks.length);
                 
                 const processTask = async (task) => {
                     const { chunk, index } = task;
+                    
                     const pct = Math.round((completedCount / chunks.length) * 100);
-                    getEl('generate-btn').innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> ${pct}% (Chunks: ${completedCount}/${chunks.length})`;
+                    getEl('generate-btn').innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> ${pct}% (Part ${completedCount}/${chunks.length})`;
+                    
+                    // Use Backup Strategy
                     const buffer = await fetchWithBackupStrategy(chunk, state.selectedVoiceId, activePool, backupPool);
                     results[index] = buffer;
                     completedCount++;
@@ -687,6 +704,7 @@
 
                 const pool = chunks.map((chunk, index) => ({ chunk, index }));
                 const executing = [];
+                
                 for (const task of pool) {
                     const p = processTask(task).then(() => {
                         executing.splice(executing.indexOf(p), 1);
@@ -710,19 +728,22 @@
                 showToast("Generation Complete!", "success");
 
             } catch (err) {
-                showToast("Failed: " + err.message, "error");
+                showToast("Error: " + err.message, "error");
                 logGenerationFail(state.selectedVoiceId, state.text, err.message);
             } finally {
                 setIsGenerating(false);
             }
         }
 
+        // --- SMART FETCH WITH BACKUP SWAP ---
         async function fetchWithBackupStrategy(text, voiceId, activePool, backupPool) {
+            // Pick random key from ACTIVE pool
             let keyIndex = Math.floor(Math.random() * activePool.length);
-            let key = activePool[keyIndex];
+            let currentKey = activePool[keyIndex];
             
+            // Try up to 3 times (swap if needed)
             for (let attempt = 0; attempt < 3; attempt++) {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${key}`;
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${currentKey}`;
                 
                 try {
                     const response = await fetch(url, {
@@ -744,40 +765,75 @@
                         return bytes.buffer;
                     } 
                     
+                    // If Rate Limit (429) or Server Error (503)
                     if (response.status === 429 || response.status === 503) {
+                        console.warn(`Key ${currentKey.substr(0,5)}... failed (${response.status}). Swapping...`);
+                        
+                        // --- SWAP LOGIC ---
                         if (backupPool.length > 0) {
-                            const freshKey = backupPool.shift();
-                            activePool[keyIndex] = freshKey; 
-                            backupPool.push(key); 
-                            key = freshKey; 
-                            continue; 
+                            // Move bad key to end of backup
+                            // Move fresh backup key to active
+                            const freshKey = backupPool.shift(); // Get from front
+                            
+                            // Only push back if we have enough backup keys to cycle properly or want to reuse bad keys later
+                            // Here we push bad key to back of backup
+                            backupPool.push(currentKey); 
+                            
+                            activePool[keyIndex] = freshKey; // Replace in active
+                            currentKey = freshKey; // Update current key for next loop
+                            continue; // Retry immediately
                         } else {
-                            await new Promise(r => setTimeout(r, 1500));
+                            // No backups left? Wait a bit and retry same key
+                            await new Promise(r => setTimeout(r, 2000));
                             continue;
                         }
                     }
+                    
                     throw new Error(await response.text());
 
                 } catch (e) {
+                    console.warn("Chunk failed, retrying...", e);
+                    // If standard error, try swapping anyway if backup exists
                     if (backupPool.length > 0) {
                          const freshKey = backupPool.shift();
+                         backupPool.push(currentKey);
                          activePool[keyIndex] = freshKey;
-                         backupPool.push(key);
-                         key = freshKey;
+                         currentKey = freshKey;
                     }
                 }
             }
             throw new Error("Failed to generate chunk after swaps.");
-        }
-        
-        async function fetchWithSmartRetry(text, voiceId, keyPool) {
-             return fetchWithBackupStrategy(text, voiceId, keyPool, []);
         }
 
         function chunkText(s) { const c=[]; let cur=""; (s.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[s]).forEach(x=>{if(cur.length+x.length<CHUNK_SIZE)cur+=x;else{if(cur)c.push(cur);cur=x;}});if(cur)c.push(cur);return c;}
         function mergeBuffers(b){if(b.length===0)return new Blob([]);let l=0,p=[];b.forEach(v=>{const d=new DataView(v),o=d.getUint32(0)===0x52494646?44:0;const s=v.slice(o);p.push(s);l+=s.byteLength;});const h=createWavHeader(l);return new Blob([h,...p],{type:'audio/wav'});}
         function createWavFromBuffer(buffer) { if (buffer.byteLength > 44 && new DataView(buffer).getUint32(0, false) === 0x52494646) { return new Blob([buffer], { type: 'audio/wav' }); } return new Blob([createWavHeader(buffer.byteLength), buffer], { type: 'audio/wav' }); }
         function createWavHeader(l){const b=new ArrayBuffer(44),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');v.setUint32(4,36+l,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,l,true);return b;}
+
+        // --- NEW FUNCTIONS TO RESET STATS ---
+        function resetPendingStats() {
+            if(!db) return showToast("Database not connected", "error");
+            if(confirm("Are you sure you want to reset pending count to 0?")) {
+                showToast("Resetting...", "info");
+                db.collection('stats').doc('global').set({
+                    pending_generations: 0
+                }, { merge: true })
+                .then(() => showToast("Stats reset!", "success"))
+                .catch(e => showToast("Failed: " + e.message, "error"));
+            }
+        }
+
+        function resetFailedStats() {
+            if(!db) return showToast("Database not connected", "error");
+            if(confirm("Are you sure you want to reset failed count to 0?")) {
+                showToast("Resetting...", "info");
+                db.collection('stats').doc('global').set({
+                    failed_generations: 0
+                }, { merge: true })
+                .then(() => showToast("Failed stats reset!", "success"))
+                .catch(e => showToast("Failed: " + e.message, "error"));
+            }
+        }
 
         function loadAdminDashboardData() {
             db.collection('stats').doc('global').onSnapshot(doc => {
@@ -787,7 +843,6 @@
                     getEl('stat-total-gens').innerText = data.total_generations || 0;
                     getEl('stat-pending').innerText = data.pending_generations || 0;
                     getEl('stat-failed-gens').innerText = data.failed_generations || 0;
-                    // NEW: USER KEYS STAT
                     getEl('stat-user-keys').innerText = data.total_user_keys || 0;
                 }
             });
@@ -811,25 +866,9 @@
                     const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleTimeString() : 'Just now';
                     const statusColor = data.status === 'failed' ? 'bg-red-500' : 'bg-emerald-500';
                     const userEmail = data.userEmail ? data.userEmail.split('@')[0] : 'User';
-                    const safeText = (data.fullText || "").replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                    const safeText = (data.fullText || "").replace(/"/g, '&quot;').replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "");
 
-                    list.innerHTML += `
-                        <tr class="border-b border-slate-700/50 hover:bg-slate-800/50 transition-colors cursor-pointer" onclick="openTextModal('${safeText}')">
-                            <td class="px-6 py-3">
-                                <div class="flex items-center gap-3 mb-1">
-                                    <div class="w-2 h-2 rounded-full ${statusColor}"></div>
-                                    <span class="text-xs text-slate-400 font-mono">${time}</span>
-                                    <span class="text-sm text-white font-bold">${userEmail}</span>
-                                </div>
-                                <div class="text-[11px] text-slate-500 truncate max-w-[300px]">
-                                    ${data.preview || "No preview"}
-                                </div>
-                            </td>
-                            <td class="px-6 py-3 text-right">
-                                <span class="text-[10px] bg-slate-700 px-2 py-1 rounded text-slate-300">${data.charCount || 0} chars</span>
-                            </td>
-                        </tr>
-                    `;
+                    list.innerHTML += `<tr class="border-b border-slate-700/50 hover:bg-slate-800/50 transition-colors cursor-pointer" onclick="openTextModal('${safeText}')"><td class="px-6 py-3"><div class="flex items-center gap-3 mb-1"><div class="w-2 h-2 rounded-full ${statusColor}"></div><span class="text-xs text-slate-400 font-mono">${time}</span><span class="text-sm text-white font-bold">${userEmail}</span></div><div class="text-[11px] text-slate-500 truncate max-w-[300px]">${data.preview || "No preview"}</div></td><td class="px-6 py-3 text-right"><span class="text-[10px] bg-slate-700 px-2 py-1 rounded text-slate-300">${data.charCount || 0} chars</span></td></tr>`;
                 });
             });
         }
@@ -839,66 +878,23 @@
         function logGenerationSuccess(voiceId, text) {
             if(!isFirebaseActive) return;
             const batch = db.batch();
-            batch.update(db.collection('stats').doc('global'), { 
-                pending_generations: firebase.firestore.FieldValue.increment(-1), 
-                total_generations: firebase.firestore.FieldValue.increment(1) 
-            });
-            batch.set(db.collection('activity_logs').doc(), { 
-                voice: voiceId, 
-                charCount: text.length, 
-                fullText: text, 
-                preview: text.split(' ').slice(0, 10).join(' ') + (text.split(' ').length > 10 ? "..." : ""), 
-                status: 'success',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
-                userEmail: state.currentUser ? state.currentUser.email : 'Anonymous', 
-                userId: state.currentUser ? state.currentUser.uid : 'anon' 
-            });
+            batch.update(db.collection('stats').doc('global'), { pending_generations: firebase.firestore.FieldValue.increment(-1), total_generations: firebase.firestore.FieldValue.increment(1) });
+            batch.set(db.collection('activity_logs').doc(), { voice: voiceId, charCount: text.length, fullText: text, preview: text.split(' ').slice(0, 10).join(' ') + (text.split(' ').length > 10 ? "..." : ""), status: 'success', timestamp: firebase.firestore.FieldValue.serverTimestamp(), userEmail: state.currentUser ? state.currentUser.email : 'Anonymous', userId: state.currentUser ? state.currentUser.uid : 'anon' });
             batch.commit().catch(console.error);
         }
 
         function logGenerationFail(voiceId, text, errorMsg) {
             if(!isFirebaseActive) return;
             const batch = db.batch();
-            batch.update(db.collection('stats').doc('global'), { 
-                pending_generations: firebase.firestore.FieldValue.increment(-1),
-                failed_generations: firebase.firestore.FieldValue.increment(1) 
-            });
-            batch.set(db.collection('activity_logs').doc(), { 
-                voice: voiceId, 
-                charCount: text ? text.length : 0, 
-                fullText: text || "",
-                preview: text ? (text.split(' ').slice(0, 10).join(' ') + "...") : "Error",
-                status: 'failed',
-                error: errorMsg,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
-                userEmail: state.currentUser ? state.currentUser.email : 'Anonymous', 
-                userId: state.currentUser ? state.currentUser.uid : 'anon' 
-            });
+            batch.update(db.collection('stats').doc('global'), { pending_generations: firebase.firestore.FieldValue.increment(-1), failed_generations: firebase.firestore.FieldValue.increment(1) });
+            batch.set(db.collection('activity_logs').doc(), { voice: voiceId, charCount: text ? text.length : 0, fullText: text || "", preview: text ? (text.split(' ').slice(0, 10).join(' ') + "...") : "Error", status: 'failed', error: errorMsg, timestamp: firebase.firestore.FieldValue.serverTimestamp(), userEmail: state.currentUser ? state.currentUser.email : 'Anonymous', userId: state.currentUser ? state.currentUser.uid : 'anon' });
             batch.commit().catch(console.error);
         }
 
         async function fetchSystemKeysForUser() { if(!isFirebaseActive) return; try { const snap = await db.collection('system_keys').orderBy('addedAt', 'desc').get(); systemKeys = snap.docs.map(doc => doc.data().key); updateKeysUI(); } catch (e) { console.log("Error fetching keys"); } }
         async function addSystemKey() { const k = getEl('new-sys-key').value.trim(); if(!k) return; try { await db.collection('system_keys').add({ key: k, addedAt: firebase.firestore.FieldValue.serverTimestamp() }); getEl('new-sys-key').value = ""; showToast("Key Added", "success"); } catch (e) { showToast(e.message, "error"); } }
         async function deleteSystemKey(id) { if(confirm("Delete Key?")) await db.collection('system_keys').doc(id).delete(); }
-        
-        // UPDATED: SAVE KEY WITH DB TRACKING
-        function saveLocalKey() { 
-            const k=getEl('api-key-input').value.trim(); 
-            if(k){
-                state.localKeys.push(k);
-                localStorage.setItem("local_api_keys",JSON.stringify(state.localKeys));
-                getEl('api-key-input').value="";
-                updateKeysUI();
-                showToast("Key Saved Locally", "success");
-                // NEW: Track User Key Added
-                if(isFirebaseActive) {
-                     db.collection('stats').doc('global').update({
-                         total_user_keys: firebase.firestore.FieldValue.increment(1)
-                     }).catch(e => console.log("Stats update failed", e));
-                }
-            } 
-        }
-        
+        function saveLocalKey() { const k=getEl('api-key-input').value.trim(); if(k){state.localKeys.push(k);localStorage.setItem("local_api_keys",JSON.stringify(state.localKeys));getEl('api-key-input').value="";updateKeysUI();showToast("Key Saved Locally", "success"); if(isFirebaseActive) { db.collection('stats').doc('global').update({ total_user_keys: firebase.firestore.FieldValue.increment(1) }).catch(e => console.log("Stats update failed", e)); }} }
         function clearLocalKeys() { if(confirm("Clear?")){state.localKeys=[];localStorage.removeItem("local_api_keys");updateKeysUI();} }
         function updateKeysUI() { getEl('active-keys-count').innerText = `Local Keys: ${state.localKeys.length}`; const hasLocal = state.localKeys.length > 0, hasSystem = systemKeys.length > 0; getEl('key-indicator').className = hasLocal ? "absolute top-2 right-2 w-2 h-2 bg-green-500 rounded-full" : (hasSystem ? "absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse" : "absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"); getEl('system-key-badge').classList.toggle('hidden', hasLocal || !hasSystem); }
         function setIsGenerating(val) { state.isGenerating = val; getEl('generate-btn').disabled = val; getEl('generate-btn').innerHTML = val ? `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Generating...` : `<i data-lucide="wand-2" class="w-5 h-5"></i> Generate Audio`; if(val){ getEl('progress-container').classList.remove('hidden'); getEl('result-container').classList.add('hidden'); } lucide.createIcons(); }
