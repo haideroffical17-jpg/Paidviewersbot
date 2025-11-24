@@ -3,491 +3,907 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ixBrowser Dashboard Clone</title>
+    <title>AI Creator Studio - Ultimate Admin</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <style>
-        /* Custom Scrollbar for Dark Theme */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #16171b; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2a2c35; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3b3e4a; 
-        }
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         
-        .pattern-dots {
-            background-image: radial-gradient(#000 1px, transparent 1px);
-            background-size: 8px 8px;
+        /* Animations */
+        @keyframes pulse-emerald {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
         }
+        .admin-pulse { animation: pulse-emerald 2s infinite; }
         
-        /* Modal Animation */
-        .modal-enter {
-            opacity: 0;
-            transform: scale(0.95);
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .modal-enter-active {
-            opacity: 1;
-            transform: scale(1);
-            transition: opacity 200ms ease-out, transform 200ms ease-out;
-        }
-        .modal-exit {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .modal-exit-active {
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 200ms ease-in, transform 200ms ease-in;
-        }
+        .animate-fade-up { animation: fade-in-up 0.3s ease-out forwards; }
     </style>
 </head>
-<body class="bg-[#1b1c21] text-gray-300 font-sans text-sm overflow-hidden h-screen flex selection:bg-blue-500 selection:text-white">
+<body class="bg-[#0B1120] text-white font-sans h-screen flex flex-col overflow-hidden">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-[#16171b] flex flex-col border-r border-gray-800 flex-shrink-0">
-        <!-- Logo -->
-        <div class="h-16 flex items-center px-6 gap-3 border-b border-gray-800/50">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-500 to-blue-600 flex items-center justify-center text-white font-bold text-xs">
-                IX
-            </div>
-            <span class="text-xl font-bold text-gray-100 tracking-tight">ixBrowser</span>
-        </div>
+    <!-- ================= VIEWS CONTAINER ================= -->
+    <div id="app-container" class="w-full h-full relative">
 
-        <!-- Menu Items -->
-        <nav class="flex-1 py-4 space-y-1 overflow-y-auto">
-            <div class="px-4 py-2 flex items-center gap-3 text-blue-500 bg-[#252830] border-r-2 border-blue-500 cursor-pointer">
-                <i data-lucide="monitor" class="w-[18px]"></i>
-                <span class="font-medium">Browser Profile</span>
-            </div>
-            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
-                <i data-lucide="globe" class="w-[18px]"></i>
-                <span>Proxy Resources</span>
-            </div>
-            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
-                <i data-lucide="puzzle" class="w-[18px]"></i>
-                <span>Extension Management</span>
-            </div>
-            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
-                <i data-lucide="users" class="w-[18px]"></i>
-                <span>Team Management</span>
-            </div>
-            <div class="px-4 py-3 flex items-center gap-3 text-gray-400 hover:text-gray-200 hover:bg-white/5 cursor-pointer transition-colors">
-                <i data-lucide="shopping-cart" class="w-[18px]"></i>
-                <span>Order & Recharge</span>
-            </div>
-            <div class="px-4 py-3 flex items-center gap-3 text-red-400 hover:text-red-300 hover:bg-white/5 cursor-pointer transition-colors">
-                <i data-lucide="gift" class="w-[18px]"></i>
-                <span>Affiliate Rewards</span>
-            </div>
-        </nav>
-
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-gray-800">
-            <div class="bg-white p-2 rounded w-24 h-24 mx-auto mb-2">
-                <div class="w-full h-full bg-black pattern-dots opacity-80"></div>
-            </div>
-            <p class="text-center text-xs text-gray-500">WhatsApp Support</p>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col min-w-0">
-        
-        <!-- Top Header -->
-        <header class="h-16 bg-[#1b1c21] border-b border-gray-800 flex items-center justify-between px-6 flex-shrink-0">
-            <div class="flex items-center gap-2 text-gray-400 text-xs hidden sm:flex">
-                <span>Dashboard</span>
-                <span>/</span>
-                <span>Browser Profile</span>
-                <span>/</span>
-                <span class="text-white">Profile List</span>
-            </div>
+        <!-- 1. LANDING PAGE VIEW -->
+        <div id="landing-view" class="absolute inset-0 flex flex-col items-center justify-center p-6 z-10 transition-opacity duration-500">
             
-            <div class="flex items-center gap-4 ml-auto">
-                <div class="hidden md:flex items-center gap-2">
-                   <button class="px-3 py-1.5 border border-red-500/50 text-red-500 rounded text-xs hover:bg-red-500/10 transition">
-                     Purchase Plan
-                   </button>
-                   <button class="px-3 py-1.5 border border-red-500/50 text-red-500 rounded text-xs hover:bg-red-500/10 transition">
-                     Purchase Proxy
-                   </button>
-                </div>
-                <div class="flex items-center gap-3 text-gray-400 border-l border-gray-700 pl-4">
-                  <span class="hover:text-white cursor-pointer transition text-xs">Help</span>
-                  <span class="hover:text-white cursor-pointer transition text-xs">English</span>
-                  <div class="flex items-center gap-2 text-white">
-                    <div class="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-xs font-medium">H</div>
-                    <span class="text-xs hidden lg:inline">haider...</span>
-                  </div>
-                </div>
-            </div>
-        </header>
+            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-emerald-900/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <!-- Dashboard Body -->
-        <main class="flex-1 p-6 overflow-hidden flex flex-col">
-            <div class="flex items-center gap-2 mb-4 font-bold text-lg text-white">
-                <span class="w-2 h-2 rounded-full bg-white"></span>
-                Profile List
+            <div class="bg-[#1E293B] border border-slate-700/50 px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest text-indigo-300 uppercase mb-6 shadow-lg">
+                Powered by Grow with Haider
             </div>
 
-            <!-- Controls Container -->
-            <div class="bg-[#222329] p-4 rounded-t-lg border border-gray-800 border-b-0 space-y-4 flex-shrink-0">
-                
-                <!-- Top Controls -->
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center gap-2">
-                        <button onclick="openModal()" class="bg-[#2d75ff] hover:bg-blue-600 text-white px-4 py-1.5 rounded flex items-center gap-2 text-sm transition shadow-lg shadow-blue-900/20">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Create Profile
-                        </button>
-                        <button class="border border-blue-500/50 text-blue-400 px-4 py-1.5 rounded flex items-center gap-2 text-sm hover:bg-blue-500/10 transition">
-                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Synchronizer
+            <div class="text-center mb-16 space-y-2">
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white">AI Creator Studio</h1>
+                <p class="text-slate-400 text-lg font-medium">Professional Tools Suite</p>
+            </div>
+
+            <div class="w-full max-w-md relative">
+                <div id="open-tool-btn" class="group relative bg-[#162032] border border-slate-800 rounded-3xl p-10 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-900/20 cursor-pointer transform hover:-translate-y-1">
+                    <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl"></div>
+                    <div class="flex flex-col items-center text-center space-y-8 relative z-10">
+                        <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="mic" class="w-10 h-10 text-white"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-2xl font-bold text-white">Text to Speech Pro</h3>
+                            <p class="text-slate-400 text-base leading-relaxed">30+ Premium Voices. Unlimited Text. <br/>Instant WAV Download.</p>
+                        </div>
+                        <button class="flex items-center gap-2 px-6 py-2 bg-emerald-500/10 text-emerald-400 rounded-full text-sm font-bold group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                            Start Generating <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </button>
                     </div>
-
-                    <!-- Search & Filter -->
-                    <div class="flex items-center gap-2 flex-1 justify-end hidden lg:flex">
-                        <div class="bg-[#1b1c21] border border-gray-700 rounded px-3 py-1.5 text-xs text-gray-400 flex items-center justify-between min-w-[120px] cursor-pointer hover:border-gray-600">
-                            Tag Selection <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                        </div>
-                        <div class="bg-[#1b1c21] border border-gray-700 rounded px-3 py-1.5 text-xs text-gray-400 flex items-center justify-between min-w-[120px] cursor-pointer hover:border-gray-600">
-                            Group Selection <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                        </div>
-                        <div class="flex">
-                            <div class="bg-[#1b1c21] border border-gray-700 border-r-0 rounded-l px-3 py-1.5 text-xs text-gray-400 flex items-center justify-between min-w-[100px] cursor-pointer">
-                                Profile Name <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                            </div>
-                            <div class="relative">
-                                <input id="searchInput" type="text" placeholder="Enter details..." class="bg-[#1b1c21] border border-gray-700 rounded-r px-3 py-1.5 text-xs text-white w-48 focus:outline-none focus:border-blue-500 transition-colors">
-                                <i data-lucide="search" class="w-3.5 h-3.5 absolute right-2 top-2 text-gray-500"></i>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Bottom Controls -->
-                <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-gray-800">
-                    <div class="flex items-center gap-2">
-                        <div class="bg-[#1b1c21] border border-blue-500/30 text-blue-400 rounded px-3 py-1.5 text-xs flex items-center gap-2 cursor-pointer hover:bg-blue-500/5 transition">
-                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Open In Batches <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4">
-                         <button onclick="renderProfiles()" class="bg-[#2d75ff] text-white px-4 py-1 rounded text-xs hover:bg-blue-600 transition">Refresh</button>
-                         <div class="flex bg-[#1b1c21] rounded p-0.5 border border-gray-800" id="tabContainer">
-                           <button class="px-3 py-1 text-xs rounded bg-[#2d75ff] text-white transition-all tab-btn" onclick="switchTab(this)">All Profiles</button>
-                           <button class="px-3 py-1 text-xs rounded text-gray-400 hover:text-white transition-all tab-btn" onclick="switchTab(this)">Favorite Profiles</button>
-                           <button class="px-3 py-1 text-xs rounded text-gray-400 hover:text-white transition-all tab-btn" onclick="switchTab(this)">Opened Profiles</button>
-                         </div>
+        <!-- 2. TOOL VIEW -->
+        <div id="tool-view" class="absolute inset-0 flex flex-col bg-[#0B1120] hidden opacity-0 transition-opacity duration-500">
+            <div class="border-b border-slate-800 bg-[#0F172A]/80 backdrop-blur-md sticky top-0 z-20">
+                <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+                    <button id="back-btn" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i> Back
+                    </button>
+                    <h1 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span class="bg-emerald-500/10 text-emerald-400 p-1.5 rounded-lg"><i data-lucide="mic" class="w-4 h-4"></i></span>
+                        Text to Speech Pro
+                    </h1>
+                    <div class="flex items-center gap-3">
+                        <button id="admin-shortcut-btn" class="hidden px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg text-xs font-bold hover:bg-red-500/20 flex items-center gap-2">
+                            <i data-lucide="shield" class="w-3 h-3"></i> Admin
+                        </button>
+                        <button id="user-logout-btn" class="p-2 text-xs text-slate-400 hover:text-white border border-slate-700 rounded-lg hover:bg-slate-800 transition-colors" title="Logout">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                        </button>
+                        <button id="settings-btn" class="p-2 rounded-full hover:bg-slate-800 text-slate-400 transition-colors relative">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            <span id="key-indicator" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Table Container -->
-            <div class="flex-1 bg-[#222329] border border-gray-800 border-t-0 overflow-auto relative rounded-b-lg">
-                <table class="w-full text-left border-collapse">
-                    <thead class="sticky top-0 bg-[#2a2b32] text-gray-400 font-medium text-xs z-10 shadow-sm">
-                        <tr>
-                            <th class="p-3 w-10 text-center"><input type="checkbox" class="rounded bg-gray-700 border-gray-600 cursor-pointer accent-blue-500"></th>
-                            <th class="p-3 cursor-pointer hover:text-white transition-colors">No. <span class="text-[10px] ml-1">▼</span></th>
-                            <th class="p-3">Group</th>
-                            <th class="p-3">Tag</th>
-                            <th class="p-3">Profile Name</th>
-                            <th class="p-3">Proxy</th>
-                            <th class="p-3">Time</th>
-                            <th class="p-3 text-center">Operation</th>
-                        </tr>
-                    </thead>
-                    <tbody id="profileTableBody" class="divide-y divide-gray-800/50">
-                        <!-- JS will populate this -->
-                    </tbody>
-                </table>
+            <div class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full grid lg:grid-cols-2 gap-6 overflow-y-auto">
+                <div class="flex flex-col gap-4 h-full">
+                    <div class="bg-[#1E293B] border border-slate-700 rounded-3xl p-1 flex-1 flex flex-col shadow-xl min-h-[300px]">
+                        <textarea id="text-input" class="flex-1 w-full bg-transparent text-lg p-6 resize-none outline-none text-slate-200 placeholder:text-slate-600" placeholder="Paste your script here (Unlimited)..."></textarea>
+                        <div class="px-6 py-3 border-t border-slate-700/50 flex justify-between items-center text-xs text-slate-500 font-mono">
+                            <span id="system-key-badge" class="hidden text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">⚡ System Key Active</span>
+                            <span><span id="char-count">0</span> characters</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <div class="bg-[#1E293B] border border-slate-700 rounded-3xl overflow-hidden flex flex-col h-[450px] shadow-xl">
+                        <div class="px-6 py-4 border-b border-slate-700 bg-[#1E293B] sticky top-0 z-10 flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Controls</span>
+                            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-slate-500"></i>
+                        </div>
+                        <div class="p-6 space-y-6 bg-[#162032] border-b border-slate-700">
+                            <div>
+                                <div class="flex justify-between mb-2 text-xs font-medium">
+                                    <span class="text-slate-400 uppercase">Speed</span>
+                                    <span id="speed-val" class="text-emerald-400">1.0x</span>
+                                </div>
+                                <input type="range" id="speed-range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full">
+                            </div>
+                        </div>
+                        <div class="px-6 py-2 bg-[#1E293B] text-xs font-bold text-slate-400 uppercase tracking-wider">Voices</div>
+                        <div id="voice-list" class="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar"></div>
+                    </div>
+
+                    <div class="bg-[#1E293B] border border-slate-700 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl"></div>
+                        <div class="relative z-10 space-y-4">
+                            <div id="progress-container" class="hidden space-y-2">
+                                <div class="flex justify-between text-xs font-bold text-emerald-400">
+                                    <span id="progress-text">Initializing...</span>
+                                    <span id="progress-pct">0%</span>
+                                </div>
+                                <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                    <div id="progress-bar" class="h-full bg-emerald-500 transition-all duration-300 w-0"></div>
+                                </div>
+                            </div>
+                            <button id="generate-btn" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#0B1120] font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                <i data-lucide="wand-2" class="w-5 h-5"></i> Generate Audio
+                            </button>
+                            <div id="result-container" class="hidden animate-in fade-in slide-in-from-bottom-2 space-y-3 pt-2">
+                                <div class="bg-slate-900/50 p-2 rounded-xl border border-slate-700">
+                                    <audio id="audio-player" controls class="w-full h-8"></audio>
+                                </div>
+                                <a id="download-link" href="#" download class="flex items-center justify-center gap-2 w-full py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-medium transition-colors">
+                                    <i data-lucide="download" class="w-4 h-4"></i> Download File
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. USER AUTH MODAL -->
+        <div id="user-auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center hidden opacity-0 transition-opacity">
+            <div class="w-full max-w-md bg-[#1E293B] border border-slate-700 rounded-3xl shadow-2xl p-8 relative">
+                <button onclick="toggleUserAuth(false)" class="absolute top-4 right-4 text-slate-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-white">Welcome Back</h2>
+                    <p class="text-slate-400 text-sm mt-1">Login to access the Studio</p>
+                </div>
+                <div class="flex bg-[#0B1120] p-1 rounded-xl mb-6">
+                    <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-bold rounded-lg text-white bg-slate-700 transition-all">Login</button>
+                    <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 py-2 text-sm font-bold rounded-lg text-slate-400 hover:text-white transition-all">Sign Up</button>
+                </div>
+                <div class="space-y-4">
+                    <input type="email" id="user-email" placeholder="Email Address" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500">
+                    <input type="password" id="user-pass" placeholder="Password" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500">
+                    <button id="auth-action-btn" onclick="handleUserAuth()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex justify-center items-center gap-2">Login</button>
+                </div>
+                <p id="auth-msg" class="text-center text-red-400 text-xs mt-4 h-4"></p>
+            </div>
+        </div>
+
+        <!-- 4. ADMIN DASHBOARD VIEW -->
+        <div id="admin-dashboard-view" class="absolute inset-0 bg-[#0B1120] flex flex-col hidden opacity-0 transition-opacity z-50">
+            <!-- Admin Nav -->
+            <div class="border-b border-red-900/30 bg-[#1E293B] px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+                <div class="flex items-center gap-3">
+                    <span class="bg-red-500/10 text-red-500 p-2 rounded-lg"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></span>
+                    <div>
+                        <h1 class="font-bold text-white">Admin Console</h1>
+                        <p class="text-[10px] text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Live Connection
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="switchView('tool')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold flex items-center gap-2 border border-slate-700">
+                        <i data-lucide="mic" class="w-4 h-4"></i> Go to Tool
+                    </button>
+                    <button onclick="handleUserLogout()" class="px-4 py-2 bg-red-900/20 hover:bg-red-900/40 text-red-400 rounded-lg text-xs font-bold flex items-center gap-2 border border-red-900/30">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Content -->
+            <div class="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
                 
-                <!-- Empty State (Hidden by default) -->
-                <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-gray-500">
-                    <i data-lucide="search" class="w-12 h-12 mb-4 opacity-20"></i>
-                    <p>No profiles found</p>
+                <!-- LIVE STATS GRID (UPDATED with 6 Columns) -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">Registered Users</p>
+                            <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
+                        </div>
+                        <h3 id="stat-total-users" class="text-3xl font-bold text-white">0</h3>
+                        <p class="text-[10px] text-slate-500 mt-1">Total Accounts</p>
+                    </div>
+                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">Total Voices</p>
+                            <i data-lucide="mic-2" class="w-4 h-4 text-emerald-400"></i>
+                        </div>
+                        <h3 id="stat-total-gens" class="text-3xl font-bold text-white">0</h3>
+                        <p class="text-[10px] text-slate-500 mt-1">Audio Files Created</p>
+                    </div>
+                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">Processing</p>
+                            <i data-lucide="loader-2" class="w-4 h-4 text-yellow-400 animate-spin"></i>
+                        </div>
+                        <h3 id="stat-pending" class="text-3xl font-bold text-yellow-400">0</h3>
+                        <p class="text-[10px] text-slate-500 mt-1">Live requests</p>
+                    </div>
+                    <!-- NEW: User Keys Card -->
+                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">User Keys</p>
+                            <i data-lucide="key" class="w-4 h-4 text-blue-400"></i>
+                        </div>
+                        <h3 id="stat-user-keys" class="text-3xl font-bold text-white">0</h3>
+                        <p class="text-[10px] text-slate-500 mt-1">Added by Users</p>
+                    </div>
+                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-400 text-[10px] uppercase tracking-wider font-bold">System Keys</p>
+                            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                        </div>
+                        <h3 id="stat-keys-count" class="text-3xl font-bold text-white">0</h3>
+                        <p class="text-[10px] text-slate-500 mt-1">Added by Admin</p>
+                    </div>
+                    <div class="bg-[#162032] border border-red-500/30 p-5 rounded-2xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-red-400 text-[10px] uppercase tracking-wider font-bold">Failed</p>
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-red-500"></i>
+                        </div>
+                        <h3 id="stat-failed-gens" class="text-3xl font-bold text-red-500">0</h3>
+                        <p class="text-[10px] text-slate-500 mt-1">Errors Encountered</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Pagination Footer -->
-            <div class="bg-[#222329] p-3 border border-gray-800 border-t-0 rounded-b-lg flex items-center justify-between text-xs text-gray-400 flex-shrink-0 mt-4 rounded-lg">
-                <div id="totalCount">Total 0</div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-1 border border-gray-700 rounded px-2 py-1 cursor-pointer hover:border-gray-600">
-                        10/page <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-[#1E293B] border border-slate-700 rounded-2xl overflow-hidden shadow-xl flex flex-col h-[400px]">
+                        <div class="px-6 py-4 border-b border-slate-700 bg-[#1E293B] sticky top-0 flex justify-between items-center">
+                            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full admin-pulse"></span> Live Activity Feed
+                            </h2>
+                            <span class="text-[10px] text-slate-500">Real-time</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-0 custom-scrollbar">
+                            <table class="w-full text-left text-sm text-slate-400">
+                                <tbody id="activity-log-list" class="divide-y divide-slate-700/50">
+                                    <tr><td class="px-6 py-8 text-center italic text-slate-600">Waiting for activity...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button class="p-1 hover:text-white disabled:opacity-50 transition"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
-                        <span class="text-blue-500 font-medium">1</span>
-                        <button class="p-1 hover:text-white disabled:opacity-50 transition"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                    <!-- ... Keys Panel ... -->
+                    <div class="bg-[#1E293B] border border-slate-700 rounded-2xl overflow-hidden shadow-xl h-fit">
+                        <div class="px-6 py-4 border-b border-slate-700 bg-[#1E293B]">
+                            <h2 class="text-sm font-bold text-white">Manage Keys</h2>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex gap-2">
+                                <input id="new-sys-key" type="text" placeholder="Paste Gemini API Key" class="flex-1 bg-[#0B1120] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-emerald-500 outline-none">
+                                <button onclick="addSystemKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="text-xs text-slate-500 font-mono max-h-48 overflow-y-auto custom-scrollbar">
+                                <ul id="system-keys-mini-list" class="space-y-2"></ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+
     </div>
 
-    <!-- Modal Backdrop -->
-    <div id="modalBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300">
-        <!-- Modal Content -->
-        <div id="modalContent" class="bg-[#222329] border border-gray-700 rounded-lg w-full max-w-md shadow-2xl transform transition-all duration-300 scale-95 opacity-0">
-            <div class="flex justify-between items-center p-4 border-b border-gray-700">
-                <h2 class="text-base font-bold text-white">Create New Profile</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1.5">Profile Name</label>
-                    <input type="text" id="pName" class="w-full bg-[#1b1c21] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm transition-colors" placeholder="e.g., Facebook Farm 1">
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start justify-center pt-20 hidden">
+        <div class="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h3 class="text-white font-bold mb-4 flex items-center gap-2"><i data-lucide="key" class="w-4 h-4 text-indigo-400"></i> Personal API Key</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="text-xs text-slate-400">Paste Your Gemini API Key</label>
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 hover:underline">Get Key <i data-lucide="external-link" class="w-3 h-3"></i></a>
                 </div>
-
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1.5">Proxy Configuration (Optional)</label>
-                    <input type="text" id="pProxy" class="w-full bg-[#1b1c21] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm transition-colors" placeholder="socks5 IP:Port:User:Pass">
+                <input id="api-key-input" type="password" placeholder="Paste Key Here..." class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-indigo-500 text-white">
+                <div class="flex gap-2">
+                    <button id="save-key-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-xl text-sm font-bold">Save Local Key</button>
+                    <button id="close-settings-btn" class="px-4 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm">Close</button>
                 </div>
-                
-                 <div>
-                    <label class="block text-xs text-gray-400 mb-1.5">Target URL (On Open)</label>
-                    <input type="text" id="pUrl" class="w-full bg-[#1b1c21] border border-gray-700 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm transition-colors" placeholder="https://..." value="https://www.google.com">
+                <div class="text-xs text-slate-500 pt-2 flex justify-between items-center">
+                    <span id="active-keys-count">Local Keys: 0</span>
+                    <button id="clear-keys-btn" class="text-red-400 hover:underline">Clear Local</button>
                 </div>
-            </div>
-
-            <div class="p-4 border-t border-gray-700 flex justify-end gap-3 bg-[#1b1c21] rounded-b-lg">
-                <button onclick="closeModal()" class="px-4 py-1.5 text-gray-400 hover:text-white text-sm transition-colors">
-                    Cancel
-                </button>
-                <button onclick="createProfile()" class="bg-[#2d75ff] hover:bg-blue-600 text-white px-6 py-1.5 rounded text-sm transition-all shadow-lg shadow-blue-900/20">
-                    Confirm
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-3 rounded shadow-lg border-l-4 border-green-500 transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
-        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-        <span id="toastMsg">Operation Successful</span>
+    <!-- TEXT PREVIEW MODAL (NEW) -->
+    <div id="text-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[80] flex items-center justify-center hidden opacity-0 transition-opacity">
+        <div class="w-full max-w-2xl bg-[#1E293B] border border-slate-700 rounded-3xl shadow-2xl p-8 relative mx-4">
+            <button onclick="closeTextModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i> Full Text Content</h3>
+            <div class="bg-[#0B1120] rounded-xl p-4 border border-slate-700 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                <p id="modal-full-text" class="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap"></p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast-container" class="fixed bottom-6 right-6 max-w-sm z-[70] hidden">
+        <div id="toast-box" class="flex items-start gap-3 p-4 rounded-lg border-l-4 shadow-2xl transition-all">
+            <i id="toast-icon" class="w-5 h-5 mt-0.5"></i>
+            <div>
+                <h3 id="toast-title" class="font-bold text-sm"></h3>
+                <p id="toast-msg" class="text-xs text-slate-300 mt-1"></p>
+            </div>
+            <button onclick="hideToast()" class="ml-auto text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
     </div>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- State Management ---
-        const defaultProfiles = [
-            { id: 1, no: 3, group: 'Haider Channel', name: 'spanish', note: 'Notes:', tag: 'Add Tag', proxy: 'No proxy', url: 'https://www.google.com', created: '11-17 08:54:26', lastOpened: '11-22 11:05:39' },
-            { id: 2, no: 2, group: 'Haider Channel', name: 'VEXUNA', note: 'Notes:', tag: 'Add Tag', proxy: 'No proxy', url: 'https://www.google.com', created: '11-13 07:57:19', lastOpened: '11-22 19:20:52' },
-            { id: 3, no: 1, group: 'Haider Channel', name: 'history', note: 'Notes:', tag: 'History', proxy: 'socks5 45.145.57.213:10136', url: 'https://www.google.com', created: '11-11 09:11:13', lastOpened: '11-22 03:19:45' },
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAbtakEQ9vl9Khz91D8HD8uDeQR8nUHa4",
+            authDomain: "creator-studio-new.firebaseapp.com",
+            projectId: "creator-studio-new",
+            storageBucket: "creator-studio-new.firebasestorage.app",
+            messagingSenderId: "512739989726",
+            appId: "1:512739989726:web:84b798168ca876ff628a4f",
+            measurementId: "G-T81R12D3KY"
+        };
+
+        const ADMIN_EMAIL = "haideroffical16@gmail.com"; 
+
+        let app, auth, db;
+        let isFirebaseActive = false;
+        let systemKeys = []; 
+
+        try {
+            if (typeof firebase !== 'undefined') {
+                app = firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                isFirebaseActive = true;
+                console.log("Firebase Connected");
+            } else {
+                showToast("Firebase SDK not loaded.", "error");
+            }
+        } catch (e) { console.error(e); }
+
+        const TTS_MODEL = "gemini-2.5-flash-preview-tts";
+        const CHUNK_SIZE = 3000; 
+        const VOICES = [
+            { id: "Fenrir", gender: "Male", desc: "Deep & Calm" },
+            { id: "Kore", gender: "Female", desc: "Soothing & Clear" },
+            { id: "Puck", gender: "Male", desc: "Energetic" },
+            { id: "Aoede", gender: "Female", desc: "Warm & Friendly" },
+            { id: "Charon", gender: "Male", desc: "Deep & Authoritative" },
+            { id: "Zephyr", gender: "Male", desc: "Smooth & Balanced" },
+            { id: "Leda", gender: "Female", desc: "Soft & Gentle" },
+            { id: "Orus", gender: "Male", desc: "Confident" },
+            { id: "Umbriel", gender: "Male", desc: "Steady & Neutral" },
+            { id: "Iapetus", gender: "Male", desc: "Serious & Deep" }
         ];
 
-        let profiles = JSON.parse(localStorage.getItem('html_browser_profiles')) || defaultProfiles;
+        let state = {
+            text: "",
+            selectedVoiceId: "Fenrir",
+            localKeys: [],
+            currentKeyIndex: 0,
+            isGenerating: false,
+            speed: 1.0,
+            currentUser: null,
+            authMode: 'login', 
+            isAdmin: false,
+            previewAudio: null
+        };
 
-        // --- DOM Elements ---
-        const tableBody = document.getElementById('profileTableBody');
-        const emptyState = document.getElementById('emptyState');
-        const modalBackdrop = document.getElementById('modalBackdrop');
-        const modalContent = document.getElementById('modalContent');
-        const totalCount = document.getElementById('totalCount');
-        const searchInput = document.getElementById('searchInput');
+        const els = {
+            landingView: document.getElementById('landing-view'),
+            toolView: document.getElementById('tool-view'),
+            adminDashboardView: document.getElementById('admin-dashboard-view'),
+            userAuthModal: document.getElementById('user-auth-modal'),
+            adminShortcutBtn: document.getElementById('admin-shortcut-btn'),
+            textModal: document.getElementById('text-modal'),
+            modalFullText: document.getElementById('modal-full-text')
+        };
 
-        // --- Core Functions ---
+        function getEl(id) { return document.getElementById(id); }
 
-        function saveProfiles() {
-            localStorage.setItem('html_browser_profiles', JSON.stringify(profiles));
-            renderProfiles();
-        }
-
-        function renderProfiles() {
-            const query = searchInput.value.toLowerCase();
-            const filtered = profiles.filter(p => p.name.toLowerCase().includes(query));
-
-            tableBody.innerHTML = '';
+        function init() {
+            lucide.createIcons();
+            renderVoices();
             
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-                filtered.forEach(p => {
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-[#2a2c35] group transition-colors border-b border-gray-800/30';
-                    
-                    // Proxy Logic
-                    let proxyDisplay = `<div class="text-gray-500 text-xs">No proxy</div>`;
-                    if (p.proxy && p.proxy !== 'No proxy') {
-                         const parts = p.proxy.split(' ');
-                         const type = parts[0] || 'http';
-                         const ip = parts[1] || p.proxy;
-                         proxyDisplay = `
-                            <div class="text-blue-400 text-xs">${type}</div>
-                            <div class="text-gray-400 text-[10px] mt-0.5 font-mono">${ip}</div>
-                         `;
+            const storedKeys = localStorage.getItem("local_api_keys");
+            if (storedKeys) state.localKeys = JSON.parse(storedKeys);
+            updateKeysUI();
+
+            if(isFirebaseActive) {
+                fetchSystemKeysForUser();
+                auth.onAuthStateChanged((user) => {
+                    state.currentUser = user;
+                    if (user) {
+                        state.isAdmin = (user.email === ADMIN_EMAIL);
+                        if (state.isAdmin) els.adminShortcutBtn.classList.remove('hidden');
+                        else els.adminShortcutBtn.classList.add('hidden');
                     }
-
-                    // Tag Styling
-                    const tagClass = p.tag === 'History' 
-                        ? "text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded text-[10px] uppercase inline-block" 
-                        : "text-blue-400 text-xs cursor-pointer hover:underline";
-
-                    row.innerHTML = `
-                        <td class="p-3 text-center"><input type="checkbox" class="rounded bg-gray-700 border-gray-600 cursor-pointer accent-blue-500"></td>
-                        <td class="p-3">
-                            <span class="border border-orange-400 text-orange-400 px-2 py-0.5 rounded text-xs font-mono">${p.no}</span>
-                        </td>
-                        <td class="p-3">
-                            <div class="text-white text-xs">${p.group}</div>
-                        </td>
-                        <td class="p-3">
-                            <span class="${tagClass}">${p.tag}</span>
-                        </td>
-                        <td class="p-3">
-                            <div class="font-medium text-white text-sm">${p.name}</div>
-                            <div class="text-gray-500 text-[10px] mt-0.5">${p.note}</div>
-                        </td>
-                        <td class="p-3">
-                            ${proxyDisplay}
-                        </td>
-                        <td class="p-3 text-[10px] text-gray-400 font-mono">
-                            <div>${p.created}</div>
-                            <div class="text-gray-500 mt-1">${p.lastOpened}</div>
-                        </td>
-                        <td class="p-3">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="launchProfile(${p.id})" class="border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-1 rounded text-xs transition-colors">
-                                    Open
-                                </button>
-                                <button class="text-gray-500 hover:text-white p-1 transition"><i data-lucide="settings" class="w-3.5 h-3.5"></i></button>
-                                <button onclick="deleteProfile(${p.id})" class="text-gray-500 hover:text-red-500 p-1 transition"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                            </div>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
                 });
             }
 
-            totalCount.innerText = `Total ${profiles.length}`;
-            lucide.createIcons(); // Re-init icons for new rows
+            getEl('open-tool-btn').onclick = checkAuthAndStart;
+            getEl('back-btn').onclick = () => switchView('landing');
+            getEl('settings-btn').onclick = () => toggleSettings(true);
+            getEl('close-settings-btn').onclick = () => toggleSettings(false);
+            getEl('save-key-btn').onclick = saveLocalKey;
+            getEl('clear-keys-btn').onclick = clearLocalKeys;
+            getEl('user-logout-btn').onclick = handleUserLogout;
+            getEl('admin-shortcut-btn').onclick = () => switchView('admin-dashboard');
+            
+            getEl('text-input').oninput = (e) => {
+                state.text = e.target.value;
+                getEl('char-count').innerText = state.text.length;
+            };
+            getEl('speed-range').oninput = (e) => {
+                state.speed = parseFloat(e.target.value);
+                getEl('speed-val').innerText = state.speed + 'x';
+            };
+            getEl('generate-btn').onclick = generateAudio;
         }
 
-        // --- Action Functions ---
+        function showToast(msg, type = 'error') {
+            const container = getEl('toast-container');
+            const box = getEl('toast-box');
+            const title = getEl('toast-title');
+            const text = getEl('toast-msg');
+            const icon = getEl('toast-icon');
+            
+            let bgClass, borderClass, titleClass, iconClass, iconName, titleText;
 
-        function launchProfile(id) {
-            const profile = profiles.find(p => p.id === id);
-            if (profile) {
-                const now = new Date();
-                const dateString = `${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-                
-                profile.lastOpened = dateString;
-                saveProfiles();
-                
-                window.open(profile.url, '_blank');
-                showToast(`Launched: ${profile.name}`);
+            if(type === 'error') {
+                bgClass = 'bg-[#1E293B]'; borderClass = 'border-red-500';
+                titleClass = 'text-red-400'; iconClass = 'text-red-500';
+                iconName = 'alert-circle'; titleText = 'Error';
+            } else if (type === 'success') {
+                bgClass = 'bg-[#1E293B]'; borderClass = 'border-emerald-500';
+                titleClass = 'text-emerald-400'; iconClass = 'text-emerald-500';
+                iconName = 'check-circle'; titleText = 'Success';
+            } else {
+                bgClass = 'bg-[#1E293B]'; borderClass = 'border-blue-500';
+                titleClass = 'text-blue-400'; iconClass = 'text-blue-500';
+                iconName = 'info'; titleText = 'Info';
+            }
+
+            box.className = `flex items-start gap-3 p-4 rounded-lg border-l-4 shadow-2xl transition-all ${bgClass} ${borderClass}`;
+            title.className = `font-bold text-sm ${titleClass}`;
+            icon.className = `w-5 h-5 mt-0.5 ${iconClass}`;
+            
+            title.innerText = titleText;
+            text.innerText = msg;
+            icon.setAttribute('data-lucide', iconName);
+            
+            container.classList.remove('hidden');
+            lucide.createIcons();
+
+            if(type !== 'error') setTimeout(hideToast, 3000);
+        }
+
+        function hideToast() { getEl('toast-container').classList.add('hidden'); }
+
+        // --- CORE LOGIC ---
+        function checkAuthAndStart() {
+            if (state.currentUser) switchView('tool');
+            else toggleUserAuth(true);
+        }
+
+        function toggleUserAuth(show) {
+            if(show) {
+                els.userAuthModal.classList.remove('hidden');
+                setTimeout(() => els.userAuthModal.classList.remove('opacity-0'), 10);
+            } else {
+                els.userAuthModal.classList.add('opacity-0');
+                setTimeout(() => els.userAuthModal.classList.add('hidden'), 300);
             }
         }
 
-        function createProfile() {
-            const name = document.getElementById('pName').value;
-            const proxy = document.getElementById('pProxy').value;
-            const url = document.getElementById('pUrl').value;
+        function switchAuthTab(mode) {
+            state.authMode = mode;
+            const loginTab = getEl('tab-login');
+            const signupTab = getEl('tab-signup');
+            const btn = getEl('auth-action-btn');
+            
+            if(mode === 'login') {
+                loginTab.className = "flex-1 py-2 text-sm font-bold rounded-lg text-white bg-slate-700 transition-all";
+                signupTab.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-400 hover:text-white transition-all";
+                btn.innerText = "Login";
+            } else {
+                signupTab.className = "flex-1 py-2 text-sm font-bold rounded-lg text-white bg-slate-700 transition-all";
+                loginTab.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-400 hover:text-white transition-all";
+                btn.innerText = "Create Account";
+            }
+        }
 
-            if (!name) {
-                alert("Profile name is required");
+        async function handleUserAuth() {
+            const email = getEl('user-email').value;
+            const pass = getEl('user-pass').value;
+            const msg = getEl('auth-msg');
+            
+            if(!email || !pass) { msg.innerText = "Please enter email and password"; return; }
+            if(!isFirebaseActive) { msg.innerText = "Error: Database not connected"; return; }
+
+            msg.innerText = "Processing...";
+            try {
+                let userCredential;
+                if(state.authMode === 'signup') {
+                    userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+                    db.collection('stats').doc('global').update({ total_users: firebase.firestore.FieldValue.increment(1) }).catch(() => {
+                        db.collection('stats').doc('global').set({ total_users: 1 }, { merge: true });
+                    });
+                } else {
+                    userCredential = await auth.signInWithEmailAndPassword(email, pass);
+                }
+                
+                const user = userCredential.user;
+                if (user.email === ADMIN_EMAIL) switchView('admin-dashboard');
+                else switchView('tool');
+                
+                msg.innerText = "";
+                getEl('user-email').value = "";
+                getEl('user-pass').value = "";
+                toggleUserAuth(false);
+
+            } catch (e) { msg.innerText = e.message.replace("Firebase:", "").trim(); }
+        }
+
+        function handleUserLogout() { auth.signOut(); switchView('landing'); }
+
+        function switchView(viewName) {
+            [els.landingView, els.toolView, els.adminDashboardView].forEach(el => {
+                el.classList.add('hidden', 'opacity-0');
+                el.classList.remove('z-50');
+            });
+            if(viewName === 'landing') showEl(els.landingView);
+            else if (viewName === 'tool') showEl(els.toolView);
+            else if (viewName === 'admin-dashboard') {
+                showEl(els.adminDashboardView);
+                els.adminDashboardView.classList.add('z-50');
+                if(isFirebaseActive) loadAdminDashboardData();
+            }
+        }
+
+        function showEl(el) { el.classList.remove('hidden'); setTimeout(() => el.classList.remove('opacity-0'), 50); }
+        function toggleSettings(show) { const modal = getEl('settings-modal'); if(show) modal.classList.remove('hidden'); else modal.classList.add('hidden'); }
+
+        // --- TEXT PREVIEW MODAL LOGIC ---
+        function openTextModal(fullText) {
+            els.modalFullText.innerText = fullText || "No text available.";
+            els.textModal.classList.remove('hidden');
+            setTimeout(() => els.textModal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeTextModal() {
+            els.textModal.classList.add('opacity-0');
+            setTimeout(() => els.textModal.classList.add('hidden'), 300);
+        }
+
+        function renderVoices() {
+            const list = getEl('voice-list'); list.innerHTML = '';
+            VOICES.forEach(voice => {
+                const isActive = state.selectedVoiceId === voice.id;
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-xl cursor-pointer transition-all flex items-center justify-between group ${isActive ? 'bg-emerald-600/20 border border-emerald-500/50' : 'hover:bg-slate-800 border border-transparent'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${isActive ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-400'}">${voice.id[0]}</div>
+                        <div>
+                            <h4 class="text-sm font-bold ${isActive ? 'text-emerald-400' : 'text-slate-300'}">${voice.id}</h4>
+                            <p class="text-[10px] text-slate-500">${voice.gender} • ${voice.desc}</p>
+                        </div>
+                    </div>
+                    <button class="preview-btn p-2 rounded-full hover:bg-slate-700 text-slate-400 hover:text-emerald-400 transition-colors" title="Play Preview">
+                        <i data-lucide="play" class="w-3 h-3 fill-current"></i>
+                    </button>
+                `;
+                div.onclick = () => { state.selectedVoiceId = voice.id; renderVoices(); };
+                const btn = div.querySelector('.preview-btn');
+                btn.onclick = (e) => { e.stopPropagation(); playPreview(voice.id); };
+                list.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        async function playPreview(voiceId) {
+            let activeKeyPool = state.localKeys.length > 0 ? state.localKeys : systemKeys;
+            if (activeKeyPool.length === 0) {
+                toggleSettings(true);
+                return showToast("Please add an API Key to preview voices.", "error");
+            }
+
+            if (state.previewAudio) state.previewAudio.pause();
+
+            try {
+                showToast("Loading preview...", "info"); 
+                const text = "Hello! This is a preview of my voice.";
+                const buffer = await fetchWithSmartRetry(text, voiceId, activeKeyPool);
+                const blob = createWavFromBuffer(buffer);
+                const url = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                audio.playbackRate = state.speed;
+                audio.play();
+                state.previewAudio = audio;
+                hideToast(); 
+            } catch (err) {
+                showToast(err.message, "error");
+            }
+        }
+
+        async function generateAudio() {
+            if(!state.currentUser) {
+                showToast("Session expired. Please login again.", "error");
+                switchView('landing');
+                toggleUserAuth(true);
                 return;
             }
-
-            const now = new Date();
-            const dateString = `${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-
-            const newProfile = {
-                id: Date.now(),
-                no: profiles.length + 1,
-                group: 'Default Group',
-                name: name,
-                note: 'Notes:',
-                tag: 'Add Tag',
-                proxy: proxy || 'No proxy',
-                url: url || 'https://www.google.com',
-                created: dateString,
-                lastOpened: '-'
-            };
-
-            profiles.unshift(newProfile); // Add to top
-            saveProfiles();
-            closeModal();
-            showToast("Profile Created Successfully");
+            const hasLocal = state.localKeys.length > 0;
+            const hasSystem = systemKeys.length > 0;
+            if (!state.text.trim()) return showToast("Please enter some text.", "error");
             
-            // Reset form
-            document.getElementById('pName').value = '';
-            document.getElementById('pProxy').value = '';
-        }
+            let allKeys = hasLocal ? state.localKeys : (hasSystem ? systemKeys : []);
+            if (allKeys.length === 0) {
+                toggleSettings(true);
+                return showToast("No API Keys found.", "error");
+            }
 
-        function deleteProfile(id) {
-            if(confirm("Are you sure you want to delete this profile?")) {
-                profiles = profiles.filter(p => p.id !== id);
-                saveProfiles();
-                showToast("Profile Deleted");
+            let activePool = [];
+            let backupPool = [];
+            
+            if (allKeys.length > 3) {
+                const activeCount = Math.ceil(allKeys.length * 0.7); 
+                activePool = allKeys.slice(0, activeCount);
+                backupPool = allKeys.slice(activeCount);
+            } else {
+                activePool = [...allKeys]; 
+            }
+
+            setIsGenerating(true);
+            incrementPending();
+
+            try {
+                const chunks = chunkText(state.text);
+                const CONCURRENCY = Math.min(activePool.length, 7); 
+                
+                let completedCount = 0;
+                let results = new Array(chunks.length);
+                
+                const processTask = async (task) => {
+                    const { chunk, index } = task;
+                    const pct = Math.round((completedCount / chunks.length) * 100);
+                    getEl('generate-btn').innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> ${pct}% (Chunks: ${completedCount}/${chunks.length})`;
+                    const buffer = await fetchWithBackupStrategy(chunk, state.selectedVoiceId, activePool, backupPool);
+                    results[index] = buffer;
+                    completedCount++;
+                };
+
+                const pool = chunks.map((chunk, index) => ({ chunk, index }));
+                const executing = [];
+                for (const task of pool) {
+                    const p = processTask(task).then(() => {
+                        executing.splice(executing.indexOf(p), 1);
+                    });
+                    executing.push(p);
+                    if (executing.length >= CONCURRENCY) {
+                        await Promise.race(executing);
+                    }
+                }
+                await Promise.all(executing);
+
+                const finalBlob = mergeBuffers(results);
+                const url = URL.createObjectURL(finalBlob);
+                
+                getEl('audio-player').src = url;
+                getEl('download-link').href = url;
+                getEl('download-link').download = `tts-${Date.now()}.wav`;
+                getEl('result-container').classList.remove('hidden');
+
+                logGenerationSuccess(state.selectedVoiceId, state.text);
+                showToast("Generation Complete!", "success");
+
+            } catch (err) {
+                showToast("Failed: " + err.message, "error");
+                logGenerationFail(state.selectedVoiceId, state.text, err.message);
+            } finally {
+                setIsGenerating(false);
             }
         }
 
-        // --- Modal Logic ---
-
-        function openModal() {
-            modalBackdrop.classList.remove('hidden');
-            // Small delay to allow display:block to apply before opacity transition
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
-            document.getElementById('pName').focus();
-        }
-
-        function closeModal() {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modalBackdrop.classList.add('hidden');
-            }, 300); // Wait for transition
-        }
-
-        // Close modal on clicking outside
-        modalBackdrop.addEventListener('click', (e) => {
-            if (e.target === modalBackdrop) closeModal();
-        });
-
-        // --- UI Utilities ---
-
-        function switchTab(btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('bg-[#2d75ff]', 'text-white');
-                b.classList.add('text-gray-400');
-            });
-            btn.classList.remove('text-gray-400');
-            btn.classList.add('bg-[#2d75ff]', 'text-white');
-            // Filter logic could go here
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            toast.classList.remove('translate-y-20', 'opacity-0');
+        async function fetchWithBackupStrategy(text, voiceId, activePool, backupPool) {
+            let keyIndex = Math.floor(Math.random() * activePool.length);
+            let key = activePool[keyIndex];
             
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            for (let attempt = 0; attempt < 3; attempt++) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${key}`;
+                
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text }] }],
+                            generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceId } } } }
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const b64 = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                        if (!b64) throw new Error("Empty response");
+                        const bin = atob(b64);
+                        const bytes = new Uint8Array(bin.length);
+                        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                        return bytes.buffer;
+                    } 
+                    
+                    if (response.status === 429 || response.status === 503) {
+                        if (backupPool.length > 0) {
+                            const freshKey = backupPool.shift();
+                            activePool[keyIndex] = freshKey; 
+                            backupPool.push(key); 
+                            key = freshKey; 
+                            continue; 
+                        } else {
+                            await new Promise(r => setTimeout(r, 1500));
+                            continue;
+                        }
+                    }
+                    throw new Error(await response.text());
+
+                } catch (e) {
+                    if (backupPool.length > 0) {
+                         const freshKey = backupPool.shift();
+                         activePool[keyIndex] = freshKey;
+                         backupPool.push(key);
+                         key = freshKey;
+                    }
+                }
+            }
+            throw new Error("Failed to generate chunk after swaps.");
+        }
+        
+        async function fetchWithSmartRetry(text, voiceId, keyPool) {
+             return fetchWithBackupStrategy(text, voiceId, keyPool, []);
         }
 
-        // --- Init ---
-        searchInput.addEventListener('input', renderProfiles);
-        renderProfiles();
-        lucide.createIcons();
+        function chunkText(s) { const c=[]; let cur=""; (s.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[s]).forEach(x=>{if(cur.length+x.length<CHUNK_SIZE)cur+=x;else{if(cur)c.push(cur);cur=x;}});if(cur)c.push(cur);return c;}
+        function mergeBuffers(b){if(b.length===0)return new Blob([]);let l=0,p=[];b.forEach(v=>{const d=new DataView(v),o=d.getUint32(0)===0x52494646?44:0;const s=v.slice(o);p.push(s);l+=s.byteLength;});const h=createWavHeader(l);return new Blob([h,...p],{type:'audio/wav'});}
+        function createWavFromBuffer(buffer) { if (buffer.byteLength > 44 && new DataView(buffer).getUint32(0, false) === 0x52494646) { return new Blob([buffer], { type: 'audio/wav' }); } return new Blob([createWavHeader(buffer.byteLength), buffer], { type: 'audio/wav' }); }
+        function createWavHeader(l){const b=new ArrayBuffer(44),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');v.setUint32(4,36+l,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,l,true);return b;}
 
+        function loadAdminDashboardData() {
+            db.collection('stats').doc('global').onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    getEl('stat-total-users').innerText = data.total_users || 0;
+                    getEl('stat-total-gens').innerText = data.total_generations || 0;
+                    getEl('stat-pending').innerText = data.pending_generations || 0;
+                    getEl('stat-failed-gens').innerText = data.failed_generations || 0;
+                    // NEW: USER KEYS STAT
+                    getEl('stat-user-keys').innerText = data.total_user_keys || 0;
+                }
+            });
+            db.collection('system_keys').orderBy('addedAt', 'desc').onSnapshot(snap => {
+                getEl('stat-keys-count').innerText = snap.size;
+                const miniList = getEl('system-keys-mini-list');
+                miniList.innerHTML = "";
+                snap.forEach(doc => {
+                    const k = doc.data().key;
+                    const mask = k.substr(0,4) + "..." + k.substr(-4);
+                    miniList.innerHTML += `<li class="flex justify-between items-center bg-slate-800 p-2 rounded border border-slate-700"><span>${mask}</span><button onclick="deleteSystemKey('${doc.id}')" class="text-red-400 hover:text-red-300"><i data-lucide="trash" class="w-3 h-3"></i></button></li>`;
+                });
+                lucide.createIcons();
+            });
+            db.collection('activity_logs').orderBy('timestamp', 'desc').limit(30).onSnapshot(snap => {
+                const list = getEl('activity-log-list');
+                list.innerHTML = "";
+                if(snap.empty) { list.innerHTML = `<tr><td class="px-6 py-8 text-center italic text-slate-600">No recent activity.</td></tr>`; return; }
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleTimeString() : 'Just now';
+                    const statusColor = data.status === 'failed' ? 'bg-red-500' : 'bg-emerald-500';
+                    const userEmail = data.userEmail ? data.userEmail.split('@')[0] : 'User';
+                    const safeText = (data.fullText || "").replace(/"/g, '&quot;').replace(/'/g, "\\'");
+
+                    list.innerHTML += `
+                        <tr class="border-b border-slate-700/50 hover:bg-slate-800/50 transition-colors cursor-pointer" onclick="openTextModal('${safeText}')">
+                            <td class="px-6 py-3">
+                                <div class="flex items-center gap-3 mb-1">
+                                    <div class="w-2 h-2 rounded-full ${statusColor}"></div>
+                                    <span class="text-xs text-slate-400 font-mono">${time}</span>
+                                    <span class="text-sm text-white font-bold">${userEmail}</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 truncate max-w-[300px]">
+                                    ${data.preview || "No preview"}
+                                </div>
+                            </td>
+                            <td class="px-6 py-3 text-right">
+                                <span class="text-[10px] bg-slate-700 px-2 py-1 rounded text-slate-300">${data.charCount || 0} chars</span>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
+        function incrementPending() { if(!isFirebaseActive) return; const ref = db.collection('stats').doc('global'); ref.update({ pending_generations: firebase.firestore.FieldValue.increment(1) }).catch(e => { ref.set({ total_users: 0, total_generations: 0, pending_generations: 1, failed_generations: 0 }, { merge: true }); }); }
+        
+        function logGenerationSuccess(voiceId, text) {
+            if(!isFirebaseActive) return;
+            const batch = db.batch();
+            batch.update(db.collection('stats').doc('global'), { 
+                pending_generations: firebase.firestore.FieldValue.increment(-1), 
+                total_generations: firebase.firestore.FieldValue.increment(1) 
+            });
+            batch.set(db.collection('activity_logs').doc(), { 
+                voice: voiceId, 
+                charCount: text.length, 
+                fullText: text, 
+                preview: text.split(' ').slice(0, 10).join(' ') + (text.split(' ').length > 10 ? "..." : ""), 
+                status: 'success',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
+                userEmail: state.currentUser ? state.currentUser.email : 'Anonymous', 
+                userId: state.currentUser ? state.currentUser.uid : 'anon' 
+            });
+            batch.commit().catch(console.error);
+        }
+
+        function logGenerationFail(voiceId, text, errorMsg) {
+            if(!isFirebaseActive) return;
+            const batch = db.batch();
+            batch.update(db.collection('stats').doc('global'), { 
+                pending_generations: firebase.firestore.FieldValue.increment(-1),
+                failed_generations: firebase.firestore.FieldValue.increment(1) 
+            });
+            batch.set(db.collection('activity_logs').doc(), { 
+                voice: voiceId, 
+                charCount: text ? text.length : 0, 
+                fullText: text || "",
+                preview: text ? (text.split(' ').slice(0, 10).join(' ') + "...") : "Error",
+                status: 'failed',
+                error: errorMsg,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
+                userEmail: state.currentUser ? state.currentUser.email : 'Anonymous', 
+                userId: state.currentUser ? state.currentUser.uid : 'anon' 
+            });
+            batch.commit().catch(console.error);
+        }
+
+        async function fetchSystemKeysForUser() { if(!isFirebaseActive) return; try { const snap = await db.collection('system_keys').orderBy('addedAt', 'desc').get(); systemKeys = snap.docs.map(doc => doc.data().key); updateKeysUI(); } catch (e) { console.log("Error fetching keys"); } }
+        async function addSystemKey() { const k = getEl('new-sys-key').value.trim(); if(!k) return; try { await db.collection('system_keys').add({ key: k, addedAt: firebase.firestore.FieldValue.serverTimestamp() }); getEl('new-sys-key').value = ""; showToast("Key Added", "success"); } catch (e) { showToast(e.message, "error"); } }
+        async function deleteSystemKey(id) { if(confirm("Delete Key?")) await db.collection('system_keys').doc(id).delete(); }
+        
+        // UPDATED: SAVE KEY WITH DB TRACKING
+        function saveLocalKey() { 
+            const k=getEl('api-key-input').value.trim(); 
+            if(k){
+                state.localKeys.push(k);
+                localStorage.setItem("local_api_keys",JSON.stringify(state.localKeys));
+                getEl('api-key-input').value="";
+                updateKeysUI();
+                showToast("Key Saved Locally", "success");
+                // NEW: Track User Key Added
+                if(isFirebaseActive) {
+                     db.collection('stats').doc('global').update({
+                         total_user_keys: firebase.firestore.FieldValue.increment(1)
+                     }).catch(e => console.log("Stats update failed", e));
+                }
+            } 
+        }
+        
+        function clearLocalKeys() { if(confirm("Clear?")){state.localKeys=[];localStorage.removeItem("local_api_keys");updateKeysUI();} }
+        function updateKeysUI() { getEl('active-keys-count').innerText = `Local Keys: ${state.localKeys.length}`; const hasLocal = state.localKeys.length > 0, hasSystem = systemKeys.length > 0; getEl('key-indicator').className = hasLocal ? "absolute top-2 right-2 w-2 h-2 bg-green-500 rounded-full" : (hasSystem ? "absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse" : "absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"); getEl('system-key-badge').classList.toggle('hidden', hasLocal || !hasSystem); }
+        function setIsGenerating(val) { state.isGenerating = val; getEl('generate-btn').disabled = val; getEl('generate-btn').innerHTML = val ? `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Generating...` : `<i data-lucide="wand-2" class="w-5 h-5"></i> Generate Audio`; if(val){ getEl('progress-container').classList.remove('hidden'); getEl('result-container').classList.add('hidden'); } lucide.createIcons(); }
+
+        init();
     </script>
 </body>
 </html>
