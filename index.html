@@ -9,7 +9,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- FIREBASE SDKs (Compat Version for Stability) -->
+    <!-- FIREBASE SDKs (Compat Version for Stability in Single File) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -199,7 +199,7 @@
             </div>
         </div>
 
-        <!-- 4. ADMIN DASHBOARD VIEW -->
+        <!-- 4. ADMIN DASHBOARD VIEW (UPDATED) -->
         <div id="admin-dashboard-view" class="absolute inset-0 bg-[#0B1120] flex flex-col hidden opacity-0 transition-opacity z-50">
             <div class="border-b border-red-900/30 bg-[#1E293B] px-6 py-4 flex justify-between items-center sticky top-0 z-10">
                 <div class="flex items-center gap-3">
@@ -237,15 +237,21 @@
                         <h3 id="stat-total-gens" class="text-3xl font-bold text-white">0</h3>
                         <p class="text-[10px] text-slate-500 mt-1">Audio Files Created</p>
                     </div>
-                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
-                        <div class="flex justify-between items-start mb-2"><p class="text-slate-400 text-[10px] uppercase font-bold">User Keys Added</p><i data-lucide="key" class="w-4 h-4 text-green-400"></i></div>
-                        <h3 id="stat-user-keys" class="text-3xl font-bold text-white">0</h3>
-                        <p class="text-[10px] text-slate-500 mt-1">Keys saved by users</p>
+                    <!-- PROCESSING CARD WITH RESET -->
+                    <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl relative group">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-400 text-[10px] uppercase font-bold">Processing Now</p>
+                            <div class="flex gap-2">
+                                <button onclick="resetPendingStats()" class="text-slate-600 hover:text-white transition-colors" title="Reset Counter"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+                                <i data-lucide="loader-2" class="w-4 h-4 text-yellow-400 animate-spin"></i>
+                            </div>
+                        </div>
+                        <h3 id="stat-pending" class="text-3xl font-bold text-yellow-400">0</h3>
+                        <p class="text-[10px] text-slate-500 mt-1">Live requests</p>
                     </div>
                     <div class="bg-[#162032] border border-slate-700 p-5 rounded-2xl">
-                        <div class="flex justify-between items-start mb-2"><p class="text-slate-400 text-[10px] uppercase font-bold">Failed Generations</p><i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i></div>
-                        <h3 id="stat-failed" class="text-3xl font-bold text-red-400">0</h3>
-                        <p class="text-[10px] text-slate-500 mt-1">Total Errors</p>
+                        <div class="flex justify-between items-start mb-2"><p class="text-slate-400 text-[10px] uppercase font-bold">System Keys</p><i data-lucide="lock" class="w-4 h-4 text-slate-400"></i></div>
+                        <h3 id="stat-keys-count" class="text-3xl font-bold text-white">0</h3>
                     </div>
                 </div>
 
@@ -680,6 +686,14 @@
                 }
             }
         }
+        
+        // --- RESET PENDING STATS ---
+        async function resetPendingStats() {
+            if(confirm("Reset pending counter to 0?")) {
+                await getRef('stats').doc('global').update({pending_generations: 0});
+                showToast("Counter Reset", "success");
+            }
+        }
 
         // Admin Functions (Fixed Paths with Safety Checks)
         function loadAdminDashboardData() {
@@ -692,6 +706,7 @@
                     if(getEl('stat-total-gens')) getEl('stat-total-gens').innerText = da.total_generations||0;
                     if(getEl('stat-user-keys')) getEl('stat-user-keys').innerText = da.total_user_keys||0;
                     if(getEl('stat-failed')) getEl('stat-failed').innerText = da.failed_generations||0;
+                    if(getEl('stat-pending')) getEl('stat-pending').innerText = da.pending_generations||0;
                 }
             });
             getRef('system_keys').onSnapshot(s => {
@@ -713,9 +728,11 @@
                         const time = dat.timestamp ? new Date(dat.timestamp.seconds*1000).toLocaleTimeString() : '...';
                         const email = dat.userEmail.split('@')[0];
                         const statusColor = dat.status==='processing' ? 'text-yellow-400 animate-pulse' : (dat.status==='failed'?'text-red-400':'text-emerald-400');
-                        const words = (dat.fullText || "").split(' ').slice(0,5).join(' ') + "...";
-                        const safeText = (dat.fullText || "").replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "");
-                        l.innerHTML += `<tr class="border-b border-slate-700/50 hover:bg-slate-800/30 transition-colors"><td class="px-6 py-3"><div class="text-xs text-white font-bold">${email}</div><div class="text-[10px] text-slate-500">${time}</div></td><td class="px-6 py-3 font-bold text-xs uppercase ${statusColor}">${dat.status}</td><td class="px-6 py-3"><div class="text-xs text-slate-300 cursor-pointer hover:text-white" onclick="this.innerText='${safeText}'">${words} <span class="text-[10px] text-indigo-400 ml-1">(click to expand)</span></div></td></tr>`;
+                        
+                        // Safe text replacement for JSON compatibility in onclick
+                        const safeText = (dat.fullText || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, "<br>");
+                        
+                        l.innerHTML += `<tr class="border-b border-slate-700/50 hover:bg-slate-800/30 transition-colors"><td class="px-6 py-3"><div class="text-xs text-white font-bold">${email}</div><div class="text-[10px] text-slate-500">${time}</div></td><td class="px-6 py-3 font-bold text-xs uppercase ${statusColor}">${dat.status}</td><td class="px-6 py-3"><div class="text-xs text-slate-300 max-h-20 overflow-y-auto custom-scrollbar whitespace-pre-wrap">${safeText}</div></td></tr>`;
                     });
                 }
             });
