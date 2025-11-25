@@ -399,15 +399,13 @@
                     if (user) {
                         state.isAdmin = (user.email === ADMIN_EMAIL);
                         els.adminShortcutBtn.classList.toggle('hidden', !state.isAdmin);
-                    }
-                });
-                // Listen for announcements - FIXED PATH
-                getRef('system_config').doc('announcement').onSnapshot(doc => {
-                    if(doc.exists && doc.data().active && doc.data().message) {
-                        els.announcementBanner.classList.remove('hidden');
-                        els.announcementText.innerText = doc.data().message;
-                    } else {
-                        els.announcementBanner.classList.add('hidden');
+                        
+                        // SETUP LISTENERS AFTER AUTH
+                        setupListeners(user);
+                        
+                        if(state.isAdmin) {
+                            loadAdminDashboardData();
+                        }
                     }
                 });
             }
@@ -430,6 +428,21 @@
         // Returns db.collection('artifacts').doc(appId).collection('public').doc('data').collection(name)
         function getRef(collectionName) {
             return db.collection('artifacts').doc(appId).collection('public').doc('data').collection(collectionName);
+        }
+        
+        // --- LISTENER SETUP ---
+        function setupListeners(user) {
+             // Listen for announcements - FIXED PATH & AUTH
+            getRef('system_config').doc('announcement').onSnapshot(doc => {
+                if(doc.exists && doc.data().active && doc.data().message) {
+                    els.announcementBanner.classList.remove('hidden');
+                    els.announcementText.innerText = doc.data().message;
+                } else {
+                    els.announcementBanner.classList.add('hidden');
+                }
+            }, (error) => {
+                console.log("Announcement listen error (expected if not admin/public):", error);
+            });
         }
 
         // --- CORE UI ---
