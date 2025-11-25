@@ -9,7 +9,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- FIREBASE SDKs (Compat Version for Stability in Single File) -->
+    <!-- FIREBASE SDKs (Compat Version for Stability) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -199,7 +199,7 @@
             </div>
         </div>
 
-        <!-- 4. ADMIN DASHBOARD VIEW (UPDATED) -->
+        <!-- 4. ADMIN DASHBOARD VIEW -->
         <div id="admin-dashboard-view" class="absolute inset-0 bg-[#0B1120] flex flex-col hidden opacity-0 transition-opacity z-50">
             <div class="border-b border-red-900/30 bg-[#1E293B] px-6 py-4 flex justify-between items-center sticky top-0 z-10">
                 <div class="flex items-center gap-3">
@@ -362,6 +362,7 @@
             measurementId: "G-T81R12D3KY"
         };
         const ADMIN_EMAIL = "haideroffical16@gmail.com"; 
+        // APP ID Variable from environment or fallback
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'creator-studio-new';
 
         let app, auth, db, isFirebaseActive = false, systemKeys = [];
@@ -400,14 +401,17 @@
                 auth.onAuthStateChanged((user) => {
                     state.currentUser = user;
                     if (user) {
+                        // Case-Insensitive Admin Check + Trim
                         const normalizedUserEmail = user.email.trim().toLowerCase();
                         const normalizedAdminEmail = ADMIN_EMAIL.trim().toLowerCase();
+                        
                         state.isAdmin = (normalizedUserEmail === normalizedAdminEmail);
                         els.adminShortcutBtn.classList.toggle('hidden', !state.isAdmin);
                         
                         setupListeners(user);
                         if(state.isAdmin) {
                             loadAdminDashboardData();
+                            // Auto-bootstrap stats if empty
                             getRef('stats').doc('global').get().then(d => {
                                 if(!d.exists) {
                                     getRef('stats').doc('global').set({total_users: 0, total_generations: 0, total_user_keys: 0, failed_generations: 0});
