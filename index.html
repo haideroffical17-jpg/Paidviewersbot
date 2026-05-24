@@ -202,7 +202,7 @@
   </a>
   <div class="nav-right">
     <!-- Admin back button -->
-    <a class="btn-admin" id="admin-btn" href="admin.html">
+    <a class="btn-admin" id="admin-btn" href="Admin.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       Admin Panel
     </a>
@@ -318,14 +318,21 @@
       <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </a>
 
-    <a class="tool-card" href="voice.html" onmousemove="trackMouse(event,this)">
+    <div class="tool-card" style="cursor:not-allowed;opacity:0.75;position:relative;" onmousemove="trackMouse(event,this)">
       <div class="card-glow"></div>
+      <!-- Coming Soon Badge -->
+      <div style="position:absolute;top:16px;right:16px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(251,191,36,.1));border:1px solid rgba(245,158,11,.4);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:5px;z-index:2;">
+        <div style="width:5px;height:5px;border-radius:50%;background:#fbbf24;box-shadow:0 0 6px #fbbf24;animation:blink 1.5s infinite;"></div>
+        <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#fbbf24;text-transform:uppercase;">Coming Soon</span>
+      </div>
       <div class="tool-icon icon-audio"><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
       <div class="tool-tag tag-audio">Text To Audio</div>
       <div class="tool-name">Voice Generator</div>
       <div class="tool-desc">Convert any text into natural-sounding speech. Multiple voices, languages, and emotional tones available.</div>
-      <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-    </a>
+      <div style="position:absolute;bottom:24px;right:24px;width:36px;height:36px;border-radius:50%;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);display:flex;align-items:center;justify-content:center;color:#fbbf24;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+    </div>
 
     <a class="tool-card" href="editor.html" onmousemove="trackMouse(event,this)">
       <div class="card-glow"></div>
