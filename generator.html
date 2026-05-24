@@ -6,20 +6,10 @@
   <title>VYROVA – Veo Video Generator</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    :root{
-      --bg:#07070f;--s1:#0c0c1a;--s2:#10101e;
-      --a:#7c3aed;--a2:#a855f7;--glow:#c084fc;
-      --red:#ef4444;--red2:#f87171;
-      --text:#f0eeff;--muted:#8b8aab;--muted2:#4a4968;
-      --border:rgba(120,80,255,.13);--border2:rgba(120,80,255,.27);
-      --card:rgba(12,12,24,.92);
-      --ok:#34d399;--warn:#fbbf24;
-    }
+    :root{--bg:#07070f;--a:#7c3aed;--a2:#a855f7;--glow:#c084fc;--red:#ef4444;--red2:#f87171;--text:#f0eeff;--muted:#8b8aab;--muted2:#4a4968;--border:rgba(120,80,255,.13);--border2:rgba(120,80,255,.27);--card:rgba(12,12,24,.92);--ok:#34d399;--warn:#fbbf24;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html,body{height:100%;overflow:hidden;}
     body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
-
-    /* BG */
     .grid{position:fixed;inset:0;background-image:linear-gradient(rgba(124,58,237,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.025) 1px,transparent 1px);background-size:54px 54px;z-index:0;pointer-events:none;}
     .blob{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
     .blob1{width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.17),transparent 70%);top:-160px;left:-120px;animation:b1 13s ease-in-out infinite;}
@@ -38,13 +28,16 @@
     .pg-icon svg{width:14px;height:14px;color:#fff;}
     .pg-name{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;background:linear-gradient(135deg,#c084fc,#f87171);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 
-    /* MODE PILLS */
+    /* FOLDER BTN */
+    .folder-btn{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:var(--warn);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+    .folder-btn:hover{background:rgba(251,191,36,.16);}
+    .folder-btn svg{width:13px;height:13px;}
+    .folder-name{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted2);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
     .tb-center{display:flex;align-items:center;gap:6px;}
     .mode-pill{padding:5px 13px;border-radius:20px;border:1px solid var(--border);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .22s;color:var(--muted);background:transparent;white-space:nowrap;}
     .mode-pill.active{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border-color:transparent;box-shadow:0 2px 12px rgba(124,58,237,.4);}
     .mode-pill:hover:not(.active){color:var(--text);border-color:var(--border2);}
-
-    /* RATIO */
     .tb-right{display:flex;align-items:center;gap:5px;}
     .ratio-btn{padding:5px 11px;border-radius:7px;border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--muted);background:transparent;letter-spacing:1px;}
     .ratio-btn.active{background:rgba(124,58,237,.15);color:var(--a2);border-color:rgba(124,58,237,.4);}
@@ -52,9 +45,8 @@
     /* LAYOUT */
     .main{display:flex;flex:1;overflow:hidden;position:relative;z-index:1;}
 
-    /* ━━━ LEFT PANEL ━━━ */
+    /* LEFT */
     .left{width:350px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--border);background:rgba(7,7,14,.65);backdrop-filter:blur(12px);}
-
     .lp-head{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
     .lp-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
     .lp-count{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;background:linear-gradient(135deg,var(--a2),var(--glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -63,29 +55,42 @@
     .p-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;}
     .p-list::-webkit-scrollbar{width:3px;}
     .p-list::-webkit-scrollbar-thumb{background:rgba(124,58,237,.3);border-radius:2px;}
-
     .p-item{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.14);border-radius:11px;padding:9px 11px;position:relative;transition:all .2s;animation:sIn .25s ease;}
     @keyframes sIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     .p-item:hover{border-color:rgba(124,58,237,.28);}
+    .p-item.pending{border-color:rgba(120,80,255,.2);}
+    .p-item.generating{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.04);}
     .p-item.done{border-color:rgba(52,211,153,.22);background:rgba(52,211,153,.04);}
-    .p-item.error{border-color:rgba(239,68,68,.22);background:rgba(239,68,68,.04);}
-
+    .p-item.error{border-color:rgba(239,68,68,.28);background:rgba(239,68,68,.06);}
     .p-num{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--a2);margin-bottom:4px;}
     .p-item.done .p-num{color:var(--ok);}
     .p-item.error .p-num{color:var(--red2);}
+    .p-item.generating .p-num{color:var(--warn);}
     .p-txt{font-size:11px;color:var(--text);line-height:1.5;word-break:break-word;}
-    .p-foot{display:flex;align-items:center;justify-content:space-between;margin-top:5px;}
-    .p-status{font-family:'Space Mono',monospace;font-size:9px;}
+
+    /* EDIT PROMPT (on error) */
+    .p-edit-ta{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(124,58,237,.25);border-radius:7px;color:var(--text);font-family:'Syne',sans-serif;font-size:11px;resize:none;line-height:1.5;padding:6px 8px;outline:none;margin-top:5px;display:none;}
+    .p-edit-ta:focus{border-color:var(--a2);}
+    .p-edit-ta.show{display:block;}
+
+    .p-foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px;gap:4px;flex-wrap:wrap;}
+    .p-status{font-family:'Space Mono',monospace;font-size:9px;flex:1;}
     .st-pending{color:var(--muted2);}
     .st-gen{color:var(--warn);animation:stpulse 1s infinite;}
     @keyframes stpulse{0%,100%{opacity:1}50%{opacity:.4}}
     .st-done{color:var(--ok);}
     .st-err{color:var(--red2);}
-    .del-btn{background:none;border:none;cursor:pointer;color:var(--muted2);padding:2px 4px;border-radius:4px;transition:all .2s;}
-    .del-btn:hover{color:var(--red2);background:rgba(239,68,68,.1);}
-    .del-btn svg{width:11px;height:11px;}
+    .p-actions{display:flex;gap:4px;}
+    .p-btn{background:none;border:1px solid;cursor:pointer;padding:2px 7px;border-radius:5px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;transition:all .2s;}
+    .p-btn-edit{color:var(--a2);border-color:rgba(168,85,247,.25);}
+    .p-btn-edit:hover{background:rgba(168,85,247,.1);}
+    .p-btn-edit.active{background:rgba(168,85,247,.15);}
+    .p-btn-retry{color:var(--ok);border-color:rgba(52,211,153,.25);}
+    .p-btn-retry:hover{background:rgba(52,211,153,.1);}
+    .p-btn-del{color:var(--red2);border-color:rgba(239,68,68,.2);}
+    .p-btn-del:hover{background:rgba(239,68,68,.1);}
 
-    /* ADD PROMPT BOX */
+    /* ADD BOX */
     .add-area{padding:10px;border-top:1px solid var(--border);flex-shrink:0;}
     .add-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:10px 12px;transition:border-color .2s;}
     .add-box:focus-within{border-color:rgba(124,58,237,.38);}
@@ -97,11 +102,10 @@
     .add-btn:hover{background:rgba(124,58,237,.24);}
     .add-btn svg{width:11px;height:11px;}
 
-    /* ━━━ MODE PANELS ━━━ */
-    /* CC Characters */
-    .cc-panel{padding:10px;border-top:1px solid var(--border);display:none;flex-shrink:0;}
-    .cc-panel.show{display:block;}
-    .cc-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+    /* PANELS */
+    .cc-panel,.ff-panel{padding:10px;border-top:1px solid var(--border);display:none;flex-shrink:0;}
+    .cc-panel.show,.ff-panel.show{display:block;}
+    .cc-head,.ff-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
     .char-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
     .char-slot{aspect-ratio:1;border-radius:9px;border:1px dashed rgba(124,58,237,.22);background:rgba(124,58,237,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
     .char-slot:hover{border-color:rgba(124,58,237,.45);background:rgba(124,58,237,.1);}
@@ -112,18 +116,8 @@
     .char-slot.filled:hover .char-del{display:flex;}
     .char-del svg{width:9px;height:9px;}
     .cc-note{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2);margin-top:7px;line-height:1.5;}
-
-    /* First Frame panel */
-    .ff-panel{padding:10px;border-top:1px solid var(--border);display:none;flex-shrink:0;}
-    .ff-panel.show{display:block;}
-    .ff-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
     .frame-row{display:flex;gap:8px;}
-    .frame-box{
-      flex:1;aspect-ratio:16/9;border-radius:10px;
-      border:1px dashed rgba(124,58,237,.22);background:rgba(124,58,237,.04);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-      cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
-    }
+    .frame-box{flex:1;aspect-ratio:16/9;border-radius:10px;border:1px dashed rgba(124,58,237,.22);background:rgba(124,58,237,.04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
     .frame-box.ratio916{aspect-ratio:9/16;}
     .frame-box:hover{border-color:rgba(124,58,237,.45);background:rgba(124,58,237,.09);}
     .frame-box.filled{border-style:solid;border-color:rgba(124,58,237,.35);}
@@ -138,23 +132,22 @@
     .gen-btn{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#ef4444);border:none;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:3px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;box-shadow:0 4px 18px rgba(124,58,237,.38);}
     .gen-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .5s;}
     .gen-btn:hover::before{left:100%;}
-    .gen-btn:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(124,58,237,.5);}
+    .gen-btn:hover{transform:translateY(-1px);}
     .gen-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
     .gen-prog{margin-top:7px;height:3px;border-radius:2px;background:rgba(255,255,255,.05);overflow:hidden;display:none;}
     .gen-prog.show{display:block;}
     .gen-bar{height:100%;background:linear-gradient(90deg,#7c3aed,#ef4444);border-radius:2px;width:0%;transition:width .5s;}
 
-    /* ━━━ CENTER CLIPS ━━━ */
+    /* CENTER */
     .center{flex:1;display:flex;flex-direction:column;overflow:hidden;}
     .c-toolbar{padding:9px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
     .c-info{display:flex;align-items:center;gap:14px;}
     .c-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
     .c-val{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;}
-    .to-editor-btn{display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:9px;background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(239,68,68,.12));border:1px solid rgba(124,58,237,.32);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;text-decoration:none;box-shadow:0 0 16px rgba(124,58,237,.08);}
+    .to-editor-btn{display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:9px;background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(239,68,68,.12));border:1px solid rgba(124,58,237,.32);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;text-decoration:none;}
     .to-editor-btn:hover{background:linear-gradient(135deg,rgba(124,58,237,.32),rgba(239,68,68,.22));transform:translateY(-1px);}
     .to-editor-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
     .to-editor-btn svg{width:13px;height:13px;}
-
     .c-grid{flex:1;overflow-y:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;align-content:start;}
     .c-grid::-webkit-scrollbar{width:3px;}
     .c-grid::-webkit-scrollbar-thumb{background:rgba(124,58,237,.28);border-radius:2px;}
@@ -170,6 +163,7 @@
     .clip{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;transition:all .3s;animation:cIn .35s ease;position:relative;}
     @keyframes cIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
     .clip:hover{border-color:rgba(124,58,237,.32);transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,0,0,.5);}
+    .clip.clip-error{border-color:rgba(239,68,68,.28);}
     .clip-thumb{background:rgba(124,58,237,.07);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
     .clip-thumb.r169{aspect-ratio:16/9;}
     .clip-thumb.r916{aspect-ratio:9/16;}
@@ -177,8 +171,6 @@
     .clip-ph{display:flex;flex-direction:column;align-items:center;gap:6px;}
     .clip-ph svg{width:24px;height:24px;color:var(--muted2);}
     .clip-ph span{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2);}
-
-    /* generating overlay */
     .gen-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(239,68,68,.08));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
     .g-spin{width:32px;height:32px;border:2px solid rgba(168,85,247,.18);border-top-color:var(--a2);border-radius:50%;animation:spin .8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -186,25 +178,35 @@
     @keyframes gp{0%,100%{opacity:1}50%{opacity:.35}}
     .scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--a2),transparent);animation:sc 2s ease-in-out infinite;}
     @keyframes sc{0%{top:0;opacity:1}100%{top:100%;opacity:0}}
-
+    /* Pending overlay */
+    .pend-ov{position:absolute;inset:0;background:rgba(7,7,20,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+    .pend-txt{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:1px;}
     .ord{position:absolute;top:7px;left:7px;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:2px 7px;font-family:'Bebas Neue',sans-serif;font-size:12px;color:#fff;letter-spacing:1px;}
     .clip-info{padding:9px 11px 4px;}
     .clip-n{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--a2);}
     .clip-n.ok{color:var(--ok);}
     .clip-n.err{color:var(--red2);}
     .clip-p{font-size:10px;color:var(--muted);line-height:1.4;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-    .clip-foot{display:flex;align-items:center;justify-content:space-between;padding:5px 11px 9px;}
+    .clip-foot{display:flex;align-items:center;justify-content:space-between;padding:5px 11px 9px;gap:4px;flex-wrap:wrap;}
     .clip-dur{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2);}
+    .clip-btns{display:flex;gap:4px;}
     .dl-btn{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:5px;padding:3px 7px;cursor:pointer;transition:all .2s;color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;}
     .dl-btn:hover{background:rgba(52,211,153,.09);color:var(--ok);border-color:rgba(52,211,153,.28);}
     .dl-btn svg{width:9px;height:9px;}
+    .retry-btn{display:flex;align-items:center;gap:3px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:5px;padding:3px 7px;cursor:pointer;transition:all .2s;color:var(--red2);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;}
+    .retry-btn:hover{background:rgba(239,68,68,.16);}
+    .retry-btn svg{width:9px;height:9px;}
+
+    /* TRIES BADGE */
+    .tries-badge{font-family:'Space Mono',monospace;font-size:8px;color:var(--warn);padding:2px 6px;border-radius:4px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);}
 
     /* TOAST */
-    .toast{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:11px;font-size:12px;font-weight:600;transform:translateY(55px);opacity:0;transition:all .32s cubic-bezier(.16,1,.3,1);pointer-events:none;max-width:300px;}
+    .toast{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:11px;font-size:12px;font-weight:600;transform:translateY(55px);opacity:0;transition:all .32s cubic-bezier(.16,1,.3,1);pointer-events:none;max-width:320px;}
     .toast.show{transform:translateY(0);opacity:1;}
     .toast.ok{background:#0a1e14;border:1px solid rgba(52,211,153,.28);color:var(--ok);}
     .toast.err{background:#1c0a0a;border:1px solid rgba(248,113,113,.28);color:var(--red2);}
     .toast.inf{background:#0f0a1e;border:1px solid rgba(124,58,237,.28);color:var(--a2);}
+    .toast.warn{background:#1a1400;border:1px solid rgba(251,191,36,.28);color:var(--warn);}
   </style>
 </head>
 <body>
@@ -216,16 +218,20 @@
 <div class="topbar">
   <div class="tb-left">
     <a class="back-btn" href="index.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back
     </a>
     <div class="pg-title">
       <div class="pg-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
       <span class="pg-name">VEO VIDEO GENERATOR</span>
     </div>
+    <!-- FOLDER SELECT -->
+    <button class="folder-btn" onclick="selectFolder()" title="Select download folder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      <span id="folder-label">Select Folder</span>
+    </button>
+    <span class="folder-name" id="folder-path"></span>
   </div>
 
-  <!-- MODE PILLS -->
   <div class="tb-center">
     <button class="mode-pill active" id="m-t2v" onclick="setMode('t2v')">Text to Video</button>
     <button class="mode-pill" id="m-cc"  onclick="setMode('cc')">CC Mode</button>
@@ -241,22 +247,19 @@
 
 <!-- MAIN -->
 <div class="main">
-
   <!-- LEFT -->
   <div class="left">
     <div class="lp-head">
       <div class="lp-label">Prompts Queue</div>
       <div class="lp-count" id="p-count">0</div>
     </div>
-
     <div class="p-list" id="p-list"></div>
 
-    <!-- ADD -->
     <div class="add-area">
       <div class="add-box">
         <textarea class="add-ta" id="new-input" placeholder="Paste or type prompts here — one per line for multiple clips at once" rows="4"></textarea>
         <div class="add-row">
-          <span class="add-hint">One line = one clip &nbsp;|&nbsp; Shift+Enter for new line</span>
+          <span class="add-hint">One line = one clip &nbsp;|&nbsp; Shift+Enter = new line</span>
           <button class="add-btn" onclick="addPrompts()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add All
@@ -265,11 +268,11 @@
       </div>
     </div>
 
-    <!-- CC CHARACTERS -->
+    <!-- CC -->
     <div class="cc-panel" id="cc-panel">
-      <div class="cc-head">Character References (unlimited upload)</div>
+      <div class="cc-head">Character References</div>
       <div class="char-grid" id="char-grid"></div>
-      <div class="cc-note">Upload unlimited character images.<br/>Only first 3 will be used per generation request.</div>
+      <div class="cc-note">Unlimited upload. Only first 3 used per request.</div>
       <input type="file" id="char-input" accept="image/*" multiple style="display:none" onchange="handleCharUpload(event)"/>
     </div>
 
@@ -277,45 +280,44 @@
     <div class="ff-panel" id="ff-panel">
       <div class="ff-head">First Frame Image</div>
       <div class="frame-row">
-        <div class="frame-box" id="ff-box" onclick="openFrame('ff')">
+        <div class="frame-box" id="ff-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <span class="frame-box-label">FIRST FRAME</span>
           <button class="frame-del" id="ff-del" onclick="clearFrame('ff',event)">✕ Remove</button>
         </div>
       </div>
-      <div class="cc-note" style="margin-top:8px;">AI will generate video starting from this image.</div>
+      <div class="cc-note" style="margin-top:8px;">AI generates video starting from this image.</div>
       <input type="file" id="ff-input" accept="image/*" style="display:none" onchange="handleFrame('ff',event)"/>
     </div>
 
-    <!-- FIRST + END FRAME -->
+    <!-- FIRST+END FRAME -->
     <div class="ff-panel" id="fe-panel">
       <div class="ff-head">First Frame &amp; End Frame</div>
       <div class="frame-row">
-        <div class="frame-box" id="fe-start-box" onclick="openFrame('fe-start')">
+        <div class="frame-box" id="fe-start-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <span class="frame-box-label">FIRST FRAME</span>
           <button class="frame-del" id="fe-start-del" onclick="clearFrame('fe-start',event)">✕</button>
         </div>
         <div style="display:flex;align-items:center;color:var(--muted2);font-size:18px;padding:0 2px;">→</div>
-        <div class="frame-box" id="fe-end-box" onclick="openFrame('fe-end')">
+        <div class="frame-box" id="fe-end-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <span class="frame-box-label">END FRAME</span>
           <button class="frame-del" id="fe-end-del" onclick="clearFrame('fe-end',event)">✕</button>
         </div>
       </div>
-      <div class="cc-note" style="margin-top:8px;">AI will transition from first frame to end frame.</div>
+      <div class="cc-note" style="margin-top:8px;">AI transitions between first and end frame.</div>
       <input type="file" id="fe-start-input" accept="image/*" style="display:none" onchange="handleFrame('fe-start',event)"/>
       <input type="file" id="fe-end-input"   accept="image/*" style="display:none" onchange="handleFrame('fe-end',event)"/>
     </div>
 
-    <!-- GENERATE -->
     <div class="gen-area">
       <button class="gen-btn" id="gen-btn" onclick="startGen()">▶ START GENERATION</button>
       <div class="gen-prog" id="gen-prog"><div class="gen-bar" id="gen-bar"></div></div>
     </div>
   </div>
 
-  <!-- CENTER CLIPS -->
+  <!-- CENTER -->
   <div class="center">
     <div class="c-toolbar">
       <div class="c-info">
@@ -331,7 +333,7 @@
       <div class="empty" id="empty-st">
         <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
         <div class="empty-h">No Clips Yet</div>
-        <div class="empty-s">Add prompts on the left and hit Start Generation to create video clips in order.</div>
+        <div class="empty-s">Add prompts on the left and hit Start Generation.</div>
       </div>
     </div>
   </div>
@@ -345,11 +347,13 @@
   let currentMode  = 't2v';
   let currentRatio = '16:9';
   let characters   = [];
-  let frames       = { ff: null, feStart: null, feEnd: null };
+  let frames       = { ff:null, feStart:null, feEnd:null };
   let isGenerating = false;
   let seq          = 0;
+  let folderHandle = null; // File System Access API
 
-  const VEO_API_KEY = 'YOUR_VEO_API_KEY';
+  const VEO_API_KEY   = 'YOUR_VEO_API_KEY';
+  const MAX_RETRIES   = 3;
 
   /* ━━ TOAST ━━ */
   function toast(msg, type='inf') {
@@ -358,15 +362,40 @@
     document.getElementById('toast-msg').textContent = msg;
     t.classList.add('show');
     clearTimeout(t._t);
-    t._t = setTimeout(()=>t.classList.remove('show'), 3000);
+    t._t = setTimeout(()=>t.classList.remove('show'), 3500);
+  }
+
+  /* ━━ FOLDER SELECT (File System Access API) ━━ */
+  async function selectFolder() {
+    try {
+      folderHandle = await window.showDirectoryPicker({ mode:'readwrite' });
+      document.getElementById('folder-label').textContent = '📁 ' + folderHandle.name;
+      document.getElementById('folder-path').textContent  = folderHandle.name;
+      toast(`Folder selected: ${folderHandle.name}`, 'ok');
+    } catch(e) {
+      if(e.name !== 'AbortError') toast('Folder selection failed.', 'err');
+    }
+  }
+
+  /* Save video blob directly to selected folder */
+  async function saveToFolder(blob, filename) {
+    if(!folderHandle) return false;
+    try {
+      const fh = await folderHandle.getFileHandle(filename, { create:true });
+      const ws = await fh.createWritable();
+      await ws.write(blob);
+      await ws.close();
+      return true;
+    } catch(e) {
+      toast('Folder save failed: ' + e.message, 'warn');
+      return false;
+    }
   }
 
   /* ━━ MODE ━━ */
   function setMode(m) {
     currentMode = m;
-    ['t2v','cc','ff','fe'].forEach(x=>{
-      document.getElementById('m-'+x).classList.toggle('active', x===m);
-    });
+    ['t2v','cc','ff','fe'].forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===m));
     document.getElementById('cc-panel').classList.toggle('show', m==='cc');
     document.getElementById('ff-panel').classList.toggle('show', m==='ff');
     document.getElementById('fe-panel').classList.toggle('show', m==='fe');
@@ -378,23 +407,20 @@
     currentRatio = r;
     document.querySelectorAll('.ratio-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    // update frame boxes ratio
-    const p = r==='9:16';
     ['ff-box','fe-start-box','fe-end-box'].forEach(id=>{
-      const el = document.getElementById(id);
-      if(el) el.classList.toggle('ratio916', p);
+      const el=document.getElementById(id);
+      if(el) el.classList.toggle('ratio916', r==='9:16');
     });
     renderClips();
   }
 
-  /* ━━ ADD PROMPTS (multi-line paste) ━━ */
+  /* ━━ ADD PROMPTS ━━ */
   function addPrompts() {
     const inp = document.getElementById('new-input');
-    const raw = inp.value;
-    const lines = raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
-    if(!lines.length) { toast('Please enter at least one prompt.','err'); return; }
+    const lines = inp.value.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    if(!lines.length){ toast('Please enter at least one prompt.','err'); return; }
     lines.forEach(txt=>{
-      prompts.push({ id:++seq, text:txt, status:'pending', videoUrl:null, duration:null });
+      prompts.push({ id:++seq, text:txt, status:'pending', videoUrl:null, duration:null, tries:0, editOpen:false });
     });
     inp.value='';
     renderPrompts(); renderClips(); updateCounts();
@@ -402,9 +428,45 @@
   }
 
   function deletePrompt(id) {
-    const idx = prompts.findIndex(p=>p.id===id);
+    const idx=prompts.findIndex(p=>p.id===id);
     if(idx===-1||prompts[idx].status==='generating') return;
     prompts.splice(idx,1);
+    renderPrompts(); renderClips(); updateCounts();
+  }
+
+  /* Toggle edit textarea for a prompt */
+  function toggleEdit(id) {
+    const p = prompts.find(x=>x.id===id);
+    if(!p) return;
+    p.editOpen = !p.editOpen;
+    renderPrompts();
+    if(p.editOpen) {
+      const ta = document.getElementById(`edit-ta-${id}`);
+      if(ta){ ta.value=p.text; ta.focus(); }
+    }
+  }
+
+  function saveEdit(id) {
+    const ta = document.getElementById(`edit-ta-${id}`);
+    const p  = prompts.find(x=>x.id===id);
+    if(!p||!ta) return;
+    p.text = ta.value.trim() || p.text;
+    p.editOpen = false;
+    if(p.status==='error') { p.status='pending'; p.tries=0; }
+    renderPrompts(); renderClips();
+    toast('Prompt updated!','ok');
+  }
+
+  /* Retry single prompt */
+  async function retryPrompt(id) {
+    const p = prompts.find(x=>x.id===id);
+    if(!p||isGenerating) return;
+    p.status='pending'; p.tries=0;
+    renderPrompts(); renderClips(); updateCounts();
+    toast('Retrying clip...','inf');
+    isGenerating=true;
+    await runSinglePrompt(p);
+    isGenerating=false;
     renderPrompts(); renderClips(); updateCounts();
   }
 
@@ -415,31 +477,44 @@
       list.innerHTML=`<div style="text-align:center;padding:28px 12px;color:var(--muted2);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;">NO PROMPTS YET<br/><br/>Add one below.</div>`;
       return;
     }
-    list.innerHTML = prompts.map((p,i)=>`
+    list.innerHTML = prompts.map((p,i)=>{
+      const isErr = p.status==='error';
+      const isDone = p.status==='done';
+      const isGen = p.status==='generating';
+      return `
       <div class="p-item ${p.status}" id="pi-${p.id}">
-        <div class="p-num">CLIP ${String(i+1).padStart(2,'0')}</div>
+        <div class="p-num">CLIP ${String(i+1).padStart(2,'0')} ${p.tries>0?`<span class="tries-badge">${p.tries}/${MAX_RETRIES} tries</span>`:''}</div>
         <div class="p-txt">${esc(p.text)}</div>
+        ${p.editOpen?`<textarea class="p-edit-ta show" id="edit-ta-${p.id}" rows="3">${esc(p.text)}</textarea>`:''}
         <div class="p-foot">
-          <span class="p-status st-${p.status==='pending'?'pending':p.status==='generating'?'gen':p.status==='done'?'done':'err'}">
-            ${p.status==='pending'?'● QUEUED':p.status==='generating'?'◉ GENERATING...':p.status==='done'?'✓ DONE':'✗ ERROR'}
+          <span class="p-status st-${p.status==='pending'?'pending':isGen?'gen':isDone?'done':'err'}">
+            ${p.status==='pending'?'● PENDING':isGen?'◉ GENERATING...':isDone?'✓ DONE':'✗ FAILED'}
           </span>
-          <button class="del-btn" onclick="deletePrompt(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+          <div class="p-actions">
+            ${isErr||p.editOpen?`<button class="p-btn p-btn-edit ${p.editOpen?'active':''}" onclick="${p.editOpen?`saveEdit(${p.id})`:`toggleEdit(${p.id})`}">${p.editOpen?'Save':'Edit'}</button>`:''}
+            ${isErr?`<button class="p-btn p-btn-retry" onclick="retryPrompt(${p.id})">↺ Retry</button>`:''}
+            ${!isGen?`<button class="p-btn p-btn-del" onclick="deletePrompt(${p.id})">✕</button>`:''}
+          </div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   /* ━━ RENDER CLIPS ━━ */
   function renderClips() {
     const grid  = document.getElementById('c-grid');
     const empty = document.getElementById('empty-st');
-    if(!prompts.length) { empty.style.display='flex'; grid.innerHTML=''; grid.appendChild(empty); return; }
+    if(!prompts.length){ empty.style.display='flex'; grid.innerHTML=''; grid.appendChild(empty); return; }
     empty.style.display='none';
     const p9 = currentRatio==='9:16';
     grid.innerHTML = prompts.map((p,i)=>{
       if(p.status==='pending') return `
         <div class="clip">
           <div class="clip-thumb ${p9?'r916':'r169'}">
-            <div class="clip-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>QUEUED</span></div>
+            <div class="pend-ov">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="1.5" width="24" height="24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="pend-txt">PENDING</span>
+            </div>
           </div>
           <div class="clip-info"><div class="clip-n">CLIP ${String(i+1).padStart(2,'0')}</div><div class="clip-p">${esc(p.text)}</div></div>
         </div>`;
@@ -454,102 +529,132 @@
         <div class="clip">
           <div class="ord">#${i+1}</div>
           <div class="clip-thumb ${p9?'r916':'r169'}">
-            ${p.videoUrl
-              ?`<video src="${p.videoUrl}" loop muted playsinline preload="metadata" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>`
-              :`<div class="clip-ph"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg><span style="color:var(--ok)">READY</span></div>`
-            }
+            ${p.videoUrl?`<video src="${p.videoUrl}" loop muted playsinline preload="metadata" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>`
+            :`<div class="clip-ph"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg><span style="color:var(--ok)">SAVED TO FOLDER</span></div>`}
           </div>
           <div class="clip-info"><div class="clip-n ok">✓ CLIP ${String(i+1).padStart(2,'0')}</div><div class="clip-p">${esc(p.text)}</div></div>
           <div class="clip-foot">
             <span class="clip-dur">${p.duration||'~8s'}</span>
-            ${p.videoUrl?`<button class="dl-btn" onclick="dlClip('${p.videoUrl}',${i+1})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>DL</button>`:''}
+            <div class="clip-btns">
+              ${p.videoUrl?`<button class="dl-btn" onclick="dlClip('${p.videoUrl}',${i+1})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>DL</button>`:''}
+            </div>
           </div>
         </div>`;
+      // error
       return `
-        <div class="clip">
+        <div class="clip clip-error">
           <div class="clip-thumb ${p9?'r916':'r169'}">
-            <div class="clip-ph"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red2)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span style="color:var(--red2)">ERROR</span></div>
+            <div class="pend-ov" style="background:rgba(239,68,68,.1);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--red2)" stroke-width="1.5" width="24" height="24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span style="font-family:'Space Mono',monospace;font-size:8px;color:var(--red2);">FAILED (${p.tries}/${MAX_RETRIES})</span>
+            </div>
           </div>
           <div class="clip-info"><div class="clip-n err">✗ CLIP ${String(i+1).padStart(2,'0')}</div><div class="clip-p">${esc(p.text)}</div></div>
+          <div class="clip-foot">
+            <span class="clip-dur" style="color:var(--red2);">Failed after ${p.tries} tries</span>
+            <div class="clip-btns">
+              <button class="retry-btn" onclick="retryPrompt(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="9" height="9"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Retry</button>
+            </div>
+          </div>
         </div>`;
     }).join('');
   }
 
-  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
   function updateCounts() {
     document.getElementById('p-count').textContent = prompts.length;
-    const done = prompts.filter(p=>p.status==='done').length;
-    document.getElementById('c-count').textContent = `${done} / ${prompts.length}`;
-    document.getElementById('editor-btn').disabled = done===0;
+    const done=prompts.filter(p=>p.status==='done').length;
+    document.getElementById('c-count').textContent=`${done} / ${prompts.length}`;
+    document.getElementById('editor-btn').disabled=done===0;
   }
 
-  /* ━━ CHARACTERS (CC) ━━ */
+  /* ━━ CHARACTERS ━━ */
   function renderCharGrid() {
-    const grid = document.getElementById('char-grid');
-    let html = characters.map((c,i)=>`
+    const grid=document.getElementById('char-grid');
+    let html=characters.map((c,i)=>`
       <div class="char-slot filled">
         <img src="${c.url}"/>
         <button class="char-del" onclick="delChar(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>`).join('');
-    // add slot
-    html += `<div class="char-slot" onclick="document.getElementById('char-input').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>`;
-    grid.innerHTML = html;
+    html+=`<div class="char-slot" onclick="document.getElementById('char-input').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>`;
+    grid.innerHTML=html;
   }
-
-  function handleCharUpload(e) {
-    Array.from(e.target.files).forEach(f=>{
-      characters.push({url:URL.createObjectURL(f), file:f});
-    });
-    renderCharGrid();
-    toast(`${e.target.files.length} character(s) uploaded!`,'ok');
-    e.target.value='';
-  }
-  function delChar(i){ characters.splice(i,1); renderCharGrid(); }
+  function handleCharUpload(e){Array.from(e.target.files).forEach(f=>{characters.push({url:URL.createObjectURL(f),file:f});});renderCharGrid();toast(`${e.target.files.length} character(s) uploaded!`,'ok');e.target.value='';}
+  function delChar(i){characters.splice(i,1);renderCharGrid();}
 
   /* ━━ FRAMES ━━ */
-  function openFrame(type){ document.getElementById(type.replace('-','_').replace('fe_','fe-').replace('ff','ff')+'-input').click(); }
-
-  // Fix: properly map type to input id
-  const frameInputMap = { 'ff':'ff-input','fe-start':'fe-start-input','fe-end':'fe-end-input' };
-  const frameBoxMap   = { 'ff':'ff-box','fe-start':'fe-start-box','fe-end':'fe-end-box' };
-  const frameDelMap   = { 'ff':'ff-del','fe-start':'fe-start-del','fe-end':'fe-end-del' };
-  const frameKey      = { 'ff':'ff','fe-start':'feStart','fe-end':'feEnd' };
+  const frameInputMap={'ff':'ff-input','fe-start':'fe-start-input','fe-end':'fe-end-input'};
+  const frameBoxMap={'ff':'ff-box','fe-start':'fe-start-box','fe-end':'fe-end-box'};
+  const frameDelMap={'ff':'ff-del','fe-start':'fe-start-del','fe-end':'fe-end-del'};
+  const frameKey={'ff':'ff','fe-start':'feStart','fe-end':'feEnd'};
 
   document.querySelectorAll('.frame-box').forEach(b=>b.addEventListener('click',function(){
-    const id = this.id.replace('-box','');
-    document.getElementById(frameInputMap[id]).click();
+    const id=this.id.replace('-box','');
+    document.getElementById(frameInputMap[id])?.click();
   }));
 
-  function handleFrame(type, e) {
-    const file = e.target.files[0];
-    if(!file) return;
-    const url = URL.createObjectURL(file);
-    frames[frameKey[type]] = {url, file};
-    const box = document.getElementById(frameBoxMap[type]);
-    // set bg image
-    let img = box.querySelector('img');
-    if(!img){ img = document.createElement('img'); box.appendChild(img); }
-    img.src = url;
-    box.classList.add('filled');
+  function handleFrame(type,e){
+    const file=e.target.files[0]; if(!file) return;
+    const url=URL.createObjectURL(file);
+    frames[frameKey[type]]={url,file};
+    const box=document.getElementById(frameBoxMap[type]);
+    let img=box.querySelector('img');
+    if(!img){img=document.createElement('img');box.appendChild(img);}
+    img.src=url; box.classList.add('filled');
     document.getElementById(frameDelMap[type]).style.display='block';
     toast('Frame uploaded!','ok');
     e.target.value='';
   }
-
-  function clearFrame(type, ev) {
+  function clearFrame(type,ev){
     ev.stopPropagation();
-    frames[frameKey[type]] = null;
-    const box = document.getElementById(frameBoxMap[type]);
-    const img = box.querySelector('img');
+    frames[frameKey[type]]=null;
+    const box=document.getElementById(frameBoxMap[type]);
+    const img=box.querySelector('img');
     if(img) img.remove();
     box.classList.remove('filled');
     document.getElementById(frameDelMap[type]).style.display='none';
   }
+  function openFrame(type){document.getElementById(frameInputMap[type])?.click();}
 
-  /* ━━ GENERATION ━━ */
+  /* ━━ GENERATE ONE CLIP WITH RETRIES ━━ */
+  async function runSinglePrompt(p) {
+    for(let attempt=1; attempt<=MAX_RETRIES; attempt++) {
+      p.status='generating'; p.tries=attempt;
+      renderPrompts(); renderClips();
+      try {
+        const { url, blob } = await generateClip(p);
+        p.status='done'; p.videoUrl=url; p.duration='~8s';
+
+        // Auto-save to folder if selected
+        if(folderHandle && blob) {
+          const idx = prompts.indexOf(p)+1;
+          const fname = `vyrova_clip_${String(idx).padStart(2,'0')}.mp4`;
+          const saved = await saveToFolder(blob, fname);
+          if(saved) toast(`Clip ${idx} saved to folder!`, 'ok');
+          else toast(`Clip ${idx} ready! (Manual DL needed)`, 'ok');
+        } else {
+          toast(`Clip ${prompts.indexOf(p)+1} ready!`, 'ok');
+        }
+        return true;
+      } catch(err) {
+        console.warn(`Attempt ${attempt} failed:`, err.message);
+        if(attempt < MAX_RETRIES) {
+          toast(`Clip ${prompts.indexOf(p)+1} attempt ${attempt} failed, retrying...`, 'warn');
+          await sleep(2000);
+        } else {
+          p.status='error';
+          toast(`Clip ${prompts.indexOf(p)+1} failed after ${MAX_RETRIES} tries.`, 'err');
+          return false;
+        }
+      }
+    }
+    return false;
+  }
+
+  /* ━━ START GENERATION ━━ */
   async function startGen() {
-    const pending = prompts.filter(p=>p.status==='pending');
+    const pending=prompts.filter(p=>p.status==='pending');
     if(!pending.length){ toast('No pending prompts!','err'); return; }
     if(isGenerating){ toast('Already generating...','inf'); return; }
 
@@ -560,66 +665,59 @@
     const bar=document.getElementById('gen-bar');
     const total=pending.length; let done=0;
 
-    for(const p of pending){
-      p.status='generating'; renderPrompts(); renderClips();
-      try{
-        const url = await generateClip(p);
-        p.status='done'; p.videoUrl=url; p.duration='~8s';
-        toast(`Clip ${prompts.indexOf(p)+1} ready!`,'ok');
-      }catch(err){
-        p.status='error';
-        toast(`Clip ${prompts.indexOf(p)+1} failed: ${err.message}`,'err');
-      }
-      done++; bar.style.width=`${(done/total)*100}%`;
+    // One by one — next starts only after current finishes
+    for(const p of pending) {
+      await runSinglePrompt(p);
+      done++;
+      bar.style.width=`${(done/total)*100}%`;
       renderPrompts(); renderClips(); updateCounts();
     }
 
     isGenerating=false; btn.disabled=false; btn.textContent='▶ START GENERATION';
-    toast(`Done! ${prompts.filter(p=>p.status==='done').length}/${prompts.length} clips ready.`,'ok');
+    const readyCount=prompts.filter(p=>p.status==='done').length;
+    const failCount=prompts.filter(p=>p.status==='error').length;
+    toast(`Done! ${readyCount} ready${failCount>0?`, ${failCount} failed`:''}. `,readyCount>0?'ok':'err');
   }
 
+  /* ━━ API CALL ━━ */
   async function generateClip(p) {
-    const ratio = currentRatio;
-    const instances = [{ prompt: p.text }];
+    const ratio=currentRatio;
+    const instances=[{ prompt:p.text }];
 
-    // Attach frames if needed
-    if((currentMode==='ff'||currentMode==='fe')&&frames.ff){
-      instances[0].image = { bytesBase64Encoded: await toB64(frames.ff.file), mimeType: frames.ff.file.type };
-    }
-    if(currentMode==='fe'&&frames.feEnd){
-      instances[0].lastFrame = { bytesBase64Encoded: await toB64(frames.feEnd.file), mimeType: frames.feEnd.file.type };
-    }
-    if(currentMode==='cc'&&characters.length){
-      instances[0].referenceImages = await Promise.all(characters.slice(0,3).map(async c=>({
-        bytesBase64Encoded: await toB64(c.file), mimeType: c.file.type
-      })));
-    }
+    if((currentMode==='ff'||currentMode==='fe')&&frames.ff)
+      instances[0].image={ bytesBase64Encoded:await toB64(frames.ff.file), mimeType:frames.ff.file.type };
+    if(currentMode==='fe'&&frames.feEnd)
+      instances[0].lastFrame={ bytesBase64Encoded:await toB64(frames.feEnd.file), mimeType:frames.feEnd.file.type };
+    if(currentMode==='cc'&&characters.length)
+      instances[0].referenceImages=await Promise.all(characters.slice(0,3).map(async c=>({ bytesBase64Encoded:await toB64(c.file), mimeType:c.file.type })));
 
-    const res = await fetch(
+    const res=await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/veo-2.0-generate-001:predictLongRunning?key=${VEO_API_KEY}`,
-      { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ instances, parameters:{ aspectRatio:ratio, sampleCount:1 } }) }
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({instances,parameters:{aspectRatio:ratio,sampleCount:1}})}
     );
-    if(!res.ok){ const e=await res.json(); throw new Error(e.error?.message||`Error ${res.status}`); }
-    const op = await res.json();
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API Error ${res.status}`);}
+    const op=await res.json();
     if(!op.name) throw new Error('No operation returned');
 
-    for(let i=0;i<30;i++){
-      await sleep(4000);
-      const poll = await fetch(`https://generativelanguage.googleapis.com/v1beta/${op.name}?key=${VEO_API_KEY}`);
-      const pd   = await poll.json();
-      if(pd.done){
-        const uri = pd.response?.videos?.[0]?.uri || pd.response?.predictions?.[0]?.bytesBase64Encoded;
-        if(!uri) throw new Error('No video in response');
-        if(!uri.startsWith('http')){
-          const blob = b64Blob(uri,'video/mp4');
-          return URL.createObjectURL(blob);
-        }
-        return uri;
-      }
+    for(let i=0;i<40;i++){
+      await sleep(5000);
+      const poll=await fetch(`https://generativelanguage.googleapis.com/v1beta/${op.name}?key=${VEO_API_KEY}`);
+      if(!poll.ok) throw new Error(`Poll error ${poll.status}`);
+      const pd=await poll.json();
       if(pd.error) throw new Error(pd.error.message);
+      if(pd.done){
+        const b64=pd.response?.predictions?.[0]?.bytesBase64Encoded;
+        const uri=pd.response?.videos?.[0]?.uri;
+        if(b64){
+          const blob=b64Blob(b64,'video/mp4');
+          return { url:URL.createObjectURL(blob), blob };
+        }
+        if(uri) return { url:uri, blob:null };
+        throw new Error('No video in response');
+      }
     }
-    throw new Error('Timeout');
+    throw new Error('Timeout: generation took too long');
   }
 
   function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
@@ -628,22 +726,23 @@
 
   function dlClip(url,num){const a=document.createElement('a');a.href=url;a.download=`vyrova_clip_${String(num).padStart(2,'0')}.mp4`;a.click();}
 
+  /* ━━ SEND TO EDITOR ━━ */
   function sendToEditor(){
     const ready=prompts.filter(p=>p.status==='done');
     if(!ready.length){toast('No clips ready!','err');return;}
-    sessionStorage.setItem('vyrova_editor_clips', JSON.stringify(
-      ready.map((p,i)=>({ order:prompts.indexOf(p)+1, prompt:p.text, videoUrl:p.videoUrl||null, duration:p.duration||'8s', label:`Clip ${String(prompts.indexOf(p)+1).padStart(2,'0')}` }))
+    sessionStorage.setItem('vyrova_editor_clips',JSON.stringify(
+      ready.map(p=>({order:prompts.indexOf(p)+1,prompt:p.text,videoUrl:p.videoUrl||null,duration:p.duration||'8s',label:`Clip ${String(prompts.indexOf(p)+1).padStart(2,'0')}`}))
     ));
     toast('Sending to Editor...','ok');
     setTimeout(()=>window.location.href='editor.html?from=generator',700);
   }
 
-  /* Enter key = add all */
+  /* ━━ KEYBOARD ━━ */
   document.getElementById('new-input').addEventListener('keydown',e=>{
     if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();addPrompts();}
   });
 
-  /* INIT */
+  /* ━━ INIT ━━ */
   renderPrompts(); renderClips(); updateCounts(); renderCharGrid();
 </script>
 </body>
