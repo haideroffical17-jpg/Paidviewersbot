@@ -6,840 +6,645 @@
   <title>VYROVA – Veo Video Generator</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --bg:#080810;--surface:#0d0d1a;--surface2:#111120;
-      --accent:#7c3aed;--accent2:#a855f7;--glow:#c084fc;
+    :root{
+      --bg:#07070f;--s1:#0c0c1a;--s2:#10101e;
+      --a:#7c3aed;--a2:#a855f7;--glow:#c084fc;
       --red:#ef4444;--red2:#f87171;
-      --text:#f1f0ff;--muted:#8b8aab;--muted2:#5a597a;
-      --border:rgba(120,80,255,0.14);--border2:rgba(120,80,255,0.28);
-      --card:rgba(13,13,26,0.9);
-      --success:#34d399;--warn:#fbbf24;
+      --text:#f0eeff;--muted:#8b8aab;--muted2:#4a4968;
+      --border:rgba(120,80,255,.13);--border2:rgba(120,80,255,.27);
+      --card:rgba(12,12,24,.92);
+      --ok:#34d399;--warn:#fbbf24;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html,body{height:100%;overflow:hidden;}
     body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
 
     /* BG */
-    .grid-overlay{position:fixed;inset:0;background-image:linear-gradient(rgba(124,58,237,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.03) 1px,transparent 1px);background-size:55px 55px;z-index:0;pointer-events:none;}
+    .grid{position:fixed;inset:0;background-image:linear-gradient(rgba(124,58,237,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.025) 1px,transparent 1px);background-size:54px 54px;z-index:0;pointer-events:none;}
     .blob{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
-    .blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.18),transparent 70%);top:-150px;left:-100px;animation:b1 12s ease-in-out infinite;}
-    .blob-2{width:400px;height:400px;background:radial-gradient(circle,rgba(239,68,68,.1),transparent 70%);bottom:-100px;right:-100px;animation:b2 15s ease-in-out infinite;}
-    @keyframes b1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
-    @keyframes b2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-40px)}}
+    .blob1{width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.17),transparent 70%);top:-160px;left:-120px;animation:b1 13s ease-in-out infinite;}
+    .blob2{width:420px;height:420px;background:radial-gradient(circle,rgba(239,68,68,.09),transparent 70%);bottom:-120px;right:-80px;animation:b2 16s ease-in-out infinite;}
+    @keyframes b1{0%,100%{transform:translate(0,0)}50%{transform:translate(45px,30px)}}
+    @keyframes b2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-35px)}}
 
     /* TOPBAR */
-    .topbar{
-      position:relative;z-index:50;
-      height:60px;padding:0 24px;
-      display:flex;align-items:center;justify-content:space-between;
-      background:rgba(8,8,16,.8);backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--border);flex-shrink:0;
-    }
-    .topbar-left{display:flex;align-items:center;gap:12px;}
-    .back-btn{
-      display:flex;align-items:center;gap:6px;
-      padding:6px 12px;border-radius:8px;
-      background:rgba(255,255,255,.04);border:1px solid var(--border);
-      color:var(--muted);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
-      cursor:pointer;text-decoration:none;transition:all .2s;
-    }
-    .back-btn:hover{background:rgba(124,58,237,.1);color:var(--text);border-color:var(--border2);}
-    .back-btn svg{width:14px;height:14px;}
-    .page-title{display:flex;align-items:center;gap:8px;}
-    .page-title-icon{
-      width:32px;height:32px;border-radius:9px;
-      background:linear-gradient(135deg,#7c3aed,#ef4444);
-      display:flex;align-items:center;justify-content:center;
-    }
-    .page-title-icon svg{width:15px;height:15px;color:#fff;}
-    .page-title-text{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;background:linear-gradient(135deg,#c084fc,#f87171);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .topbar{position:relative;z-index:50;height:58px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,7,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);flex-shrink:0;}
+    .tb-left{display:flex;align-items:center;gap:10px;}
+    .back-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .back-btn:hover{background:rgba(124,58,237,.1);color:var(--text);}
+    .back-btn svg{width:13px;height:13px;}
+    .pg-title{display:flex;align-items:center;gap:8px;}
+    .pg-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#ef4444);display:flex;align-items:center;justify-content:center;}
+    .pg-icon svg{width:14px;height:14px;color:#fff;}
+    .pg-name{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;background:linear-gradient(135deg,#c084fc,#f87171);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 
-    /* MODE + RATIO TABS */
-    .topbar-center{display:flex;align-items:center;gap:12px;}
-    .seg-group{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:3px;}
-    .seg-btn{
-      padding:5px 14px;border-radius:7px;border:none;
-      font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
-      cursor:pointer;transition:all .2s;color:var(--muted);background:transparent;
-    }
-    .seg-btn.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 2px 10px rgba(124,58,237,.4);}
-    .seg-divider{width:1px;height:18px;background:var(--border);}
+    /* MODE PILLS */
+    .tb-center{display:flex;align-items:center;gap:6px;}
+    .mode-pill{padding:5px 13px;border-radius:20px;border:1px solid var(--border);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .22s;color:var(--muted);background:transparent;white-space:nowrap;}
+    .mode-pill.active{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border-color:transparent;box-shadow:0 2px 12px rgba(124,58,237,.4);}
+    .mode-pill:hover:not(.active){color:var(--text);border-color:var(--border2);}
 
-    .topbar-right{display:flex;align-items:center;gap:8px;}
-    .ratio-btn{
-      padding:5px 12px;border-radius:7px;border:1px solid var(--border);
-      font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
-      cursor:pointer;transition:all .2s;color:var(--muted);background:transparent;
-      letter-spacing:1px;
-    }
-    .ratio-btn.active{background:rgba(124,58,237,.15);color:var(--accent2);border-color:rgba(124,58,237,.4);}
+    /* RATIO */
+    .tb-right{display:flex;align-items:center;gap:5px;}
+    .ratio-btn{padding:5px 11px;border-radius:7px;border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--muted);background:transparent;letter-spacing:1px;}
+    .ratio-btn.active{background:rgba(124,58,237,.15);color:var(--a2);border-color:rgba(124,58,237,.4);}
 
-    /* MAIN LAYOUT */
+    /* LAYOUT */
     .main{display:flex;flex:1;overflow:hidden;position:relative;z-index:1;}
 
-    /* LEFT PANEL — PROMPTS */
-    .left-panel{
-      width:340px;flex-shrink:0;
-      display:flex;flex-direction:column;
-      border-right:1px solid var(--border);
-      background:rgba(8,8,14,.6);backdrop-filter:blur(10px);
-    }
-    .panel-header{
-      padding:16px 18px 12px;
-      border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;
-    }
-    .panel-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-    .prompt-count{
-      font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;
-      background:linear-gradient(135deg,var(--accent2),var(--glow));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    }
+    /* ━━━ LEFT PANEL ━━━ */
+    .left{width:350px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--border);background:rgba(7,7,14,.65);backdrop-filter:blur(12px);}
+
+    .lp-head{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .lp-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+    .lp-count{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;background:linear-gradient(135deg,var(--a2),var(--glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 
     /* PROMPT LIST */
-    .prompt-list{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
-    .prompt-list::-webkit-scrollbar{width:4px;}
-    .prompt-list::-webkit-scrollbar-track{background:transparent;}
-    .prompt-list::-webkit-scrollbar-thumb{background:rgba(124,58,237,.3);border-radius:2px;}
+    .p-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;}
+    .p-list::-webkit-scrollbar{width:3px;}
+    .p-list::-webkit-scrollbar-thumb{background:rgba(124,58,237,.3);border-radius:2px;}
 
-    .prompt-item{
-      background:rgba(124,58,237,.06);
-      border:1px solid rgba(124,58,237,.15);
-      border-radius:12px;padding:10px 12px;
-      position:relative;transition:all .2s;
-      animation:slideIn .3s ease;
-    }
-    @keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
-    .prompt-item:hover{border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);}
-    .prompt-item.has-clip{border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.05);}
+    .p-item{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.14);border-radius:11px;padding:9px 11px;position:relative;transition:all .2s;animation:sIn .25s ease;}
+    @keyframes sIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .p-item:hover{border-color:rgba(124,58,237,.28);}
+    .p-item.done{border-color:rgba(52,211,153,.22);background:rgba(52,211,153,.04);}
+    .p-item.error{border-color:rgba(239,68,68,.22);background:rgba(239,68,68,.04);}
 
-    .prompt-num{
-      font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;
-      color:var(--accent2);margin-bottom:5px;
-    }
-    .prompt-item.has-clip .prompt-num{color:var(--success);}
-    .prompt-textarea{
-      width:100%;background:transparent;border:none;outline:none;
-      color:var(--text);font-family:'Syne',sans-serif;font-size:12px;
-      resize:none;line-height:1.5;min-height:52px;
-    }
-    .prompt-textarea::placeholder{color:var(--muted2);}
-    .prompt-item-actions{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
-    .prompt-status{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;}
-    .status-pending{color:var(--muted2);}
-    .status-generating{color:var(--warn);}
-    .status-done{color:var(--success);}
-    .status-error{color:var(--red2);}
-    .del-prompt-btn{
-      background:none;border:none;cursor:pointer;
-      color:var(--muted2);padding:2px;border-radius:4px;transition:all .2s;
-    }
-    .del-prompt-btn:hover{color:var(--red2);background:rgba(239,68,68,.1);}
-    .del-prompt-btn svg{width:12px;height:12px;}
+    .p-num{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--a2);margin-bottom:4px;}
+    .p-item.done .p-num{color:var(--ok);}
+    .p-item.error .p-num{color:var(--red2);}
+    .p-txt{font-size:11px;color:var(--text);line-height:1.5;word-break:break-word;}
+    .p-foot{display:flex;align-items:center;justify-content:space-between;margin-top:5px;}
+    .p-status{font-family:'Space Mono',monospace;font-size:9px;}
+    .st-pending{color:var(--muted2);}
+    .st-gen{color:var(--warn);animation:stpulse 1s infinite;}
+    @keyframes stpulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .st-done{color:var(--ok);}
+    .st-err{color:var(--red2);}
+    .del-btn{background:none;border:none;cursor:pointer;color:var(--muted2);padding:2px 4px;border-radius:4px;transition:all .2s;}
+    .del-btn:hover{color:var(--red2);background:rgba(239,68,68,.1);}
+    .del-btn svg{width:11px;height:11px;}
 
-    /* ADD PROMPT */
-    .add-prompt-area{padding:12px;border-top:1px solid var(--border);}
-    .add-prompt-box{
-      display:flex;flex-direction:column;gap:8px;
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--border);border-radius:12px;
-      padding:10px 12px;
-      transition:border-color .2s;
-    }
-    .add-prompt-box:focus-within{border-color:rgba(124,58,237,.4);}
-    .add-textarea{
-      width:100%;background:transparent;border:none;outline:none;
-      color:var(--text);font-family:'Syne',sans-serif;font-size:13px;
-      resize:none;line-height:1.5;min-height:60px;
-    }
-    .add-textarea::placeholder{color:var(--muted2);}
-    .add-row{display:flex;align-items:center;justify-content:space-between;}
-    .add-hint{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:1px;}
-    .add-btn{
-      display:flex;align-items:center;gap:5px;
-      padding:6px 14px;border-radius:8px;
-      background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);
-      color:var(--accent2);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
-      cursor:pointer;transition:all .2s;
-    }
-    .add-btn:hover{background:rgba(124,58,237,.25);}
-    .add-btn svg{width:12px;height:12px;}
+    /* ADD PROMPT BOX */
+    .add-area{padding:10px;border-top:1px solid var(--border);flex-shrink:0;}
+    .add-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:10px 12px;transition:border-color .2s;}
+    .add-box:focus-within{border-color:rgba(124,58,237,.38);}
+    .add-ta{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Syne',sans-serif;font-size:12px;resize:none;line-height:1.55;min-height:72px;}
+    .add-ta::placeholder{color:var(--muted2);font-size:12px;}
+    .add-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+    .add-hint{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2);}
+    .add-btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.28);color:var(--a2);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+    .add-btn:hover{background:rgba(124,58,237,.24);}
+    .add-btn svg{width:11px;height:11px;}
 
-    /* CC CHARACTER UPLOAD */
-    .cc-section{
-      padding:12px;border-top:1px solid var(--border);
-      display:none;
-    }
-    .cc-section.visible{display:block;}
-    .cc-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-    .cc-label-badge{background:rgba(245,158,11,.1);color:var(--warn);border:1px solid rgba(245,158,11,.2);border-radius:4px;padding:1px 6px;font-size:8px;}
-    .char-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;}
-    .char-slot{
-      aspect-ratio:1;border-radius:10px;
-      border:1px dashed rgba(124,58,237,.25);
-      background:rgba(124,58,237,.04);
-      display:flex;align-items:center;justify-content:center;
+    /* ━━━ MODE PANELS ━━━ */
+    /* CC Characters */
+    .cc-panel{padding:10px;border-top:1px solid var(--border);display:none;flex-shrink:0;}
+    .cc-panel.show{display:block;}
+    .cc-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+    .char-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+    .char-slot{aspect-ratio:1;border-radius:9px;border:1px dashed rgba(124,58,237,.22);background:rgba(124,58,237,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+    .char-slot:hover{border-color:rgba(124,58,237,.45);background:rgba(124,58,237,.1);}
+    .char-slot.filled{border-style:solid;border-color:rgba(124,58,237,.32);}
+    .char-slot img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
+    .char-slot svg{width:16px;height:16px;color:var(--muted2);}
+    .char-del{position:absolute;top:2px;right:2px;background:rgba(239,68,68,.85);border:none;border-radius:4px;width:15px;height:15px;display:none;align-items:center;justify-content:center;cursor:pointer;color:#fff;}
+    .char-slot.filled:hover .char-del{display:flex;}
+    .char-del svg{width:9px;height:9px;}
+    .cc-note{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2);margin-top:7px;line-height:1.5;}
+
+    /* First Frame panel */
+    .ff-panel{padding:10px;border-top:1px solid var(--border);display:none;flex-shrink:0;}
+    .ff-panel.show{display:block;}
+    .ff-head{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+    .frame-row{display:flex;gap:8px;}
+    .frame-box{
+      flex:1;aspect-ratio:16/9;border-radius:10px;
+      border:1px dashed rgba(124,58,237,.22);background:rgba(124,58,237,.04);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
       cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
     }
-    .char-slot:hover{border-color:rgba(124,58,237,.5);background:rgba(124,58,237,.1);}
-    .char-slot.filled{border-style:solid;border-color:rgba(124,58,237,.35);}
-    .char-slot img{width:100%;height:100%;object-fit:cover;border-radius:9px;}
-    .char-slot svg{width:18px;height:18px;color:var(--muted2);}
-    .char-slot .del-char{
-      position:absolute;top:2px;right:2px;
-      background:rgba(239,68,68,.8);border:none;border-radius:4px;
-      width:16px;height:16px;display:none;align-items:center;justify-content:center;
-      cursor:pointer;color:#fff;
-    }
-    .char-slot.filled:hover .del-char{display:flex;}
-    .char-slot .del-char svg{width:10px;height:10px;}
-    .cc-note{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:.5px;}
+    .frame-box.ratio916{aspect-ratio:9/16;}
+    .frame-box:hover{border-color:rgba(124,58,237,.45);background:rgba(124,58,237,.09);}
+    .frame-box.filled{border-style:solid;border-color:rgba(124,58,237,.35);}
+    .frame-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:9px;}
+    .frame-box-label{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted2);z-index:1;}
+    .frame-box svg{width:18px;height:18px;color:var(--muted2);z-index:1;}
+    .frame-del{position:absolute;top:4px;right:4px;z-index:2;background:rgba(239,68,68,.85);border:none;border-radius:5px;padding:2px 5px;cursor:pointer;color:#fff;font-size:9px;display:none;}
+    .frame-box.filled:hover .frame-del{display:block;}
 
-    /* GENERATE BUTTON */
-    .gen-area{padding:12px;border-top:1px solid var(--border);}
-    .gen-btn{
-      width:100%;padding:14px;border-radius:12px;
-      background:linear-gradient(135deg,#7c3aed,#ef4444);
-      border:none;color:#fff;font-family:'Bebas Neue',sans-serif;
-      font-size:18px;letter-spacing:3px;cursor:pointer;
-      transition:all .3s;position:relative;overflow:hidden;
-      box-shadow:0 4px 20px rgba(124,58,237,.4);
-    }
-    .gen-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transition:left .5s;}
+    /* GENERATE */
+    .gen-area{padding:10px;border-top:1px solid var(--border);flex-shrink:0;}
+    .gen-btn{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#ef4444);border:none;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:3px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;box-shadow:0 4px 18px rgba(124,58,237,.38);}
+    .gen-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .5s;}
     .gen-btn:hover::before{left:100%;}
-    .gen-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(124,58,237,.55);}
-    .gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-    .gen-progress{
-      margin-top:8px;height:3px;border-radius:2px;
-      background:rgba(255,255,255,.06);overflow:hidden;display:none;
-    }
-    .gen-progress.visible{display:block;}
-    .gen-bar{height:100%;background:linear-gradient(90deg,#7c3aed,#ef4444);border-radius:2px;width:0%;transition:width .4s;}
+    .gen-btn:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(124,58,237,.5);}
+    .gen-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+    .gen-prog{margin-top:7px;height:3px;border-radius:2px;background:rgba(255,255,255,.05);overflow:hidden;display:none;}
+    .gen-prog.show{display:block;}
+    .gen-bar{height:100%;background:linear-gradient(90deg,#7c3aed,#ef4444);border-radius:2px;width:0%;transition:width .5s;}
 
-    /* CENTER — VIDEO PREVIEW */
-    .center-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-    .clips-toolbar{
-      padding:10px 18px;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;
-      flex-shrink:0;
-    }
-    .clips-info{display:flex;align-items:center;gap:12px;}
-    .clips-info-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-    .clips-info-val{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--text);}
-    .add-editor-btn{
-      display:flex;align-items:center;gap:7px;
-      padding:8px 18px;border-radius:10px;
-      background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(239,68,68,.15));
-      border:1px solid rgba(124,58,237,.35);
-      color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
-      cursor:pointer;transition:all .3s;text-decoration:none;
-      box-shadow:0 0 20px rgba(124,58,237,.1);
-    }
-    .add-editor-btn:hover{background:linear-gradient(135deg,rgba(124,58,237,.35),rgba(239,68,68,.25));transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3);}
-    .add-editor-btn svg{width:14px;height:14px;}
-    .add-editor-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+    /* ━━━ CENTER CLIPS ━━━ */
+    .center{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+    .c-toolbar{padding:9px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .c-info{display:flex;align-items:center;gap:14px;}
+    .c-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+    .c-val{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;}
+    .to-editor-btn{display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:9px;background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(239,68,68,.12));border:1px solid rgba(124,58,237,.32);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;text-decoration:none;box-shadow:0 0 16px rgba(124,58,237,.08);}
+    .to-editor-btn:hover{background:linear-gradient(135deg,rgba(124,58,237,.32),rgba(239,68,68,.22));transform:translateY(-1px);}
+    .to-editor-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+    .to-editor-btn svg{width:13px;height:13px;}
 
-    /* CLIPS GRID */
-    .clips-grid{flex:1;overflow-y:auto;padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;align-content:start;}
-    .clips-grid::-webkit-scrollbar{width:4px;}
-    .clips-grid::-webkit-scrollbar-thumb{background:rgba(124,58,237,.3);border-radius:2px;}
+    .c-grid{flex:1;overflow-y:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;align-content:start;}
+    .c-grid::-webkit-scrollbar{width:3px;}
+    .c-grid::-webkit-scrollbar-thumb{background:rgba(124,58,237,.28);border-radius:2px;}
 
-    /* EMPTY STATE */
-    .empty-state{
-      grid-column:1/-1;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:80px 20px;gap:16px;
-    }
-    .empty-icon{
-      width:80px;height:80px;border-radius:20px;
-      background:rgba(124,58,237,.08);border:1px solid var(--border);
-      display:flex;align-items:center;justify-content:center;
-    }
-    .empty-icon svg{width:36px;height:36px;color:var(--muted2);}
-    .empty-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--muted2);}
-    .empty-sub{font-size:13px;color:var(--muted2);text-align:center;max-width:320px;line-height:1.6;}
+    /* EMPTY */
+    .empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;}
+    .empty-ico{width:72px;height:72px;border-radius:18px;background:rgba(124,58,237,.07);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+    .empty-ico svg{width:32px;height:32px;color:var(--muted2);}
+    .empty-h{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--muted2);}
+    .empty-s{font-size:12px;color:var(--muted2);text-align:center;max-width:300px;line-height:1.6;}
 
     /* CLIP CARD */
-    .clip-card{
-      background:var(--card);border:1px solid var(--border);
-      border-radius:14px;overflow:hidden;
-      transition:all .3s;animation:clipIn .4s ease;
-      position:relative;
-    }
-    @keyframes clipIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-    .clip-card:hover{border-color:rgba(124,58,237,.35);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.5);}
-
-    .clip-thumb{
-      aspect-ratio:16/9;background:rgba(124,58,237,.08);
-      display:flex;align-items:center;justify-content:center;
-      position:relative;overflow:hidden;
-    }
-    .clip-thumb.ratio-916{aspect-ratio:9/16;}
+    .clip{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;transition:all .3s;animation:cIn .35s ease;position:relative;}
+    @keyframes cIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+    .clip:hover{border-color:rgba(124,58,237,.32);transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,0,0,.5);}
+    .clip-thumb{background:rgba(124,58,237,.07);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+    .clip-thumb.r169{aspect-ratio:16/9;}
+    .clip-thumb.r916{aspect-ratio:9/16;}
     .clip-thumb video{width:100%;height:100%;object-fit:cover;}
-    .clip-thumb-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;}
-    .clip-thumb-placeholder svg{width:28px;height:28px;color:var(--muted2);}
+    .clip-ph{display:flex;flex-direction:column;align-items:center;gap:6px;}
+    .clip-ph svg{width:24px;height:24px;color:var(--muted2);}
+    .clip-ph span{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2);}
 
-    /* GENERATING animation */
-    .clip-generating{
-      position:absolute;inset:0;
-      background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(239,68,68,.1));
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
-    }
-    .gen-spinner{
-      width:36px;height:36px;border:2px solid rgba(168,85,247,.2);
-      border-top-color:var(--accent2);border-radius:50%;
-      animation:spin 0.8s linear infinite;
-    }
+    /* generating overlay */
+    .gen-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(239,68,68,.08));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+    .g-spin{width:32px;height:32px;border:2px solid rgba(168,85,247,.18);border-top-color:var(--a2);border-radius:50%;animation:spin .8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .gen-spinner-text{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent2);letter-spacing:1px;animation:pulse .8s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .g-txt{font-family:'Space Mono',monospace;font-size:8px;color:var(--a2);letter-spacing:1px;animation:gp .9s ease-in-out infinite;}
+    @keyframes gp{0%,100%{opacity:1}50%{opacity:.35}}
+    .scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--a2),transparent);animation:sc 2s ease-in-out infinite;}
+    @keyframes sc{0%{top:0;opacity:1}100%{top:100%;opacity:0}}
 
-    /* Scan line anim */
-    .scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent2),transparent);animation:scan 2s ease-in-out infinite;}
-    @keyframes scan{0%{top:0%;opacity:1}100%{top:100%;opacity:0}}
-
-    .clip-info{padding:10px 12px;}
-    .clip-num{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent2);}
-    .clip-prompt-preview{font-size:11px;color:var(--muted);line-height:1.4;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-
-    .clip-footer{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:6px 12px 10px;
-    }
-    .clip-dur{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted2);}
-    .clip-dl-btn{
-      display:flex;align-items:center;gap:4px;
-      background:rgba(255,255,255,.04);border:1px solid var(--border);
-      border-radius:6px;padding:4px 8px;cursor:pointer;transition:all .2s;
-      color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
-    }
-    .clip-dl-btn:hover{background:rgba(52,211,153,.1);color:var(--success);border-color:rgba(52,211,153,.3);}
-    .clip-dl-btn svg{width:10px;height:10px;}
-
-    /* ORDER badge */
-    .order-badge{
-      position:absolute;top:8px;left:8px;
-      background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:6px;padding:3px 8px;
-      font-family:'Bebas Neue',sans-serif;font-size:13px;
-      color:#fff;letter-spacing:1px;
-    }
+    .ord{position:absolute;top:7px;left:7px;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:2px 7px;font-family:'Bebas Neue',sans-serif;font-size:12px;color:#fff;letter-spacing:1px;}
+    .clip-info{padding:9px 11px 4px;}
+    .clip-n{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--a2);}
+    .clip-n.ok{color:var(--ok);}
+    .clip-n.err{color:var(--red2);}
+    .clip-p{font-size:10px;color:var(--muted);line-height:1.4;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .clip-foot{display:flex;align-items:center;justify-content:space-between;padding:5px 11px 9px;}
+    .clip-dur{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2);}
+    .dl-btn{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:5px;padding:3px 7px;cursor:pointer;transition:all .2s;color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;}
+    .dl-btn:hover{background:rgba(52,211,153,.09);color:var(--ok);border-color:rgba(52,211,153,.28);}
+    .dl-btn svg{width:9px;height:9px;}
 
     /* TOAST */
-    .toast{
-      position:fixed;bottom:24px;right:24px;z-index:999;
-      display:flex;align-items:center;gap:10px;
-      padding:12px 18px;border-radius:12px;
-      font-size:13px;font-weight:600;
-      transform:translateY(60px);opacity:0;
-      transition:all .35s cubic-bezier(.16,1,.3,1);
-      pointer-events:none;
-    }
+    .toast{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:11px;font-size:12px;font-weight:600;transform:translateY(55px);opacity:0;transition:all .32s cubic-bezier(.16,1,.3,1);pointer-events:none;max-width:300px;}
     .toast.show{transform:translateY(0);opacity:1;}
-    .toast.success{background:#0d2218;border:1px solid rgba(52,211,153,.3);color:var(--success);}
-    .toast.error{background:#1f0e0e;border:1px solid rgba(248,113,113,.3);color:var(--red2);}
-    .toast.info{background:#110d1f;border:1px solid rgba(124,58,237,.3);color:var(--accent2);}
+    .toast.ok{background:#0a1e14;border:1px solid rgba(52,211,153,.28);color:var(--ok);}
+    .toast.err{background:#1c0a0a;border:1px solid rgba(248,113,113,.28);color:var(--red2);}
+    .toast.inf{background:#0f0a1e;border:1px solid rgba(124,58,237,.28);color:var(--a2);}
   </style>
 </head>
 <body>
-
-<div class="grid-overlay"></div>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
+<div class="grid"></div>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-left">
+  <div class="tb-left">
     <a class="back-btn" href="index.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
       Back
     </a>
-    <div class="page-title">
-      <div class="page-title-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-      </div>
-      <span class="page-title-text">VEO VIDEO GENERATOR</span>
+    <div class="pg-title">
+      <div class="pg-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+      <span class="pg-name">VEO VIDEO GENERATOR</span>
     </div>
   </div>
 
-  <!-- MODE TABS -->
-  <div class="topbar-center">
-    <div class="seg-group" id="mode-group">
-      <button class="seg-btn active" onclick="setMode('t2v',this)">Text to Video</button>
-      <button class="seg-btn" onclick="setMode('cc',this)">CC Mode</button>
-    </div>
+  <!-- MODE PILLS -->
+  <div class="tb-center">
+    <button class="mode-pill active" id="m-t2v" onclick="setMode('t2v')">Text to Video</button>
+    <button class="mode-pill" id="m-cc"  onclick="setMode('cc')">CC Mode</button>
+    <button class="mode-pill" id="m-ff"  onclick="setMode('ff')">First Frame</button>
+    <button class="mode-pill" id="m-fe"  onclick="setMode('fe')">First + End Frame</button>
   </div>
 
-  <!-- RATIO -->
-  <div class="topbar-right">
+  <div class="tb-right">
     <button class="ratio-btn active" id="r169" onclick="setRatio('16:9',this)">16:9</button>
-    <button class="ratio-btn" id="r916" onclick="setRatio('9:16',this)">9:16</button>
+    <button class="ratio-btn"        id="r916" onclick="setRatio('9:16',this)">9:16</button>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-  <!-- LEFT: PROMPTS -->
-  <div class="left-panel">
-    <div class="panel-header">
-      <div class="panel-label">Prompts Queue</div>
-      <div class="prompt-count" id="prompt-count">0</div>
+  <!-- LEFT -->
+  <div class="left">
+    <div class="lp-head">
+      <div class="lp-label">Prompts Queue</div>
+      <div class="lp-count" id="p-count">0</div>
     </div>
 
-    <div class="prompt-list" id="prompt-list">
-      <!-- prompts injected here -->
-    </div>
+    <div class="p-list" id="p-list"></div>
 
-    <!-- ADD PROMPT -->
-    <div class="add-prompt-area">
-      <div class="add-prompt-box">
-        <textarea class="add-textarea" id="new-prompt-input" placeholder="Describe your video scene... e.g. A cinematic drone shot over snowy mountains at golden hour" rows="3"></textarea>
+    <!-- ADD -->
+    <div class="add-area">
+      <div class="add-box">
+        <textarea class="add-ta" id="new-input" placeholder="Paste or type prompts here — one per line for multiple clips at once" rows="4"></textarea>
         <div class="add-row">
-          <span class="add-hint">Enter ↵ to add</span>
-          <button class="add-btn" onclick="addPrompt()">
+          <span class="add-hint">One line = one clip &nbsp;|&nbsp; Shift+Enter for new line</span>
+          <button class="add-btn" onclick="addPrompts()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add
+            Add All
           </button>
         </div>
       </div>
     </div>
 
     <!-- CC CHARACTERS -->
-    <div class="cc-section" id="cc-section">
-      <div class="cc-label">
-        Characters
-        <span class="cc-label-badge">MAX 3 IN API</span>
+    <div class="cc-panel" id="cc-panel">
+      <div class="cc-head">Character References (unlimited upload)</div>
+      <div class="char-grid" id="char-grid"></div>
+      <div class="cc-note">Upload unlimited character images.<br/>Only first 3 will be used per generation request.</div>
+      <input type="file" id="char-input" accept="image/*" multiple style="display:none" onchange="handleCharUpload(event)"/>
+    </div>
+
+    <!-- FIRST FRAME -->
+    <div class="ff-panel" id="ff-panel">
+      <div class="ff-head">First Frame Image</div>
+      <div class="frame-row">
+        <div class="frame-box" id="ff-box" onclick="openFrame('ff')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="frame-box-label">FIRST FRAME</span>
+          <button class="frame-del" id="ff-del" onclick="clearFrame('ff',event)">✕ Remove</button>
+        </div>
       </div>
-      <div class="char-grid" id="char-grid">
-        <!-- slots injected -->
+      <div class="cc-note" style="margin-top:8px;">AI will generate video starting from this image.</div>
+      <input type="file" id="ff-input" accept="image/*" style="display:none" onchange="handleFrame('ff',event)"/>
+    </div>
+
+    <!-- FIRST + END FRAME -->
+    <div class="ff-panel" id="fe-panel">
+      <div class="ff-head">First Frame &amp; End Frame</div>
+      <div class="frame-row">
+        <div class="frame-box" id="fe-start-box" onclick="openFrame('fe-start')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="frame-box-label">FIRST FRAME</span>
+          <button class="frame-del" id="fe-start-del" onclick="clearFrame('fe-start',event)">✕</button>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--muted2);font-size:18px;padding:0 2px;">→</div>
+        <div class="frame-box" id="fe-end-box" onclick="openFrame('fe-end')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="frame-box-label">END FRAME</span>
+          <button class="frame-del" id="fe-end-del" onclick="clearFrame('fe-end',event)">✕</button>
+        </div>
       </div>
-      <div class="cc-note">Upload character images. API uses max 3 per generation.</div>
-      <input type="file" id="char-file-input" accept="image/*" multiple style="display:none;" onchange="handleCharUpload(event)"/>
+      <div class="cc-note" style="margin-top:8px;">AI will transition from first frame to end frame.</div>
+      <input type="file" id="fe-start-input" accept="image/*" style="display:none" onchange="handleFrame('fe-start',event)"/>
+      <input type="file" id="fe-end-input"   accept="image/*" style="display:none" onchange="handleFrame('fe-end',event)"/>
     </div>
 
     <!-- GENERATE -->
     <div class="gen-area">
-      <button class="gen-btn" id="gen-btn" onclick="startGeneration()">
-        ▶ START GENERATION
-      </button>
-      <div class="gen-progress" id="gen-progress">
-        <div class="gen-bar" id="gen-bar"></div>
-      </div>
+      <button class="gen-btn" id="gen-btn" onclick="startGen()">▶ START GENERATION</button>
+      <div class="gen-prog" id="gen-prog"><div class="gen-bar" id="gen-bar"></div></div>
     </div>
   </div>
 
-  <!-- CENTER: CLIPS -->
-  <div class="center-panel">
-    <div class="clips-toolbar">
-      <div class="clips-info">
-        <span class="clips-info-label">Generated Clips</span>
-        <span class="clips-info-val" id="clips-count">0 / 0</span>
+  <!-- CENTER CLIPS -->
+  <div class="center">
+    <div class="c-toolbar">
+      <div class="c-info">
+        <span class="c-lbl">Generated Clips</span>
+        <span class="c-val" id="c-count">0 / 0</span>
       </div>
-      <button class="add-editor-btn" id="editor-btn" onclick="sendToEditor()" disabled>
+      <button class="to-editor-btn" id="editor-btn" onclick="sendToEditor()" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         Add to Editor Timeline
       </button>
     </div>
-
-    <div class="clips-grid" id="clips-grid">
-      <div class="empty-state" id="empty-state">
-        <div class="empty-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        </div>
-        <div class="empty-title">No Clips Yet</div>
-        <div class="empty-sub">Add prompts on the left and hit Start Generation to create your video clips.</div>
+    <div class="c-grid" id="c-grid">
+      <div class="empty" id="empty-st">
+        <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+        <div class="empty-h">No Clips Yet</div>
+        <div class="empty-s">Add prompts on the left and hit Start Generation to create video clips in order.</div>
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <span id="toast-msg"></span>
-</div>
+<div class="toast" id="toast"><span id="toast-msg"></span></div>
 
 <script>
-  /* ── STATE ── */
-  let prompts    = [];   // {id, text, status:'pending'|'generating'|'done'|'error', videoUrl, duration}
-  let clips      = [];   // same order as prompts, generated clips
+  /* ━━ STATE ━━ */
+  let prompts      = [];
   let currentMode  = 't2v';
   let currentRatio = '16:9';
-  let characters   = [];  // {id, url, file}
+  let characters   = [];
+  let frames       = { ff: null, feStart: null, feEnd: null };
   let isGenerating = false;
-  let promptIdSeq  = 0;
+  let seq          = 0;
 
-  /* ── VEO API CONFIG ── */
-  /* Replace with your actual Veo API key */
   const VEO_API_KEY = 'YOUR_VEO_API_KEY';
 
-  /* ── TOAST ── */
-  function toast(msg, type='info') {
+  /* ━━ TOAST ━━ */
+  function toast(msg, type='inf') {
     const t = document.getElementById('toast');
     t.className = `toast ${type}`;
     document.getElementById('toast-msg').textContent = msg;
     t.classList.add('show');
-    clearTimeout(t._tid);
-    t._tid = setTimeout(()=>t.classList.remove('show'), 3200);
+    clearTimeout(t._t);
+    t._t = setTimeout(()=>t.classList.remove('show'), 3000);
   }
 
-  /* ── MODE ── */
-  function setMode(mode, btn) {
-    currentMode = mode;
-    document.querySelectorAll('#mode-group .seg-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const cc = document.getElementById('cc-section');
-    mode==='cc' ? cc.classList.add('visible') : cc.classList.remove('visible');
+  /* ━━ MODE ━━ */
+  function setMode(m) {
+    currentMode = m;
+    ['t2v','cc','ff','fe'].forEach(x=>{
+      document.getElementById('m-'+x).classList.toggle('active', x===m);
+    });
+    document.getElementById('cc-panel').classList.toggle('show', m==='cc');
+    document.getElementById('ff-panel').classList.toggle('show', m==='ff');
+    document.getElementById('fe-panel').classList.toggle('show', m==='fe');
     renderCharGrid();
   }
 
-  /* ── RATIO ── */
-  function setRatio(ratio, btn) {
-    currentRatio = ratio;
+  /* ━━ RATIO ━━ */
+  function setRatio(r, btn) {
+    currentRatio = r;
     document.querySelectorAll('.ratio-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    // update existing clip thumbs
-    document.querySelectorAll('.clip-thumb').forEach(el=>{
-      el.classList.toggle('ratio-916', ratio==='9:16');
+    // update frame boxes ratio
+    const p = r==='9:16';
+    ['ff-box','fe-start-box','fe-end-box'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.classList.toggle('ratio916', p);
     });
+    renderClips();
   }
 
-  /* ── PROMPTS ── */
-  function addPrompt() {
-    const inp = document.getElementById('new-prompt-input');
-    const txt = inp.value.trim();
-    if(!txt) { toast('Please enter a prompt first.','error'); return; }
-    const p = { id: ++promptIdSeq, text: txt, status:'pending', videoUrl:null, duration:null };
-    prompts.push(p);
-    inp.value = '';
-    renderPrompts();
-    renderClips();
-    updateCounts();
-    toast(`Prompt #${prompts.length} added!`,'success');
+  /* ━━ ADD PROMPTS (multi-line paste) ━━ */
+  function addPrompts() {
+    const inp = document.getElementById('new-input');
+    const raw = inp.value;
+    const lines = raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    if(!lines.length) { toast('Please enter at least one prompt.','err'); return; }
+    lines.forEach(txt=>{
+      prompts.push({ id:++seq, text:txt, status:'pending', videoUrl:null, duration:null });
+    });
+    inp.value='';
+    renderPrompts(); renderClips(); updateCounts();
+    toast(`${lines.length} prompt${lines.length>1?'s':''} added!`,'ok');
   }
 
   function deletePrompt(id) {
     const idx = prompts.findIndex(p=>p.id===id);
-    if(idx===-1) return;
-    if(prompts[idx].status==='generating') { toast('Cannot delete a generating prompt.','error'); return; }
+    if(idx===-1||prompts[idx].status==='generating') return;
     prompts.splice(idx,1);
-    clips.splice(idx,1);
     renderPrompts(); renderClips(); updateCounts();
   }
 
+  /* ━━ RENDER PROMPTS ━━ */
   function renderPrompts() {
-    const list = document.getElementById('prompt-list');
-    if(!prompts.length) { list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted2);font-size:12px;font-family:'Space Mono',monospace;">No prompts yet.<br/>Add one below.</div>`; return; }
+    const list = document.getElementById('p-list');
+    if(!prompts.length) {
+      list.innerHTML=`<div style="text-align:center;padding:28px 12px;color:var(--muted2);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;">NO PROMPTS YET<br/><br/>Add one below.</div>`;
+      return;
+    }
     list.innerHTML = prompts.map((p,i)=>`
-      <div class="prompt-item ${p.status==='done'?'has-clip':''}" id="pi-${p.id}">
-        <div class="prompt-num">CLIP ${String(i+1).padStart(2,'0')}</div>
-        <textarea class="prompt-textarea" onchange="updatePromptText(${p.id},this.value)" ${p.status!=='pending'?'disabled':''}>${p.text}</textarea>
-        <div class="prompt-item-actions">
-          <span class="prompt-status status-${p.status}">
+      <div class="p-item ${p.status}" id="pi-${p.id}">
+        <div class="p-num">CLIP ${String(i+1).padStart(2,'0')}</div>
+        <div class="p-txt">${esc(p.text)}</div>
+        <div class="p-foot">
+          <span class="p-status st-${p.status==='pending'?'pending':p.status==='generating'?'gen':p.status==='done'?'done':'err'}">
             ${p.status==='pending'?'● QUEUED':p.status==='generating'?'◉ GENERATING...':p.status==='done'?'✓ DONE':'✗ ERROR'}
           </span>
-          <button class="del-prompt-btn" onclick="deletePrompt(${p.id})" title="Remove">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-          </button>
+          <button class="del-btn" onclick="deletePrompt(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>
       </div>`).join('');
   }
 
-  function updatePromptText(id, val) {
-    const p = prompts.find(x=>x.id===id);
-    if(p) p.text = val;
-  }
-
-  function updateCounts() {
-    document.getElementById('prompt-count').textContent = prompts.length;
-    const done = prompts.filter(p=>p.status==='done').length;
-    document.getElementById('clips-count').textContent = `${done} / ${prompts.length}`;
-    const edBtn = document.getElementById('editor-btn');
-    edBtn.disabled = done === 0;
-  }
-
-  /* ── CLIPS RENDER ── */
+  /* ━━ RENDER CLIPS ━━ */
   function renderClips() {
-    const grid = document.getElementById('clips-grid');
-    const empty = document.getElementById('empty-state');
-    if(!prompts.length) {
-      empty.style.display='flex'; return;
-    }
+    const grid  = document.getElementById('c-grid');
+    const empty = document.getElementById('empty-st');
+    if(!prompts.length) { empty.style.display='flex'; grid.innerHTML=''; grid.appendChild(empty); return; }
     empty.style.display='none';
+    const p9 = currentRatio==='9:16';
     grid.innerHTML = prompts.map((p,i)=>{
-      const isPortrait = currentRatio==='9:16';
       if(p.status==='pending') return `
-        <div class="clip-card">
-          <div class="clip-thumb ${isPortrait?'ratio-916':''}">
-            <div class="clip-thumb-placeholder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted2);">QUEUED</span>
-            </div>
+        <div class="clip">
+          <div class="clip-thumb ${p9?'r916':'r169'}">
+            <div class="clip-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>QUEUED</span></div>
           </div>
-          <div class="clip-info">
-            <div class="clip-num">CLIP ${String(i+1).padStart(2,'0')}</div>
-            <div class="clip-prompt-preview">${escHtml(p.text)}</div>
-          </div>
+          <div class="clip-info"><div class="clip-n">CLIP ${String(i+1).padStart(2,'0')}</div><div class="clip-p">${esc(p.text)}</div></div>
         </div>`;
       if(p.status==='generating') return `
-        <div class="clip-card" id="cc-${p.id}">
-          <div class="clip-thumb ${isPortrait?'ratio-916':''}">
-            <div class="clip-generating">
-              <div class="gen-spinner"></div>
-              <div class="gen-spinner-text">GENERATING...</div>
-              <div class="scan-line"></div>
-            </div>
+        <div class="clip">
+          <div class="clip-thumb ${p9?'r916':'r169'}">
+            <div class="gen-ov"><div class="g-spin"></div><div class="g-txt">GENERATING...</div><div class="scan"></div></div>
           </div>
-          <div class="clip-info">
-            <div class="clip-num">CLIP ${String(i+1).padStart(2,'0')}</div>
-            <div class="clip-prompt-preview">${escHtml(p.text)}</div>
-          </div>
+          <div class="clip-info"><div class="clip-n">CLIP ${String(i+1).padStart(2,'0')}</div><div class="clip-p">${esc(p.text)}</div></div>
         </div>`;
       if(p.status==='done') return `
-        <div class="clip-card">
-          <div class="order-badge">#${i+1}</div>
-          <div class="clip-thumb ${isPortrait?'ratio-916':''}">
+        <div class="clip">
+          <div class="ord">#${i+1}</div>
+          <div class="clip-thumb ${p9?'r916':'r169'}">
             ${p.videoUrl
-              ? `<video src="${p.videoUrl}" loop muted playsinline preload="metadata" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>`
-              : `<div class="clip-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--success);">READY</span></div>`
+              ?`<video src="${p.videoUrl}" loop muted playsinline preload="metadata" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>`
+              :`<div class="clip-ph"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg><span style="color:var(--ok)">READY</span></div>`
             }
           </div>
-          <div class="clip-info">
-            <div class="clip-num" style="color:var(--success);">✓ CLIP ${String(i+1).padStart(2,'0')}</div>
-            <div class="clip-prompt-preview">${escHtml(p.text)}</div>
-          </div>
-          <div class="clip-footer">
+          <div class="clip-info"><div class="clip-n ok">✓ CLIP ${String(i+1).padStart(2,'0')}</div><div class="clip-p">${esc(p.text)}</div></div>
+          <div class="clip-foot">
             <span class="clip-dur">${p.duration||'~8s'}</span>
-            ${p.videoUrl?`<button class="clip-dl-btn" onclick="downloadClip('${p.videoUrl}',${i+1})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>DL</button>`:''}
+            ${p.videoUrl?`<button class="dl-btn" onclick="dlClip('${p.videoUrl}',${i+1})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>DL</button>`:''}
           </div>
         </div>`;
-      // error
       return `
-        <div class="clip-card">
-          <div class="clip-thumb ${isPortrait?'ratio-916':''}">
-            <div class="clip-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red2)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--red2);">ERROR</span></div>
+        <div class="clip">
+          <div class="clip-thumb ${p9?'r916':'r169'}">
+            <div class="clip-ph"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red2)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span style="color:var(--red2)">ERROR</span></div>
           </div>
-          <div class="clip-info">
-            <div class="clip-num" style="color:var(--red2);">✗ CLIP ${String(i+1).padStart(2,'0')}</div>
-            <div class="clip-prompt-preview">${escHtml(p.text)}</div>
-          </div>
+          <div class="clip-info"><div class="clip-n err">✗ CLIP ${String(i+1).padStart(2,'0')}</div><div class="clip-p">${esc(p.text)}</div></div>
         </div>`;
     }).join('');
-    // re-attach empty state
-    grid.insertAdjacentElement('afterbegin', document.getElementById('empty-state'));
   }
 
-  function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-  /* ── CHARACTERS (CC MODE) ── */
+  function updateCounts() {
+    document.getElementById('p-count').textContent = prompts.length;
+    const done = prompts.filter(p=>p.status==='done').length;
+    document.getElementById('c-count').textContent = `${done} / ${prompts.length}`;
+    document.getElementById('editor-btn').disabled = done===0;
+  }
+
+  /* ━━ CHARACTERS (CC) ━━ */
   function renderCharGrid() {
     const grid = document.getElementById('char-grid');
-    const slots = [];
-    for(let i=0;i<8;i++){
-      const c = characters[i];
-      if(c) {
-        slots.push(`<div class="char-slot filled" title="Character ${i+1}">
-          <img src="${c.url}" alt="char${i+1}"/>
-          <button class="del-char" onclick="deleteChar(${i})">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>`);
-      } else {
-        slots.push(`<div class="char-slot" onclick="openCharUpload()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </div>`);
-      }
-    }
-    grid.innerHTML = slots.join('');
+    let html = characters.map((c,i)=>`
+      <div class="char-slot filled">
+        <img src="${c.url}"/>
+        <button class="char-del" onclick="delChar(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>`).join('');
+    // add slot
+    html += `<div class="char-slot" onclick="document.getElementById('char-input').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>`;
+    grid.innerHTML = html;
   }
 
-  function openCharUpload(){ document.getElementById('char-file-input').click(); }
-
   function handleCharUpload(e) {
-    const files = Array.from(e.target.files);
-    files.forEach(file=>{
-      if(characters.length>=8) return;
-      const url = URL.createObjectURL(file);
-      characters.push({id:Date.now()+Math.random(), url, file});
+    Array.from(e.target.files).forEach(f=>{
+      characters.push({url:URL.createObjectURL(f), file:f});
     });
     renderCharGrid();
-    toast(`${files.length} character(s) uploaded!`, 'success');
+    toast(`${e.target.files.length} character(s) uploaded!`,'ok');
+    e.target.value='';
+  }
+  function delChar(i){ characters.splice(i,1); renderCharGrid(); }
+
+  /* ━━ FRAMES ━━ */
+  function openFrame(type){ document.getElementById(type.replace('-','_').replace('fe_','fe-').replace('ff','ff')+'-input').click(); }
+
+  // Fix: properly map type to input id
+  const frameInputMap = { 'ff':'ff-input','fe-start':'fe-start-input','fe-end':'fe-end-input' };
+  const frameBoxMap   = { 'ff':'ff-box','fe-start':'fe-start-box','fe-end':'fe-end-box' };
+  const frameDelMap   = { 'ff':'ff-del','fe-start':'fe-start-del','fe-end':'fe-end-del' };
+  const frameKey      = { 'ff':'ff','fe-start':'feStart','fe-end':'feEnd' };
+
+  document.querySelectorAll('.frame-box').forEach(b=>b.addEventListener('click',function(){
+    const id = this.id.replace('-box','');
+    document.getElementById(frameInputMap[id]).click();
+  }));
+
+  function handleFrame(type, e) {
+    const file = e.target.files[0];
+    if(!file) return;
+    const url = URL.createObjectURL(file);
+    frames[frameKey[type]] = {url, file};
+    const box = document.getElementById(frameBoxMap[type]);
+    // set bg image
+    let img = box.querySelector('img');
+    if(!img){ img = document.createElement('img'); box.appendChild(img); }
+    img.src = url;
+    box.classList.add('filled');
+    document.getElementById(frameDelMap[type]).style.display='block';
+    toast('Frame uploaded!','ok');
     e.target.value='';
   }
 
-  function deleteChar(idx) {
-    characters.splice(idx,1);
-    renderCharGrid();
+  function clearFrame(type, ev) {
+    ev.stopPropagation();
+    frames[frameKey[type]] = null;
+    const box = document.getElementById(frameBoxMap[type]);
+    const img = box.querySelector('img');
+    if(img) img.remove();
+    box.classList.remove('filled');
+    document.getElementById(frameDelMap[type]).style.display='none';
   }
 
-  /* ── GENERATION ── */
-  async function startGeneration() {
+  /* ━━ GENERATION ━━ */
+  async function startGen() {
     const pending = prompts.filter(p=>p.status==='pending');
-    if(!pending.length) { toast('No pending prompts to generate!','error'); return; }
-    if(isGenerating) { toast('Generation already running...','info'); return; }
+    if(!pending.length){ toast('No pending prompts!','err'); return; }
+    if(isGenerating){ toast('Already generating...','inf'); return; }
 
-    isGenerating = true;
-    const genBtn = document.getElementById('gen-btn');
-    genBtn.disabled = true;
-    genBtn.textContent = '⏳ GENERATING...';
+    isGenerating=true;
+    const btn=document.getElementById('gen-btn');
+    btn.disabled=true; btn.textContent='⏳ GENERATING...';
+    const prog=document.getElementById('gen-prog'); prog.classList.add('show');
+    const bar=document.getElementById('gen-bar');
+    const total=pending.length; let done=0;
 
-    const prog = document.getElementById('gen-progress');
-    const bar  = document.getElementById('gen-bar');
-    prog.classList.add('visible');
-
-    const total = pending.length;
-    let done = 0;
-
-    for(const p of pending) {
-      p.status = 'generating';
-      renderPrompts(); renderClips();
-
-      try {
-        const videoUrl = await generateClip(p);
-        p.status  = 'done';
-        p.videoUrl = videoUrl;
-        p.duration = '~8s';
-        toast(`Clip ${prompts.indexOf(p)+1} ready!`, 'success');
-      } catch(err) {
-        p.status = 'error';
-        toast(`Clip ${prompts.indexOf(p)+1} failed: ${err.message}`, 'error');
+    for(const p of pending){
+      p.status='generating'; renderPrompts(); renderClips();
+      try{
+        const url = await generateClip(p);
+        p.status='done'; p.videoUrl=url; p.duration='~8s';
+        toast(`Clip ${prompts.indexOf(p)+1} ready!`,'ok');
+      }catch(err){
+        p.status='error';
+        toast(`Clip ${prompts.indexOf(p)+1} failed: ${err.message}`,'err');
       }
-
-      done++;
-      bar.style.width = `${(done/total)*100}%`;
+      done++; bar.style.width=`${(done/total)*100}%`;
       renderPrompts(); renderClips(); updateCounts();
     }
 
-    isGenerating = false;
-    genBtn.disabled = false;
-    genBtn.textContent = '▶ START GENERATION';
-    const allDone = prompts.filter(p=>p.status==='done').length;
-    toast(`Generation complete! ${allDone}/${prompts.length} clips ready.`, 'success');
+    isGenerating=false; btn.disabled=false; btn.textContent='▶ START GENERATION';
+    toast(`Done! ${prompts.filter(p=>p.status==='done').length}/${prompts.length} clips ready.`,'ok');
   }
 
-  /* ── ACTUAL VEO API CALL ── */
   async function generateClip(p) {
-    const ratio = currentRatio === '9:16' ? '9:16' : '16:9';
+    const ratio = currentRatio;
+    const instances = [{ prompt: p.text }];
 
-    /* Build request body */
-    const body = {
-      model: 'veo-2.0-generate-001',
-      prompt: p.text,
-      config: {
-        aspectRatio: ratio,
-        durationSeconds: 8,
-        numberOfVideos: 1,
-      }
-    };
-
-    /* CC Mode: attach up to 3 characters */
-    if(currentMode === 'cc' && characters.length > 0) {
-      const chars = characters.slice(0,3);
-      body.referenceImages = await Promise.all(chars.map(async c=>{
-        const b64 = await fileToBase64(c.file);
-        return { imageBytes: b64, mimeType: c.file.type };
-      }));
+    // Attach frames if needed
+    if((currentMode==='ff'||currentMode==='fe')&&frames.ff){
+      instances[0].image = { bytesBase64Encoded: await toB64(frames.ff.file), mimeType: frames.ff.file.type };
+    }
+    if(currentMode==='fe'&&frames.feEnd){
+      instances[0].lastFrame = { bytesBase64Encoded: await toB64(frames.feEnd.file), mimeType: frames.feEnd.file.type };
+    }
+    if(currentMode==='cc'&&characters.length){
+      instances[0].referenceImages = await Promise.all(characters.slice(0,3).map(async c=>({
+        bytesBase64Encoded: await toB64(c.file), mimeType: c.file.type
+      })));
     }
 
-    /* Step 1: Submit generation job */
-    const submitRes = await fetch(
+    const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/veo-2.0-generate-001:predictLongRunning?key=${VEO_API_KEY}`,
-      {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ instances:[{ prompt: p.text }], parameters:{ aspectRatio: ratio, sampleCount:1 } })
-      }
+      { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ instances, parameters:{ aspectRatio:ratio, sampleCount:1 } }) }
     );
+    if(!res.ok){ const e=await res.json(); throw new Error(e.error?.message||`Error ${res.status}`); }
+    const op = await res.json();
+    if(!op.name) throw new Error('No operation returned');
 
-    if(!submitRes.ok) {
-      const err = await submitRes.json();
-      throw new Error(err.error?.message || `API Error ${submitRes.status}`);
-    }
-
-    const opData = await submitRes.json();
-    const opName = opData.name;
-    if(!opName) throw new Error('No operation name returned');
-
-    /* Step 2: Poll for result */
-    for(let attempt=0; attempt<30; attempt++) {
+    for(let i=0;i<30;i++){
       await sleep(4000);
-      const pollRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/${opName}?key=${VEO_API_KEY}`
-      );
-      const pollData = await pollRes.json();
-
-      if(pollData.done) {
-        const uri = pollData.response?.videos?.[0]?.uri || pollData.response?.predictions?.[0]?.bytesBase64Encoded;
+      const poll = await fetch(`https://generativelanguage.googleapis.com/v1beta/${op.name}?key=${VEO_API_KEY}`);
+      const pd   = await poll.json();
+      if(pd.done){
+        const uri = pd.response?.videos?.[0]?.uri || pd.response?.predictions?.[0]?.bytesBase64Encoded;
         if(!uri) throw new Error('No video in response');
-        // If base64
-        if(!uri.startsWith('http')) {
-          const blob = b64ToBlob(uri, 'video/mp4');
+        if(!uri.startsWith('http')){
+          const blob = b64Blob(uri,'video/mp4');
           return URL.createObjectURL(blob);
         }
         return uri;
       }
-
-      if(pollData.error) throw new Error(pollData.error.message);
+      if(pd.error) throw new Error(pd.error.message);
     }
-    throw new Error('Timeout: generation took too long');
+    throw new Error('Timeout');
   }
 
-  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+  function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+  function toB64(file){return new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.onerror=j;fr.readAsDataURL(file);});}
+  function b64Blob(b64,type){const bin=atob(b64);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type});}
 
-  function fileToBase64(file){
-    return new Promise((res,rej)=>{
-      const r = new FileReader();
-      r.onload = ()=>res(r.result.split(',')[1]);
-      r.onerror = rej;
-      r.readAsDataURL(file);
-    });
+  function dlClip(url,num){const a=document.createElement('a');a.href=url;a.download=`vyrova_clip_${String(num).padStart(2,'0')}.mp4`;a.click();}
+
+  function sendToEditor(){
+    const ready=prompts.filter(p=>p.status==='done');
+    if(!ready.length){toast('No clips ready!','err');return;}
+    sessionStorage.setItem('vyrova_editor_clips', JSON.stringify(
+      ready.map((p,i)=>({ order:prompts.indexOf(p)+1, prompt:p.text, videoUrl:p.videoUrl||null, duration:p.duration||'8s', label:`Clip ${String(prompts.indexOf(p)+1).padStart(2,'0')}` }))
+    ));
+    toast('Sending to Editor...','ok');
+    setTimeout(()=>window.location.href='editor.html?from=generator',700);
   }
 
-  function b64ToBlob(b64, type){
-    const bin = atob(b64);
-    const arr = new Uint8Array(bin.length);
-    for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
-    return new Blob([arr],{type});
-  }
-
-  /* ── DOWNLOAD ── */
-  function downloadClip(url, num) {
-    const a = document.createElement('a');
-    a.href = url; a.download = `vyrova_clip_${String(num).padStart(2,'0')}.mp4`;
-    a.click();
-  }
-
-  /* ── SEND TO EDITOR ── */
-  function sendToEditor() {
-    const readyClips = prompts.filter(p=>p.status==='done');
-    if(!readyClips.length){ toast('No clips ready yet!','error'); return; }
-
-    // Save ordered clips to sessionStorage for editor.html
-    const editorData = readyClips.map((p,i)=>({
-      order:   prompts.indexOf(p)+1,
-      prompt:  p.text,
-      videoUrl: p.videoUrl || null,
-      duration: p.duration || '8s',
-      label:   `Clip ${String(prompts.indexOf(p)+1).padStart(2,'0')}`
-    }));
-
-    sessionStorage.setItem('vyrova_editor_clips', JSON.stringify(editorData));
-    toast('Sending to Editor Timeline...','success');
-    setTimeout(()=>{ window.location.href='editor.html?from=generator'; }, 800);
-  }
-
-  /* ── KEYBOARD SHORTCUT ── */
-  document.getElementById('new-prompt-input').addEventListener('keydown', e=>{
-    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); addPrompt(); }
+  /* Enter key = add all */
+  document.getElementById('new-input').addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();addPrompts();}
   });
 
-  /* ── INIT ── */
-  renderPrompts();
-  renderClips();
-  updateCounts();
-  renderCharGrid();
+  /* INIT */
+  renderPrompts(); renderClips(); updateCounts(); renderCharGrid();
 </script>
 </body>
 </html>
