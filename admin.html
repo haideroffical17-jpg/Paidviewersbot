@@ -226,11 +226,11 @@
     <div class="al-sub">This area is restricted. Unauthorized access is prohibited.</div>
     <div class="al-field">
       <label>Username / Phone</label>
-      <input type="text" id="al-user" placeholder="923220498935" autocomplete="off"/>
+      <input type="text" id="al-user" placeholder="Enter username" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')"/>
     </div>
     <div class="al-field">
       <label>Password</label>
-      <input type="password" id="al-pass" placeholder="••••••••" autocomplete="off"/>
+      <input type="password" id="al-pass" placeholder="Enter password" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')"/>
     </div>
     <button class="al-btn" id="al-btn" onclick="adminLogin()">Sign In to Admin Panel</button>
     <div class="al-err" id="al-err">❌ Incorrect credentials. Access denied.</div>
