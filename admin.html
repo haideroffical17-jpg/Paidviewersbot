@@ -9,8 +9,8 @@
     :root{--bg:#080810;--surface:#0f0f1a;--border:rgba(120,80,255,0.15);--border2:rgba(120,80,255,0.25);--accent:#7c3aed;--accent2:#a855f7;--glow:#c084fc;--text:#f1f0ff;--muted:#8b8aab;--error:#f87171;--success:#34d399;--warn:#fbbf24;--card:rgba(15,15,26,0.9);}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
-    body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;visibility:hidden;}
-    body.auth-ok{visibility:visible;animation:bIn .4s ease;}
+    body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+    body{animation:bIn .4s ease;}
     @keyframes bIn{from{opacity:0}to{opacity:1}}
 
     /* ── AUTH SCREENS ── */
@@ -680,11 +680,10 @@
 
   function checkAdminSession(){
     const s = sessionStorage.getItem(SESSION_KEY);
+    document.getElementById('auth-screen').style.display='none';
     if(s === 'authenticated'){
-      document.getElementById('auth-screen').style.display='none';
-      document.body.classList.add('auth-ok');
+      // already logged in - show dashboard
     } else {
-      document.getElementById('auth-screen').style.display='none';
       document.getElementById('admin-login-screen').classList.add('show');
     }
   }
@@ -703,7 +702,6 @@
       btn.style.background = 'linear-gradient(135deg,#34d399,#10b981)';
       setTimeout(()=>{
         document.getElementById('admin-login-screen').classList.remove('show');
-        document.body.classList.add('auth-ok');
         btn.textContent='Sign In to Admin Panel';
         btn.style.background='';
       }, 700);
